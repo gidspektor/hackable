@@ -4,7 +4,7 @@
       <div class="wrapper">
         <nav>
           <RouterLink to="/">Home</RouterLink>
-          <RouterLink to="/posts">Posts</RouterLink>
+          <RouterLink to="/blog">Blog</RouterLink>
           <RouterLink to="/walkthrough">Vulnerabilities Walkthrough</RouterLink>
         </nav>
       </div>
