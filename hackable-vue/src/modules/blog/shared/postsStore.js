@@ -4,13 +4,14 @@ import PostsService from './postsService.js'
 export const usePostsStore = defineStore('posts', {
   state: () => {
     return {
-      posts: []
+      posts: [],
+      selectedPost: []
     }
   },
 
   actions: {
     async getPosts() {
-      const mock = [
+      this.posts = [
         {
           id: 1,
           title: 'pies are ok',
@@ -27,8 +28,30 @@ export const usePostsStore = defineStore('posts', {
           body: 'but not cats'
         }
       ]
-      this.posts = mock
       // this.posts = await PostsService.getPosts()
+    },
+
+    async getPost(id) {
+      const mock = {
+        id: 1,
+        title: 'pies are ok',
+        body: 'but not cats',
+        comments: [
+          {
+            id: 1,
+            user: 'user1',
+            body: 'I love cats'
+          },
+          {
+            id: 2,
+            user: 'user2',
+            body: 'I love dogs'
+          }
+        ]
+      }
+      // post = await PostsService.getPost(id)
+
+      return mock
     }
   },
 })

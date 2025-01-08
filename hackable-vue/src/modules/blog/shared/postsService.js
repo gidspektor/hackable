@@ -6,4 +6,8 @@ export default class PostsService {
   async GetPosts() {
     return await api.GET(`${BASE_ROUTE}/posts/`)
   }
+
+  async GetPost(id) {
+    return await api.GET(`${BASE_ROUTE}/posts/${id}`)
+  }
 }

@@ -12,20 +12,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { usePostsStore } from '../shared/postsStore';
 import PostPreview from '../components/PostPreview.vue';
 
 const postsStore = usePostsStore();
 
-const posts = ref([]);
+const posts = computed(() => postsStore.posts);
 const isLoading = ref(false);
 
 const getPosts = async () => {
   isLoading.value = true;
   try {
     await postsStore.getPosts();
-    posts.value = postsStore.posts;
   } catch (error) {
     console.error('Failed to fetch posts:', error);
   } finally {
@@ -33,8 +32,8 @@ const getPosts = async () => {
   }
 };
 
-onMounted(() => {
-  getPosts();
+onMounted(async () => {
+  await getPosts();
 });
 </script>
 
