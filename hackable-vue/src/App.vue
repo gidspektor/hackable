@@ -3,9 +3,9 @@
     <header>
       <div class="wrapper">
         <nav>
-          <RouterLink to="/">Home</RouterLink>
-          <RouterLink to="/blog">Blog</RouterLink>
-          <RouterLink to="/walkthrough">Vulnerabilities Walkthrough</RouterLink>
+          <RouterLink :to="{name: 'home'}">Home</RouterLink>
+          <RouterLink :to="{name: 'blogs'}">Blogs</RouterLink>
+          <RouterLink :to="{name: 'walkthrough'}">Vulnerabilities Walkthrough</RouterLink>
         </nav>
       </div>
     </header>

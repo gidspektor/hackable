@@ -4,10 +4,11 @@
   </div>
   <div v-else class="posts-container">
     <div class="posts">
-      <router-link v-for="post in posts" :key="post.id" :to="`/post/${post.id}`" class="post-item">
+      <router-link v-for="post in posts" :key="post.id" :to="{ name: 'post', params: { id: post.id } }" class="post-item">
         <PostPreview :title="post.title" :body="post.body" />
       </router-link>
     </div>
+    <router-view></router-view>
   </div>
 </template>
 

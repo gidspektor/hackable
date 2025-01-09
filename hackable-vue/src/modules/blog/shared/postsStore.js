@@ -32,26 +32,30 @@ export const usePostsStore = defineStore('posts', {
     },
 
     async getPost(id) {
-      const mock = {
+      console.log('getPost', id)
+      this.selectedPost = {
         id: 1,
+        userId: 1,
+        user: 'user1',
         title: 'pies are ok',
         body: 'but not cats',
         comments: [
           {
             id: 1,
+            userId: 1,
             user: 'user1',
             body: 'I love cats'
           },
           {
             id: 2,
+            userId: 2,
             user: 'user2',
             body: 'I love dogs'
           }
         ]
       }
-      // post = await PostsService.getPost(id)
+      // this.selectedPost = await PostsService.getPost(id)
 
-      return mock
     }
   },
 })

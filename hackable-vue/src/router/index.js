@@ -10,16 +10,14 @@ const router = createRouter({
       component: HomeView,
     },
     {
-      path: '/blog',
-      name: 'blog',
+      path: '/blogs',
+      name: 'blogs',
       component: () => import('../modules/blog/views/BlogHomeView.vue'),
-      children: [
-        {
-          path: 'post/:id',
-          name: 'post',
-          component: () => import('../modules/blog/views/PostView.vue'),
-        },
-      ],
+    },
+    {
+      path: '/post/:id',
+      name: 'post',
+      component: () => import('../modules/blog/views/PostView.vue'),
     },
     {
       path: '/walkthrough',
