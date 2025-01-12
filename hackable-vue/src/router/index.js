@@ -12,17 +12,17 @@ const router = createRouter({
     {
       path: '/blogs',
       name: 'blogs',
-      component: () => import('../modules/blog/views/BlogHomeView.vue'),
+      component: () => import('@blog/views/BlogHomeView.vue'),
     },
     {
       path: '/post/:id',
       name: 'post',
-      component: () => import('../modules/blog/views/PostView.vue'),
+      component: () => import('@blog/views/PostView.vue'),
     },
     {
       path: '/walkthrough',
       name: 'walkthrough',
-      component: () => import('../modules/blog/views/WalkthroughView.vue'),
+      component: () => import('@blog/views/WalkthroughView.vue'),
     },
   ],
 })

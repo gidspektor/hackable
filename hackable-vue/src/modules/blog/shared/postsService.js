@@ -1,6 +1,5 @@
 import api from '../../../shared/api.js'
-
-const BASE_ROUTE = 'hackable'
+import { BASE_ROUTE } from '../../../shared/constants.js'
 
 export default class PostsService {
   async GetPosts() {

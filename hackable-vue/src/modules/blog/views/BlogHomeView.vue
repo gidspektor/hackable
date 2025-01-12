@@ -14,8 +14,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
-import { usePostsStore } from '../shared/postsStore';
-import PostPreview from '../components/PostPreview.vue';
+import { usePostsStore } from '@blog/shared/postsStore';
+import PostPreview from '@blog/components/PostPreview.vue';
 
 const postsStore = usePostsStore();
 

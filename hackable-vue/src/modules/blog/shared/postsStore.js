@@ -5,7 +5,8 @@ export const usePostsStore = defineStore('posts', {
   state: () => {
     return {
       posts: [],
-      selectedPost: []
+      selectedPost: [],
+      cachedRoute: ''
     }
   },
 
@@ -56,6 +57,6 @@ export const usePostsStore = defineStore('posts', {
       }
       // this.selectedPost = await PostsService.getPost(id)
 
-    }
+    },
   },
 })

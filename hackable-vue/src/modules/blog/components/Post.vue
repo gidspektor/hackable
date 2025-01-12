@@ -38,11 +38,13 @@ post: {
     font-weight: bold;
     color: green; /* Title is green */
     margin-bottom: 1rem; /* Add spacing after the title */
+    text-align: center; /* Center the title */
 }
 
 /* Content Styling */
 .post-content {
     margin-bottom: 2rem; /* Add spacing after the content */
+    text-align: center; /* Center the title */
 }
 
 /* User Styling */
