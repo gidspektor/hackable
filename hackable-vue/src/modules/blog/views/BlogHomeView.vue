@@ -20,7 +20,7 @@ import PostPreview from '@blog/components/PostPreview.vue';
 const postsStore = usePostsStore();
 
 const posts = computed(() => postsStore.posts);
-const isLoading = ref(false);
+const isLoading = ref<boolean>(false);
 
 const getPosts = async () => {
   isLoading.value = true;

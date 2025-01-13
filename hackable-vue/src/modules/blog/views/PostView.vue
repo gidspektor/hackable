@@ -1,28 +1,28 @@
 <template>
-    <div v-if="isLoading">
-        <p class="green">Loading post...</p>
-    </div>
-    <div v-else class="posts-container">
-        <div class="post">
-           <Post :post="post" />
-        </div>
-        <CreateComment :postId="post.id" @login="openLoginModal" class="create-comment" />
-        <div class="comments">
-            <div v-for="comment in post.comments" :key="comment.id" class="comment">
-                <Comment :comment="comment" />
-            </div>
-        </div>
-    </div>
-    <div class='overlay' v-show='showModal'>
-      <transition name='fade'>
-        <LoginSignupModal
-          id='modal'
-          class='myModal'
-          v-show='showModal'
-          @close="showModal = false"
-        />
-      </transition>
-    </div>
+	<div v-if="isLoading">
+		<p class="green">Loading post...</p>
+	</div>
+	<div v-else class="posts-container">
+			<div class="post">
+				<Post :post="post" />
+			</div>
+			<CreateComment :postId="post.id" @login="openLoginModal" class="create-comment" />
+			<div class="comments">
+				<div v-for="comment in post.comments" :key="comment.id" class="comment">
+					<Comment :comment="comment" />
+				</div>
+			</div>
+	</div>
+	<div class='overlay' v-show='showModal'>
+		<transition name='fade'>
+			<LoginSignupModal
+				id='modal'
+				class='myModal'
+				v-show='showModal'
+				@close="showModal = false"
+			/>
+		</transition>
+	</div>
 </template>
 
 <script setup lang="ts">
@@ -36,11 +36,11 @@ import CreateComment from '@blog/components/CreateComment.vue';
 import LoginSignupModal from '@blog/components/modals/LoginSignupModal.vue';
 
 const route = useRoute();
-const showModal = ref(false);
+const showModal = ref<boolean>(false);
 const postsStore = usePostsStore();
 
-const postId = ref(route.params.id);
-const isLoading = ref(false);
+const postId = ref<int>(route.params.id);
+const isLoading = ref<boolean>(false);
 const post = computed(() => postsStore.selectedPost);
 
 const openLoginModal = () => {

@@ -1,71 +1,74 @@
 <template>
-    <div class="modal-overlay">
-      <div class="modal-container">
-        <div v-if="isLoading" class="modal-body">
-          <div class="loading-text">Loading...</div>
-        </div>
-        <div v-else>
-          <div class="modal-header">
-            <div @click="closeModal" class="close-button">&times;</div>
-            <h5 class="modal-title">Log in or Sign up</h5>
-          </div>
-          <div class="modal-content">
-            <template v-if="!signUpUser">
-              <div>
-                <div class="form-group">
-                  <input
-                    v-model="email"
-                    type="email"
-                    class="input-field"
-                    placeholder="Email Address"
-                  />
-                  <div v-if="emailError" class="error-message">{{ emailError }}</div>
-                  <input
-                    v-model="password"
-                    type="password"
-                    class="input-field"
-                    placeholder="Password"
-                  />
-                  <div class="links">
-                    <a href="#" class="link" @click.prevent="resetPassword">Forgot password?</a>
-                    <span>|</span>
-                    <a href="#" class="link" @click="signUp">Sign up?</a>
-                  </div>
-                  <div v-if="error" class="error-message">{{ error }}</div>
-                </div>
-                <button @click="login" class="action-button">Continue</button>
-              </div>
-            </template>
-            <template v-else>
-              <div class="form-group">
-                <input v-model="name" class="input-field" placeholder="Full Name" type="text" />
-                <div v-if="nameError" class="error-message">{{ nameError }}</div>
-                <input v-model="email" class="input-field" placeholder="Email Address" type="email" />
-                <div v-if="emailError" class="error-message">{{ emailError }}</div>
-                <input
-                  v-model="password"
-                  class="input-field"
-                  placeholder="Create Password"
-                  type="password"
-                />
-                <div v-if="passwordLengthError" class="error-message">{{ passwordLengthError }}</div>
-                <input
-                  v-model="passwordRepeat"
-                  class="input-field"
-                  placeholder="Repeat Password"
-                  type="password"
-                />
-                <div v-if="passwordNotMatchError" class="error-message">
-                  {{ passwordNotMatchError }}
-                </div>
-                <button @click="createAccount" class="action-button">Create Account</button>
-              </div>
-            </template>
-          </div>
-        </div>
-      </div>
-    </div>
-  </template>
+	<div class="modal-overlay">
+		<div class="modal-container">
+			<div v-if="isLoading" class="modal-body">
+				<div class="loading-text">Loading...</div>
+			</div>
+			<div v-else>
+				<div class="modal-header">
+					<div @click="closeModal" class="close-button">&times;</div>
+					<h5 class="modal-title">Log in or Sign up</h5>
+				</div>
+				<div class="modal-content">
+					<template v-if="!signUpUser">
+						<div>
+							<div class="form-group">
+								<input
+									v-model="email"
+									type="email"
+									class="input-field"
+									placeholder="Email Address"
+								/>
+								<div v-if="emailError" class="error-message">{{ emailError }}</div>
+								<input
+									v-model="password"
+									type="password"
+									class="input-field"
+									placeholder="Password"
+								/>
+								<div class="links">
+									<a href="#" class="link" @click.prevent="resetPassword">Forgot password?</a>
+									<span>|</span>
+									<a href="#" class="link" @click="signUp">Sign up</a>
+								</div>
+								<div v-if="error" class="error-message">{{ error }}</div>
+							</div>
+							<button @click="login" class="action-button">Continue</button>
+						</div>
+					</template>
+					<template v-else>
+						<div class="form-group">
+							<input v-model="name" class="input-field" placeholder="Full Name" type="text" />
+							<div v-if="nameError" class="error-message">{{ nameError }}</div>
+							<input v-model="email" class="input-field" placeholder="Email Address" type="email" />
+							<div v-if="emailError" class="error-message">{{ emailError }}</div>
+							<input
+								v-model="password"
+								class="input-field"
+								placeholder="Create Password"
+								type="password"
+							/>
+							<div v-if="passwordLengthError" class="error-message">{{ passwordLengthError }}</div>
+							<input
+								v-model="passwordRepeat"
+								class="input-field"
+								placeholder="Repeat Password"
+								type="password"
+							/>
+							<div v-if="passwordNotMatchError" class="error-message">
+								{{ passwordNotMatchError }}
+							</div>
+							<div class="links">
+								<a href="#" class="link" @click="signIn">Sign in</a>
+							</div>
+							<button @click="createAccount" class="action-button">Create Account</button>
+						</div>
+					</template>
+				</div>
+			</div>
+		</div>
+	</div>
+</template>
   
 <script setup lang="ts">
 import { ref, computed } from 'vue';
@@ -73,25 +76,24 @@ import { useHackableStore } from '@/shared/hackableStore';
 
 const hackableStore = useHackableStore();
 
-const signUpUser = ref(false);
-const isLoading = ref(false);
-const email = ref('');
-const password = ref('');
-const name = ref('');
-const passwordRepeat = ref('');
-const error = ref('');
-const emailError = ref('');
-const nameError = ref('');
-const passwordLengthError = ref('');
-const passwordNotMatchError = ref('');
+const formValid = ref<boolean>(false);
+const signUpUser = ref<boolean>(false);
+const isLoading = ref<boolean>(false);
+const email = ref<string>('');
+const password = ref<string>('');
+const name = ref<string>('');
+const passwordRepeat = ref<string>('');
+const error = ref<string>('');
+const emailError = ref<string>('');
+const nameError = ref<string>('');
+const passwordLengthError = ref<string>('');
+const passwordNotMatchError = ref<string>('');
+const cleanedName = ref<string>('');
 
 const emit = defineEmits(['close']);
 
 const closeModal = () => {
   emit('close');
-};
-const goBack = () => {
-  // Implement goBack logic
 };
 const login = () => {
   hackableStore.login(email.value, password.value);
@@ -99,14 +101,49 @@ const login = () => {
 const signUp = () => {
   signUpUser.value = true;
 };
+const signIn = () => {
+  signUpUser.value = false;
+};
 const createAccount = () => {
-  // Implement createAccount logic
+	validateForm();
+
+	if(formValid.value) {
+		cleanedName.value = name.value.replace(/[^a-z'A-Z ]/, '').replace(/[/(){};:*]/g, '')
+		let response = hackableStore.createAccount(name.value, email.value, password.value, passwordRepeat.value);
+
+		if (false) {
+			error.value = response.error;
+		} else {
+			emit('close');
+		}
+	}
 };
 const resetPassword = () => {
   // Implement resetPassword logic
 };
-const loginWithEmail = () => {
-  // Implement loginWithEmail logic
+
+const validateForm = () => {
+	formValid.value = false;
+
+	nameError.value = '';
+	passwordLengthError.value = '';
+	passwordNotMatchError.value = '';
+
+	if (name.value.split(' ').length === 1 || !name.value) {
+		nameError.value = 'Please input full name';
+	}
+
+	if (password.value.length < 8) {
+		passwordLengthError.value = 'Password must be a minimum of 8 characters';
+	}
+
+	if (password.value !== passwordRepeat.value) {
+		passwordNotMatchError.value = 'Passwords don\'t match';
+	}
+
+	if (!passwordNotMatchError.value && !passwordLengthError.value && !nameError.value) {
+		formValid.value = true;
+	}
 };
 </script>
   

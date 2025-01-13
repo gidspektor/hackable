@@ -20,7 +20,7 @@
     postId: number
   }>();
 
-  const active = ref(false);
+  const active = ref<boolean>(false);
   const hackableStore = useHackableStore();
 
   const emit = defineEmits(['login']);
