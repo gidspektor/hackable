@@ -59,7 +59,7 @@ const getPost = async () => {
 }
 
 onMounted(async () => {
-    await getPost();
+  await getPost();
 });
 </script>
 

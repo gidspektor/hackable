@@ -16,8 +16,32 @@
 </template>
 
 <script setup lang="ts">
+import { created } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
 import HomeView from './views/HomeView.vue'
+
+// created(async () => {
+// 	let securePages = ['eventPage', 'account']
+// 	let tokenState = inspectToken()
+
+// 	if (tokenState === 'active') {
+// 		await this.$store.dispatch('getUserInfo', localStorage.getItem('t'))
+// 	}
+
+// 	if (tokenState === 'refresh') {
+// 		await this.$store.dispatch('refreshToken').catch((error) => {
+// 			console.log(error)
+// 			localStorage.removeItem('t')
+// 			this.$router.push('/')
+// 		})
+// 	}
+
+// 	if (tokenState === 'expired' && securePages.includes(this.$route.name)) {
+// 		this.$router.push('Login')
+// 	}
+
+// 	this.loaded = true
+// })
 </script>
 
 <style scoped>

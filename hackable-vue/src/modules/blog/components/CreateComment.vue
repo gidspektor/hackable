@@ -1,6 +1,7 @@
 <template>
 	<div v-if="active" class="text-box-container">
 		<textarea
+			v-model="comment"
 			class="text-box"
 			placeholder="Write your comment here..."
 		></textarea>
@@ -14,14 +15,18 @@
 
 <script setup lang="ts">
   import { useHackableStore } from '@/shared/hackableStore';
+	import { usePostsStore } from '@blog/shared/postsStore';
   import { ref, computed } from 'vue';
 
   defineProps<{
     postId: number
   }>();
 
+	const postsStore = usePostsStore();
+	const hackableStore = useHackableStore();
+
   const active = ref<boolean>(false);
-  const hackableStore = useHackableStore();
+	const comment = ref<string>('');
 
   const emit = defineEmits(['login']);
   const user = computed(() => hackableStore.user);
@@ -35,7 +40,10 @@
   };
 
   const submitComment = () => {
-    // Logic to handle comment submission
+    if (comment.value) {
+			postsStore.createComment(props.postId, comment.value);
+			active.value = false;
+		}
   };
 </script>
 

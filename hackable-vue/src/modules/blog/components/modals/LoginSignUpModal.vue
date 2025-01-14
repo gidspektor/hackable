@@ -27,8 +27,6 @@
 									placeholder="Password"
 								/>
 								<div class="links">
-									<a href="#" class="link" @click.prevent="resetPassword">Forgot password?</a>
-									<span>|</span>
 									<a href="#" class="link" @click="signUp">Sign up</a>
 								</div>
 								<div v-if="error" class="error-message">{{ error }}</div>
@@ -111,15 +109,12 @@ const createAccount = () => {
 		cleanedName.value = name.value.replace(/[^a-z'A-Z ]/, '').replace(/[/(){};:*]/g, '')
 		let response = hackableStore.createAccount(name.value, email.value, password.value, passwordRepeat.value);
 
-		if (false) {
+		if (response.error) {
 			error.value = response.error;
 		} else {
 			emit('close');
 		}
 	}
-};
-const resetPassword = () => {
-  // Implement resetPassword logic
 };
 
 const validateForm = () => {

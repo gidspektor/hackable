@@ -11,8 +11,10 @@ const router = createRouter({
     },
     {
       path: '/blogs',
-      name: 'blogs',
-      component: () => import('@blog/views/BlogHomeView.vue'),
+			children: [
+				{ path: '', name:'blogs', component: () => import('@blog/views/BlogHomeView.vue') },
+				{ path: 'create', name:'create-post', component: () => import('@blog/views/CreatePostView.vue') },
+			]
     },
     {
       path: '/post/:id',

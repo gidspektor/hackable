@@ -1,44 +1,57 @@
 import { defineStore } from 'pinia'
+import { reactive, computed } from 'vue'
 
-export const useHackableStore = defineStore('hackable', {
-	state: () => {
-			return {
-				user: JSON.parse(localStorage.getItem('user')) || null,
-			}
-	},
+export const useHackableStore = defineStore('hackable', () => {
+	const state = reactive({
+		user: null,
+		jwt: null,
+	})
 
-	actions: {
-		async login(email, password) {
-			let user = {
-				id: 1,
-				name: 'user1'
-			}
+	return {
+		user: computed(() => state.user),
+		login,
+		createAccount,
+		clearUser,
+	}
 
-			// this.user = await HackableService.login({'email': email, 'password': password})
+	async function login(email, password) {
+		let user = {
+			id: 1,
+			name: 'user1'
+		}
 
-			localStorage.setItem('user', JSON.stringify(user));
-		},
+		// this.user = await HackableService.login({'email': email, 'password': password})
+		// state.jwt = 'jwt'
 
-		async createAccount(name, email, password, passwordRepeat) {
-			let user = {
-				id: 1,
-				name: 'user1'
-			}
+		state.user = user
+	}
 
-			// response = await HackableService.createAccount({'name': name, 'email': email, 'password': password, 'passwordRepeat': passwordRepeat})
+	async function createAccount(name, email, password, passwordRepeat) {
+		let user = {
+			id: 1,
+			name: 'user1'
+		}
 
-			// if (response.status === 201) {
-			// 	this.user = response.data
-			// }
+		// response = await HackableService.createAccount({'name': name, 'email': email, 'password': password, 'passwordRepeat': passwordRepeat})
 
-			// return response
+		// if (response.status === 201) {
+		// 	this.user = response.data
+		// }
+		// state.jwt = 'jwt'
+		// return response
 
-			localStorage.setItem('user', JSON.stringify(user));
-		},
+		state.user = user
+	}
 
-		clearUser() {
-      this.user = null;
-      localStorage.removeItem('user');
-    },
-	},
+	// async function refreshToken() {
+
+	// }
+
+	// async function refreshUserData() {
+
+	// }
+
+	function clearUser() {
+		state.user = null
+	}
 })

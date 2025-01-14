@@ -1,4 +1,5 @@
 <template>
+	<RouterLink :to="{name: 'create-post'}">Create Post</RouterLink>
   <div v-if="isLoading">
     <p class="green">Loading posts...</p>
   </div>
