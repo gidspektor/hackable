@@ -14,37 +14,37 @@
 </template>
 
 <script setup lang="ts">
-  import { useHackableStore } from '@/shared/hackableStore';
-	import { usePostsStore } from '@blog/shared/postsStore';
-  import { ref, computed } from 'vue';
+import { useHackableStore } from '@/shared/hackableStore'
+import { usePostsStore } from '@blog/shared/postsStore'
+import { ref, computed } from 'vue'
 
-  defineProps<{
-    postId: number
-  }>();
+defineProps<{
+	postId: number
+}>()
 
-	const postsStore = usePostsStore();
-	const hackableStore = useHackableStore();
+const postsStore = usePostsStore()
+const hackableStore = useHackableStore()
 
-  const active = ref<boolean>(false);
-	const comment = ref<string>('');
+const active = ref<boolean>(false)
+const comment = ref<string>('')
 
-  const emit = defineEmits(['login']);
-  const user = computed(() => hackableStore.user);
+const emit = defineEmits(['login'])
+const user = computed(() => hackableStore.user)
 
-  const openCommentBox = () => {
-    user.value ? (active.value = true) : emit('login');
-  };
+const openCommentBox = () => {
+	user.value ? (active.value = true) : emit('login')
+}
 
-  const cancelComment = () => {
-    active.value = false;
-  };
+const cancelComment = () => {
+	active.value = false
+}
 
-  const submitComment = () => {
-    if (comment.value) {
-			postsStore.createComment(props.postId, comment.value);
-			active.value = false;
-		}
-  };
+const submitComment = () => {
+	if (comment.value) {
+		postsStore.createComment(props.postId, comment.value)
+		active.value = false
+	}
+}
 </script>
 
 <style scoped>
@@ -106,7 +106,7 @@
 .submit-button:hover {
 	background-color: darkgreen;
 }
- 
+
 .add-comment-button {
 	width: 100%;
 	padding: 1rem;
@@ -118,7 +118,9 @@
 	font-weight: bold;
 	text-align: center;
 	cursor: pointer;
-	transition: background-color 0.3s, color 0.3s;
+	transition:
+		background-color 0.3s,
+		color 0.3s;
 }
 
 .add-comment-button:hover {

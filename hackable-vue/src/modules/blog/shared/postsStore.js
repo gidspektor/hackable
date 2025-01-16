@@ -6,7 +6,7 @@ export const usePostsStore = defineStore('posts', () => {
 	const state = reactive({
 		posts: [],
 		selectedPost: [],
-  })
+	})
 
 	return {
 		posts: computed(() => state.posts),
@@ -14,6 +14,7 @@ export const usePostsStore = defineStore('posts', () => {
 		getPosts,
 		getPost,
 		createComment,
+		createPost,
 	}
 
 	async function getPosts() {
@@ -21,18 +22,18 @@ export const usePostsStore = defineStore('posts', () => {
 			{
 				id: 1,
 				title: 'pies are ok',
-				body: 'but not cats'
+				body: 'but not cats',
 			},
 			{
 				id: 2,
 				title: 'cats are better',
-				body: 'but not dogs'
+				body: 'but not dogs',
 			},
 			{
 				id: 3,
 				title: 'dogs are the best',
-				body: 'but not cats'
-			}
+				body: 'but not cats',
+			},
 		]
 		// state.posts = await PostsService.getPosts()
 	}
@@ -49,20 +50,24 @@ export const usePostsStore = defineStore('posts', () => {
 					id: 1,
 					userId: 1,
 					user: 'user1',
-					body: 'I love cats'
+					body: 'I love cats',
 				},
 				{
 					id: 2,
 					userId: 2,
 					user: 'user2',
-					body: 'I love dogs'
-				}
-			]
+					body: 'I love dogs',
+				},
+			],
 		}
 		// state.selectedPost = await PostsService.getPost(id)
 	}
 
 	async function createComment(postId, comment) {
-		// return await PostsService.createComment({'id': postId, 'body': comment})
+		// return response = await PostsService.createComment({'id': postId, 'body': comment})
+	}
+
+	async function createPost(userId, title, body) {
+		// return response = await PostsService.createPost({'user_id': userId, 'body': body, 'title': title})
 	}
 })

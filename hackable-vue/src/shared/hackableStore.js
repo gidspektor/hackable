@@ -17,7 +17,7 @@ export const useHackableStore = defineStore('hackable', () => {
 	async function login(email, password) {
 		let user = {
 			id: 1,
-			name: 'user1'
+			name: 'user1',
 		}
 
 		// this.user = await HackableService.login({'email': email, 'password': password})
@@ -29,7 +29,7 @@ export const useHackableStore = defineStore('hackable', () => {
 	async function createAccount(name, email, password, passwordRepeat) {
 		let user = {
 			id: 1,
-			name: 'user1'
+			name: 'user1',
 		}
 
 		// response = await HackableService.createAccount({'name': name, 'email': email, 'password': password, 'passwordRepeat': passwordRepeat})

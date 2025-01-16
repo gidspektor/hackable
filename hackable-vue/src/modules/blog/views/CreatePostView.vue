@@ -1,48 +1,54 @@
 <template>
 	<div class="container">
 		<div class="post-box">
-			<input
-				v-model="title"
-				class="title-input"
-				placeholder="Click Bait Title"
-			/>
-			<textarea
-				v-model="body"
-				class="body-input"
-				placeholder="What's on your mind?"
-			></textarea>
-		<div class="button-container">
-			<button @click="cancelPost" class="cancel-button">Cancel</button>
-			<button @click="createPost" class="submit-button">Submit</button>
-		</div>
+			<input v-model="title" class="title-input" placeholder="Click Bait Title" />
+			<textarea v-model="body" class="body-input" placeholder="What's on your mind?"></textarea>
+			<div v-if="error" class="error-message">{{ error }}</div>
+			<div class="button-container">
+				<button @click="cancelPost" class="cancel-button">Cancel</button>
+				<button @click="createPost" class="submit-button">Submit</button>
+			</div>
 		</div>
 	</div>
-  </template>
-  
+</template>
+
 <script setup lang="ts">
-  import { ref } from 'vue';
-  import { usePostsStore } from '@blog/shared/postsStore';
+import { ref, computed } from 'vue'
+import { usePostsStore } from '@blog/shared/postsStore'
+import { useHackableStore } from '@/shared/hackableStore'
+import { useRouter } from 'vue-router'
 
-	const postsStore = usePostsStore();
+const postsStore = usePostsStore()
+const hackableStore = useHackableStore()
 
-	const title = ref<string>('');
-	const body = ref<string>('');
+const router = useRouter()
 
-	const cancelPost = () => {
-		title.value = '';
-		body.value = '';
-		
-	};
+const title = ref<string>('')
+const body = ref<string>('')
+const error = ref<string>('')
+const user = computed(() => hackableStore.user)
 
-	const createPost = () => {
-		if (title.value && body.value) {
-			postsStore.createPost(title.value, body.value);
-			title.value = '';
-			body.value = '';
+const cancelPost = () => {
+	title.value = ''
+	body.value = ''
+	router.push({ name: 'blogs' })
+}
+
+const createPost = async () => {
+	if (title.value && body.value) {
+		const response = await postsStore.createPost(user.value.id, title.value, body.value)
+
+		if (response.error) {
+			error.value = response.error
+		} else {
+			title.value = ''
+			body.value = ''
+			router.push({ name: 'blogs' })
 		}
-	};
+	}
+}
 </script>
-  
+
 <style scoped>
 .container {
 	display: flex;
@@ -51,7 +57,7 @@
 	height: 100vh;
 	padding-top: 10%;
 }
-  
+
 .post-box {
 	width: 100%;
 	max-width: 1000px;
@@ -60,7 +66,7 @@
 	border-radius: 3%;
 	box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
 }
-  
+
 .title-input,
 .body-input {
 	width: 100%;
@@ -124,4 +130,3 @@
 	background-color: #43a047;
 }
 </style>
-  

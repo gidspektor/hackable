@@ -67,193 +67,197 @@
 		</div>
 	</div>
 </template>
-  
+
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { useHackableStore } from '@/shared/hackableStore';
+import { ref } from 'vue'
+import { useHackableStore } from '@/shared/hackableStore'
 
-const hackableStore = useHackableStore();
+const hackableStore = useHackableStore()
 
-const formValid = ref<boolean>(false);
-const signUpUser = ref<boolean>(false);
-const isLoading = ref<boolean>(false);
-const email = ref<string>('');
-const password = ref<string>('');
-const name = ref<string>('');
-const passwordRepeat = ref<string>('');
-const error = ref<string>('');
-const emailError = ref<string>('');
-const nameError = ref<string>('');
-const passwordLengthError = ref<string>('');
-const passwordNotMatchError = ref<string>('');
-const cleanedName = ref<string>('');
+const formValid = ref<boolean>(false)
+const signUpUser = ref<boolean>(false)
+const isLoading = ref<boolean>(false)
+const email = ref<string>('')
+const password = ref<string>('')
+const name = ref<string>('')
+const passwordRepeat = ref<string>('')
+const error = ref<string>('')
+const emailError = ref<string>('')
+const nameError = ref<string>('')
+const passwordLengthError = ref<string>('')
+const passwordNotMatchError = ref<string>('')
+const cleanedName = ref<string>('')
 
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close'])
 
 const closeModal = () => {
-  emit('close');
-};
+	emit('close')
+}
 const login = () => {
-  hackableStore.login(email.value, password.value);
-};
+	hackableStore.login(email.value, password.value)
+}
 const signUp = () => {
-  signUpUser.value = true;
-};
+	signUpUser.value = true
+}
 const signIn = () => {
-  signUpUser.value = false;
-};
+	signUpUser.value = false
+}
 const createAccount = () => {
-	validateForm();
+	validateForm()
 
-	if(formValid.value) {
+	if (formValid.value) {
 		cleanedName.value = name.value.replace(/[^a-z'A-Z ]/, '').replace(/[/(){};:*]/g, '')
-		let response = hackableStore.createAccount(name.value, email.value, password.value, passwordRepeat.value);
+		let response = hackableStore.createAccount(
+			name.value,
+			email.value,
+			password.value,
+			passwordRepeat.value,
+		)
 
 		if (response.error) {
-			error.value = response.error;
+			error.value = response.error
 		} else {
-			emit('close');
+			emit('close')
 		}
 	}
-};
+}
 
 const validateForm = () => {
-	formValid.value = false;
+	formValid.value = false
 
-	nameError.value = '';
-	passwordLengthError.value = '';
-	passwordNotMatchError.value = '';
+	nameError.value = ''
+	passwordLengthError.value = ''
+	passwordNotMatchError.value = ''
 
 	if (name.value.split(' ').length === 1 || !name.value) {
-		nameError.value = 'Please input full name';
+		nameError.value = 'Please input full name'
 	}
 
 	if (password.value.length < 8) {
-		passwordLengthError.value = 'Password must be a minimum of 8 characters';
+		passwordLengthError.value = 'Password must be a minimum of 8 characters'
 	}
 
 	if (password.value !== passwordRepeat.value) {
-		passwordNotMatchError.value = 'Passwords don\'t match';
+		passwordNotMatchError.value = "Passwords don't match"
 	}
 
 	if (!passwordNotMatchError.value && !passwordLengthError.value && !nameError.value) {
-		formValid.value = true;
+		formValid.value = true
 	}
-};
+}
 </script>
-  
+
 <style scoped>
 .modal-container {
-    background: white;
-    border-radius: 10px;
-    width: 90%;
-    max-width: 500px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+	background: white;
+	border-radius: 10px;
+	width: 90%;
+	max-width: 500px;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
-  
+
 .modal-header {
-    padding: 1rem;
-    border-bottom: 1px solid #ddd;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+	padding: 1rem;
+	border-bottom: 1px solid #ddd;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 }
-  
+
 .close-button {
-    cursor: pointer;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #333;
+	cursor: pointer;
+	font-size: 1.5rem;
+	font-weight: bold;
+	color: #333;
 }
-  
+
 .modal-title {
-    font-size: 1.2rem;
-    font-weight: bold;
-    text-align: center;
-    margin: 0 auto;
-    color: green;
+	font-size: 1.2rem;
+	font-weight: bold;
+	text-align: center;
+	margin: 0 auto;
+	color: green;
 }
-  
+
 .back-arrow {
-    cursor: pointer;
-    height: 20px;
-    margin-right: auto;
+	cursor: pointer;
+	height: 20px;
+	margin-right: auto;
 }
-  
+
 .modal-content {
-    padding: 1rem;
+	padding: 1rem;
 }
-  
+
 .form-group {
-    margin-bottom: 1rem;
+	margin-bottom: 1rem;
 }
-  
+
 .input-field {
-    width: 100%;
-    padding: 0.5rem;
-    margin-bottom: 0.5rem;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 1rem;
+	width: 100%;
+	padding: 0.5rem;
+	margin-bottom: 0.5rem;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	font-size: 1rem;
 }
-  
+
 .error-message {
-    color: red;
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
+	color: red;
+	font-size: 0.9rem;
+	margin-bottom: 0.5rem;
 }
-  
+
 .links {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 1rem;
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 1rem;
 }
-  
+
 .link {
-    font-size: 0.9rem;
-    color: #007bff;
-    cursor: pointer;
+	font-size: 0.9rem;
+	color: #007bff;
+	cursor: pointer;
 }
-  
+
 .link:hover {
-    text-decoration: underline;
+	text-decoration: underline;
 }
-  
+
 .action-button {
-    width: 100%;
-    padding: 0.75rem;
-    font-size: 1rem;
-    color: white;
-    background-color: #28a745;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    text-align: center;
+	width: 100%;
+	padding: 0.75rem;
+	font-size: 1rem;
+	color: white;
+	background-color: #28a745;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	text-align: center;
 }
-  
+
 .action-button:hover {
-    background-color: #218838;
+	background-color: #218838;
 }
 
 .email-button {
-    width: 100%;
-    padding: 0.75rem;
-    margin-top: 0.5rem;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    background-color: white;
+	width: 100%;
+	padding: 0.75rem;
+	margin-top: 0.5rem;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+	background-color: white;
 }
 
 .email-button:hover {
-    background-color: #f7f7f7;
+	background-color: #f7f7f7;
 }
-  
+
 .button-icon {
-    height: 20px;
-    margin-right: 1rem;
+	height: 20px;
+	margin-right: 1rem;
 }
 </style>
-  
