@@ -15,14 +15,14 @@
 
 <script setup lang="ts">
 import { useHackableStore } from '@/shared/hackableStore'
-import { usePostsStore } from '@blog/shared/postsStore'
+import { useArticlesStore } from '@articles/shared/articlesStore'
 import { ref, computed } from 'vue'
 
 defineProps<{
-	postId: number
+	articleId: number
 }>()
 
-const postsStore = usePostsStore()
+const articlesStore = useArticlesStore()
 const hackableStore = useHackableStore()
 
 const active = ref<boolean>(false)
@@ -41,7 +41,7 @@ const cancelComment = () => {
 
 const submitComment = () => {
 	if (comment.value) {
-		postsStore.createComment(props.postId, comment.value)
+		articlesStore.createComment(props.articleId, comment.value)
 		active.value = false
 	}
 }

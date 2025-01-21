@@ -10,25 +10,30 @@ const router = createRouter({
 			component: HomeView,
 		},
 		{
-			path: '/blogs',
+			path: '/articles',
 			children: [
-				{ path: '', name: 'blogs', component: () => import('@blog/views/BlogHomeView.vue') },
+				{ path: '', name: 'articles', component: () => import('@articles/views/ArticleHomeView.vue') },
 				{
 					path: 'create',
-					name: 'create-post',
-					component: () => import('@blog/views/CreatePostView.vue'),
+					name: 'create-article',
+					component: () => import('@articles/views/CreateArticleView.vue'),
 				},
 				{
-					path: 'post/:id',
-					name: 'post',
-					component: () => import('@blog/views/PostView.vue'),
-				},
+					path: 'article/:id',
+					name: 'article',
+					component: () => import('@articles/views/ArticleView.vue'),
+				}
 			],
+		},
+		{
+			path: '/account',
+			name: 'account',
+			component: () => import('@/views/AccountView.vue'),
 		},
 		{
 			path: '/walkthrough',
 			name: 'walkthrough',
-			component: () => import('@blog/views/WalkthroughView.vue'),
+			component: () => import('@/views/WalkthroughView.vue'),
 		},
 	],
 })

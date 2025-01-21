@@ -1,14 +1,14 @@
 <template>
 	<div class="post">
-		<h1 class="post-title">{{ post.title }}</h1>
-		<p class="post-content">{{ post.body }}</p>
-		<p class="post-user">{{ post.user }}</p>
+		<h1 class="post-title" v-html="article.title"></h1>
+		<p class="post-content" v-html="article.body"></p>
+		<p class="post-user">{{ article.user }}</p>
 	</div>
 </template>
 
 <script setup lang="ts">
 defineProps<{
-	post: {
+	article: {
 		title: string
 		body: string
 		user: string
@@ -21,6 +21,7 @@ defineProps<{
 		}[]
 	}
 }>()
+
 </script>
 
 <style scoped>

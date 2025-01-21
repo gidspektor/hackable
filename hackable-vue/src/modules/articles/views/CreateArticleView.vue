@@ -2,11 +2,12 @@
 	<div class="container">
 		<div class="post-box">
 			<input v-model="title" class="title-input" placeholder="Click Bait Title" />
-			<textarea v-model="body" class="body-input" placeholder="What's on your mind?"></textarea>
+			<textarea v-model="richText" class="body-input" placeholder="Only subjective facts here."></textarea>
 			<div v-if="error" class="error-message">{{ error }}</div>
+
 			<div class="button-container">
-				<button @click="cancelPost" class="cancel-button">Cancel</button>
-				<button @click="createPost" class="submit-button">Submit</button>
+				<button @click="cancelArticle" class="cancel-button">Cancel</button>
+				<button @click="createArticle" class="submit-button">Submit</button>
 			</div>
 		</div>
 	</div>
@@ -14,37 +15,47 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { usePostsStore } from '@blog/shared/postsStore'
+
+import { useArticlesStore } from '@articles/shared/articlesStore'
 import { useHackableStore } from '@/shared/hackableStore'
 import { useRouter } from 'vue-router'
 
-const postsStore = usePostsStore()
+const articlesStore = useArticlesStore()
 const hackableStore = useHackableStore()
 
 const router = useRouter()
 
+const editor = ref(''); 
 const title = ref<string>('')
-const body = ref<string>('')
+const richText = ref<string>('')
 const error = ref<string>('')
 const user = computed(() => hackableStore.user)
 
-const cancelPost = () => {
+const cancelArticle = () => {
 	title.value = ''
-	body.value = ''
-	router.push({ name: 'blogs' })
+	richText.value = ''
+	router.push({ name: 'articles' })
 }
 
-const createPost = async () => {
-	if (title.value && body.value) {
-		const response = await postsStore.createPost(user.value.id, title.value, body.value)
+const createArticle = async () => {
+	//<a onclick=alert(document.cookie) href="#">Click here for awesomeness!</a>
+	if (title.value && richText.value) {
+
+		const response = await articlesStore.createArticle(
+			user.value.id,
+			title.value,
+			richText.value
+		);
 
 		if (response.error) {
-			error.value = response.error
+			error.value = response.error;
 		} else {
-			title.value = ''
-			body.value = ''
-			router.push({ name: 'blogs' })
+			title.value = '';
+			richText.value = '';
+			router.push({ name: 'articles' });
 		}
+	} else {
+		error.value = 'Please enter a title and content!';
 	}
 }
 </script>

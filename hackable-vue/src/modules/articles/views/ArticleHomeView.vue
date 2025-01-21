@@ -1,10 +1,25 @@
 <template>
 	<aside class="sidebar">
-		<a :href="createPostUrl" class="sidebar-link">
-    	Create Post
-  	</a>
-		<p class="sidebar-link" @click="openLoginModal">
-			Login/Sign Up
+		<p class="sidebar-link">
+			<router-link
+				:to="{ name: 'create-article' }"
+			>
+				Create Article
+			</router-link>
+		</p>
+		<p v-if="user" class="sidebar-link" @click="">
+			<router-link
+				:to="{ name: 'account' }"
+			>
+				My Account
+			</router-link>
+		</p>
+		<p v-else class="sidebar-link" @click="openLoginModal">
+			<router-link
+				to="#"
+			>
+				Login/Sign Up
+			</router-link>
 		</p>
 	</aside>
 	<main class="main-content">
@@ -14,12 +29,12 @@
 		<div v-else class="posts-container">
 			<div class="posts">
 				<router-link
-					v-for="post in posts"
-					:key="post.id"
-					:to="{ name: 'post', params: { id: post.id } }"
+					v-for="article in articles"
+					:key="article.id"
+					:to="{ name: 'article', params: { id: article.id } }"
 					class="post-item"
 				>
-					<PostPreview :title="post.title" :body="post.body" />
+					<ArticlePreview :title="article.title" :body="article.body" />
 				</router-link>
 			</div>
 			<router-view></router-view>
@@ -34,26 +49,26 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
-import { useRouter } from 'vue-router'
 
-import { usePostsStore } from '@blog/shared/postsStore';
-import PostPreview from '@blog/components/PostPreview.vue';
-import LoginSignupModal from '@blog/components/modals/LoginSignupModal.vue'
+import { useArticlesStore } from '@articles/shared/articlesStore';
+import { useHackableStore } from '@/shared/hackableStore'
+import ArticlePreview from '@articles/components/ArticlePreview.vue';
+import LoginSignupModal from '@articles/components/modals/LoginSignupModal.vue'
 
-const router = useRouter()
-const postsStore = usePostsStore();
+const hackableStore = useHackableStore()
+const articlesStore = useArticlesStore();
 
-const createPostUrl = router.resolve({ name: 'create-post' }).href
-const posts = computed(() => postsStore.posts);
+const user = computed(() => hackableStore.user)
+const articles = computed(() => articlesStore.articles);
 const isLoading = ref<boolean>(false);
 const showModal = ref<boolean>(false)
 
-const getPosts = async () => {
+const getArticles = async () => {
 	isLoading.value = true;
 	try {
-		await postsStore.getPosts();
+		await articlesStore.getArticles();
 	} catch (error) {
-		console.error('Failed to fetch posts:', error);
+		console.error('Failed to fetch articles:', error);
 	} finally {
 		isLoading.value = false;
 	}
@@ -64,7 +79,7 @@ const openLoginModal = () => {
 }
 
 onMounted(async () => {
-	await getPosts();
+	await getArticles();
 });
 </script>
 

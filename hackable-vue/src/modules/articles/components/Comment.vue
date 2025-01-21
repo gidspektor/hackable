@@ -7,7 +7,7 @@
 
 <script setup lang="ts">
 defineProps<{
-	comment: array<{
+	comment: Array<{
 		id: number
 		userId: number
 		user: string

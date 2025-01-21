@@ -1,14 +1,14 @@
 <template>
 	<div v-if="isLoading">
-		<p class="green">Loading post...</p>
+		<p class="green">Loading articles...</p>
 	</div>
 	<div v-else class="posts-container">
 		<div class="post">
-			<Post :post="post" />
+			<Article :article="article" />
 		</div>
-		<CreateComment :postId="post.id" @login="openLoginModal" class="create-comment" />
+		<CreateComment :articleId="article.id" @login="openLoginModal" class="create-comment" />
 		<div class="comments">
-			<div v-for="comment in post.comments" :key="comment.id" class="comment">
+			<div v-for="comment in article.comments" :key="comment.id" class="comment">
 				<Comment :comment="comment" />
 			</div>
 		</div>
@@ -23,38 +23,38 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { usePostsStore } from '@blog/shared/postsStore'
+import { useArticlesStore } from '@articles/shared/articlesStore'
 
-import Post from '@blog/components/Post.vue'
-import Comment from '@blog/components/Comment.vue'
-import CreateComment from '@blog/components/CreateComment.vue'
-import LoginSignupModal from '@blog/components/modals/LoginSignupModal.vue'
+import Article from '@articles/components/Article.vue'
+import Comment from '@articles/components/Comment.vue'
+import CreateComment from '@articles/components/CreateComment.vue'
+import LoginSignupModal from '@articles/components/modals/LoginSignupModal.vue'
 
 const route = useRoute()
 const showModal = ref<boolean>(false)
-const postsStore = usePostsStore()
+const articlesStore = useArticlesStore()
 
-const postId = ref<number>(Number(route.params.id))
+const articleId = ref<number>(Number(route.params.id))
 const isLoading = ref<boolean>(false)
-const post = computed(() => postsStore.selectedPost)
+const article = computed(() => articlesStore.selectedArticle)
 
 const openLoginModal = () => {
 	showModal.value = true
 }
 
-const getPost = async () => {
+const getArticle = async () => {
 	isLoading.value = true
 	try {
-		await postsStore.getPost(postId.value)
+		await articlesStore.getArticle(articleId.value)
 	} catch (error) {
-		console.error('Failed to fetch posts:', error)
+		console.error('Failed to fetch articles:', error)
 	} finally {
 		isLoading.value = false
 	}
 }
 
 onMounted(async () => {
-	await getPost()
+	await getArticle()
 })
 </script>
 
