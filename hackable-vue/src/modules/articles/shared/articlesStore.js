@@ -6,6 +6,8 @@ export const useArticlesStore = defineStore('articles', () => {
 	const state = reactive({
 		articles: [],
 		selectedArticle: [],
+		userArticles: [],
+		userCommentedOnArticles: [],
 	})
 
 	return {
@@ -15,6 +17,8 @@ export const useArticlesStore = defineStore('articles', () => {
 		getArticle,
 		createComment,
 		createArticle,
+		getUserArticles,
+		getUserCommentedOnArticles,
 	}
 
 	async function getArticles() {
@@ -91,5 +95,13 @@ export const useArticlesStore = defineStore('articles', () => {
 		// 	],
 		// }
 		// return response = await ArticlesService.createArticle({'user_id': userId, 'body': body, 'title': title})
+	}
+
+	async function getUserArticles() {
+		// state.articles = await ArticlesService.getUserArticles()
+	}
+
+	async function getUserCommentedOnArticles() {
+		// state.userCommentedOnArticles = await ArticlesService.getUserCommentedOnArticles()
 	}
 })

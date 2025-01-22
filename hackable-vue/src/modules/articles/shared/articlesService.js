@@ -17,4 +17,12 @@ export default class ArticlesService {
 	async createComment(params) {
 		return await api.POST(`${BASE_ROUTE}/comment/`, params)
 	}
+
+	async getUserArticles() {
+		return await api.GET(`${BASE_ROUTE}/user/articles`)
+	}
+
+	async getUserCommentedOnArticles() {
+		return await api.GET(`${BASE_ROUTE}/user/commented/articles`)
+	}
 }
