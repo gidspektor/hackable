@@ -108,7 +108,8 @@ const createAccount = () => {
 	if (formValid.value) {
 		cleanedName.value = name.value.replace(/[^a-z'A-Z ]/, '').replace(/[/(){};:*]/g, '')
 		let response = hackableStore.createAccount(
-			name.value,
+			name.value.split(' ')[0],
+			name.value.split(' ')[1],
 			email.value,
 			password.value,
 			passwordRepeat.value,

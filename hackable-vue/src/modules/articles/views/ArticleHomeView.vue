@@ -7,7 +7,7 @@
 				Create Article
 			</router-link>
 		</p>
-		<p v-if="true" class="sidebar-link" @click="">
+		<p v-if="user" class="sidebar-link" @click="">
 			<router-link
 				:to="{ name: 'account' }"
 			>

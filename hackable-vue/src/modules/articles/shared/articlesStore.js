@@ -6,6 +6,7 @@ export const useArticlesStore = defineStore('articles', () => {
 	const state = reactive({
 		articles: [],
 		selectedArticle: [],
+		selectedArticleComments: [],
 		userArticles: [],
 		userCommentedOnArticles: [],
 	})
@@ -13,8 +14,12 @@ export const useArticlesStore = defineStore('articles', () => {
 	return {
 		articles: computed(() => state.articles),
 		selectedArticle: computed(() => state.selectedArticle),
+		userArticles: computed(() => state.userArticles),
+		userCommentedOnArticles: computed(() => state.userCommentedOnArticles),
+		selectedArticleComments: computed(() => state.selectedArticleComments),
 		getArticles,
 		getArticle,
+		getArticleComments,
 		createComment,
 		createArticle,
 		getUserArticles,
@@ -43,33 +48,40 @@ export const useArticlesStore = defineStore('articles', () => {
 		// state.articles = await ArticlesService.getArticles()
 	}
 
-	async function getArticle(id) {
+	async function getArticle(articleId) {
 		state.selectedArticle = {
 			id: 1,
 			userId: 1,
 			user: 'user1',
 			title: 'pies are ok',
-			body: 'but not cats',
-			comments: [
-				{
-					id: 1,
-					userId: 1,
-					user: 'user1',
-					body: 'I love cats',
-				},
-				{
-					id: 2,
-					userId: 2,
-					user: 'user2',
-					body: 'I love dogs',
-				},
-			],
+			body: 'but not cats'
 		}
-		// state.selectedArticle = await ArticlesService.getArticle(id)
+		// state.selectedArticle = await ArticlesService.getArticle(articleId)
 	}
 
-	async function createComment(postId, comment) {
+	async function getArticleComments(articleId) {
+		state.selectedArticleComments =  [
+			{
+				id: 1,
+				articleId: 1,
+				userId: 1,
+				user: 'user1',
+				body: 'I love cats',
+			},
+			{
+				id: 2,
+				articleId: 1,
+				userId: 2,
+				user: 'user2',
+				body: 'I love dogs',
+			},
+		]
+		// state.selectedArticleComments = await ArticlesService.getArticleComments(articleId)
+	}
+
+	async function createComment(articleId, comment) {
 		// return response = await ArticlesService.createComment({'id': postId, 'body': comment})
+		// await getArticleComments(articleId)
 	}
 
 	async function createArticle(userId, title, body) {
@@ -98,10 +110,44 @@ export const useArticlesStore = defineStore('articles', () => {
 	}
 
 	async function getUserArticles() {
-		// state.articles = await ArticlesService.getUserArticles()
+		state.userArticles = [
+			{
+				id: 1,
+				title: 'pies are ok',
+				body: 'but not cats',
+			},
+			{
+				id: 2,
+				title: 'cats are better',
+				body: 'but not dogs',
+			},
+			{
+				id: 3,
+				title: 'dogs are the best',
+				body: 'but not cats',
+			},
+		]
+		// state.userArticles = await ArticlesService.getUserArticles()
 	}
 
 	async function getUserCommentedOnArticles() {
+		state.userCommentedOnArticles = [
+			{
+				id: 1,
+				title: 'pies are ok',
+				body: 'but not cats',
+			},
+			{
+				id: 2,
+				title: 'cats are better',
+				body: 'but not dogs',
+			},
+			{
+				id: 3,
+				title: 'dogs are the best',
+				body: 'but not cats',
+			},
+		]
 		// state.userCommentedOnArticles = await ArticlesService.getUserCommentedOnArticles()
 	}
 })

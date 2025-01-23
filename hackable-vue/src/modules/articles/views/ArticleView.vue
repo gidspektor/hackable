@@ -7,8 +7,11 @@
 			<Article :article="article" />
 		</div>
 		<CreateComment :articleId="article.id" @login="openLoginModal" class="create-comment" />
-		<div class="comments">
-			<div v-for="comment in article.comments" :key="comment.id" class="comment">
+		<div v-if="isLoadingComments">
+			<p class="green">Loading comments...</p>
+		</div>
+		<div v-else class="comments">
+			<div v-for="comment in articleComments" :key="comment.id" class="comment">
 				<Comment :comment="comment" />
 			</div>
 		</div>
@@ -36,7 +39,9 @@ const articlesStore = useArticlesStore()
 
 const articleId = ref<number>(Number(route.params.id))
 const isLoading = ref<boolean>(false)
+const isLoadingComments = ref<boolean>(false)
 const article = computed(() => articlesStore.selectedArticle)
+const articleComments = computed(() => articlesStore.selectedArticleComments)
 
 const openLoginModal = () => {
 	showModal.value = true
@@ -53,8 +58,20 @@ const getArticle = async () => {
 	}
 }
 
+const getArticleComments = async () => {
+	isLoadingComments.value = true
+	try {
+		await articlesStore.getArticleComments(articleId.value)
+	} catch (error) {
+		console.error('Failed to fetch comments:', error)
+	} finally {
+		isLoadingComments.value = false
+	}
+}
+
 onMounted(async () => {
 	await getArticle()
+	await getArticleComments()
 })
 </script>
 

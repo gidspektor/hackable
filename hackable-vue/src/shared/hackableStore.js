@@ -1,23 +1,27 @@
 import { defineStore } from 'pinia'
 import { reactive, computed } from 'vue'
+import HackableService from './hackableService.js'
 
 export const useHackableStore = defineStore('hackable', () => {
 	const state = reactive({
 		user: null,
-		jwt: null,
+		userImageUrl: null,
 	})
 
 	return {
 		user: computed(() => state.user),
+		userImageUrl: computed(() => state.userImageUrl),
 		login,
 		createAccount,
-		clearUser,
+		getUserImage,
 	}
 
 	async function login(email, password) {
 		let user = {
 			id: 1,
-			name: 'user1',
+			first_name: 'peter',
+			last_name: 'parker',
+			email: 'pparker@dailybuggle.com',
 		}
 
 		// this.user = await HackableService.login({'email': email, 'password': password})
@@ -26,13 +30,20 @@ export const useHackableStore = defineStore('hackable', () => {
 		state.user = user
 	}
 
-	async function createAccount(name, email, password, passwordRepeat) {
+	async function createAccount(firstName, lastName, email, password, passwordRepeat) {
 		let user = {
 			id: 1,
-			name: 'user1',
+			first_name: 'peter',
+			last_name: 'parker',
+			email: 'pparker@dailybuggle.com',
 		}
 
-		// response = await HackableService.createAccount({'name': name, 'email': email, 'password': password, 'passwordRepeat': passwordRepeat})
+		// response = await HackableService.createAccount(
+		// 		{
+		// 			'firstName': firstName, 'lastNmae': lastName, 'email': email,
+		// 			'password': password, 'passwordRepeat': passwordRepeat
+		// 		}
+		// )
 
 		// if (response.status === 201) {
 		// 	this.user = response.data
@@ -51,7 +62,8 @@ export const useHackableStore = defineStore('hackable', () => {
 
 	// }
 
-	function clearUser() {
-		state.user = null
+	async function getUserImage() {
+		// state.userImageUrl = HackableService.getUserImageUrl()
+		state.userImageUrl = 'https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50'
 	}
 })
