@@ -1,10 +1,20 @@
 <template>
 	<div class="image">
-		<img
-			:src="userImageUrl"
-			class="rounded-circle"
-			width="150"
-		/>
+		<form :class="userImageUrl ? 'image-uploaded' : 'image-not-uploaded'" @click="() => $refs.media.click()">
+			<img
+				v-if="userImageUrl"
+				:src="userImageUrl"
+				width="150"
+			/>
+			<input
+				type="file"
+				id="media"
+				accept="image/*"
+				@change="(event) => handelFileUpload(event)"
+				ref="media"
+			/>
+			<p v-if="!userImageUrl">Upload a user profile image</p>
+		</form>
 	</div>
 	<div class="section">
 		<h6>Full Name</h6>
@@ -12,7 +22,7 @@
 			{{ user.first_name }} {{ user.last_name }}
 		</div>
 	</div>
-	
+
 	<div class="section">
 		<h6 class="mb-0">Email</h6>
 		<div class="col-4 text-secondary">
@@ -100,6 +110,20 @@ const getUserImage = async () => {
 	}
 };
 
+const handelFileUpload = async (event: Event) => {
+	const target = event.target as HTMLInputElement;
+	const file = target.files?.[0];
+	if (!file) {
+		return;
+	}
+
+	try {
+		await hackableStore.uploadUserImage(file);
+	} catch (error) {
+		console.error('Failed to upload user image:', error);
+	}
+};
+
 onMounted(async () => {
 	await getUserCommentedOnArticles();
 	await getUserArticles();
@@ -130,5 +154,42 @@ onMounted(async () => {
 
 .image {
 	margin-bottom: 2rem;
+}
+
+img {
+	border-radius: 20px;
+}
+
+.image-not-uploaded {
+  width: 500px !important;
+  height: 100%;
+  border-radius: 5px;
+  border: 1.5px dashed #a0a0a0;
+  cursor: pointer;
+}
+
+.image-uploaded {
+	width: 150px;
+	height: 100%;
+	border-radius: 5px;
+	border: none;
+	cursor: pointer;
+}
+
+form input {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  outline: none;
+  opacity: 0;
+}
+
+form p {
+	margin: 0;
+	padding-bottom: 1rem;
+	text-align: center;
+	font-size: 1.5rem;
+	color: #a0a0a0;
 }
 </style>

@@ -13,4 +13,8 @@ export default class HackableService {
 	async getUserImageUrl() {
 		return await api.GET(`${BASE_ROUTE}/getUserImageUrl/`)
 	}
+
+	async uploadUserImage(params) {
+		return await api.POST(`${BASE_ROUTE}/uploadUserImage/`, params)
+	}
 }

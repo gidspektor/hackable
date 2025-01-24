@@ -14,6 +14,7 @@ export const useHackableStore = defineStore('hackable', () => {
 		login,
 		createAccount,
 		getUserImage,
+		uploadUserImage,
 	}
 
 	async function login(email, password) {
@@ -65,5 +66,11 @@ export const useHackableStore = defineStore('hackable', () => {
 	async function getUserImage() {
 		// state.userImageUrl = HackableService.getUserImageUrl()
 		state.userImageUrl = 'https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50'
+	}
+
+	async function uploadUserImage(image) {
+		// response = await HackableService.uploadUserImage(image)
+		// await getUserImage()
+		// return response
 	}
 })
