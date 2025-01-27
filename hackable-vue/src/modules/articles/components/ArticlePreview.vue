@@ -21,6 +21,7 @@ defineProps<{
 	width: 100%; /* Make it take up the full width */
 	max-width: 100%; /* Ensure it doesn't exceed the full width */
 	margin: 1rem 0; /* Center the container and give some spacing */
+	height: 100%;
 	text-align: center;
 	transition:
 		background 0.3s ease,

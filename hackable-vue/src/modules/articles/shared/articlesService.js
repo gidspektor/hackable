@@ -29,4 +29,8 @@ export default class ArticlesService {
 	async getArticleComments(id) {
 		return await api.GET(`${BASE_ROUTE}/article/${id}/comments`)
 	}
+
+	async getFeaturedArticles() {
+		return await api.GET(`${BASE_ROUTE}/featured/articles`)
+	}
 }

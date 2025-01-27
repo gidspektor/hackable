@@ -9,6 +9,7 @@ export const useArticlesStore = defineStore('articles', () => {
 		selectedArticleComments: [],
 		userArticles: [],
 		userCommentedOnArticles: [],
+		featuredArticles: [],
 	})
 
 	return {
@@ -17,6 +18,7 @@ export const useArticlesStore = defineStore('articles', () => {
 		userArticles: computed(() => state.userArticles),
 		userCommentedOnArticles: computed(() => state.userCommentedOnArticles),
 		selectedArticleComments: computed(() => state.selectedArticleComments),
+		featuredArticles: computed(() => state.featuredArticles),
 		getArticles,
 		getArticle,
 		getArticleComments,
@@ -24,6 +26,7 @@ export const useArticlesStore = defineStore('articles', () => {
 		createArticle,
 		getUserArticles,
 		getUserCommentedOnArticles,
+		getFeaturedArticles,
 	}
 
 	async function getArticles() {
@@ -77,6 +80,28 @@ export const useArticlesStore = defineStore('articles', () => {
 			},
 		]
 		// state.selectedArticleComments = await ArticlesService.getArticleComments(articleId)
+	}
+
+	async function getFeaturedArticles() {
+		state.featuredArticles = [
+			{
+				id: 1,
+				title: 'pies are ok',
+				body: 'but not cats',
+			},
+			{
+				id: 2,
+				title: 'cats are better',
+				body: 'but not dogs',
+			},
+			{
+				id: 3,
+				title: 'dogs are the best',
+				body: 'but not cats',
+			},
+		]
+		// const response = await ArticlesService.getFeaturedArticles()
+		// response.length = 3 ? state.featuredArticles = response : state.featuredArticles = response.slice(0, 3)
 	}
 
 	async function createComment(articleId, comment) {

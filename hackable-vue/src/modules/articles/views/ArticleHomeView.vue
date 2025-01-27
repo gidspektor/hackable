@@ -1,5 +1,5 @@
 <template>
-	<aside class="sidebar">
+	<nav>
 		<p class="sidebar-link">
 			<router-link
 				:to="{ name: 'create-article' }"
@@ -21,8 +21,20 @@
 				Login/Sign Up
 			</router-link>
 		</p>
-	</aside>
+	</nav>
+
 	<main class="main-content">
+		<p>Featured</p>
+		<div class="top-boxes">
+			<router-link
+				v-for="featuredArticle in featuredArticles"
+				:key="featuredArticle.id"
+				:to="{ name: 'article', params: { id: featuredArticle.id } }"
+				class="box"
+			>
+				<ArticlePreview :title="featuredArticle.title" :body="featuredArticle.body" />
+			</router-link>
+		</div>
 		<div v-if="isLoading">
 			<p class="green loading">Loading posts...</p>
 		</div>
@@ -60,6 +72,7 @@ const articlesStore = useArticlesStore();
 
 const user = computed(() => hackableStore.user)
 const articles = computed(() => articlesStore.articles);
+const featuredArticles = computed(() => articlesStore.featuredArticles);
 const isLoading = ref<boolean>(false);
 const showModal = ref<boolean>(false)
 
@@ -74,11 +87,20 @@ const getArticles = async () => {
 	}
 };
 
+const getFeaturedArticles = async () => {
+	try {
+		await articlesStore.getFeaturedArticles();
+	} catch (error) {
+		console.error('Failed to fetch featured articles:', error);
+	}
+};
+
 const openLoginModal = () => {
 	showModal.value = true
 }
 
 onMounted(async () => {
+	await getFeaturedArticles();
 	await getArticles();
 });
 </script>
@@ -104,16 +126,23 @@ onMounted(async () => {
 	margin-left: -15em;
 }
 
-.sidebar {
-	width: 250px;
+nav a {
+	display: inline-block;
+	padding: 0 1rem;
+	border-left: 1px solid var(--color-border, #ddd);
+}
+
+nav a:first-of-type {
+	border: none;
+}
+
+nav {
+	width: 100%;
 	background-color: none;
-	padding: 1rem;
-	box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
 	position: absolute;
-	left: 10%;
+	top: 7%;
+	left: 40%;
 }
 
 .sidebar-link {
@@ -171,19 +200,48 @@ onMounted(async () => {
 	opacity: 1;
 }
 
-@media (max-width: 1030px) {
-	.sidebar {
-		left: 0;
-	}
+.top-boxes {
+	display: flex;
+	justify-content: space-between;
+	gap: 1rem;
+	margin-bottom: 2rem;
+	height: 200px;
+}
+
+.box {
+	flex: 1;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.5rem;
+	font-weight: bold;
+	text-align: center;
+	color: inherit;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.box:hover {
+	background-color: transparent;
+	opacity: 1;
+}
+
+p {
+	font-size: 1.5rem;
+	color: white;
+	margin-bottom: 1rem;
 }
 
 @media (max-width: 768px) {
-	.sidebar {
-		width: 200px;
-	}
-
 	.post-item {
 		width: 100%;
+	}
+	.top-boxes {
+		flex-direction: column;
+	}
+	nav {
+		top: 15%;
+		left: 30%;
 	}
 }
 
@@ -194,6 +252,9 @@ onMounted(async () => {
 
 	.post-item {
 		width: 100%;
+	}
+	nav {
+		top: 15%;
 	}
 }
 </style>
