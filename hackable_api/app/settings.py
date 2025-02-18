@@ -41,6 +41,8 @@ class Settings(BaseSettings):
 	allowed_headers: list = os.environ.get("ALLOWED_HEADERS", ["Authorization", "Content-Type", "X-Api-Key"])
 	allowed_methods: list = os.environ.get("ALLOWED_METHODS", ["GET", "POST", "PUT", "DELETE", "OPTIONS"])
 
+	request_max_lenth: int = os.environ.get("REQUEST_MAX_LENGTH", 1000)
+
 	log_level: LogLevel = LogLevel.INFO
 
 settings = Settings()

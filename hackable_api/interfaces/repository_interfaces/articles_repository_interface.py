@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 
 
-class ArticleRepositoryInterface(ABC):
+class ArticlesRepositoryInterface(ABC):
     @abstractmethod
-    def get_articles(self):
+    def get_articles_previews(self):
         raise NotImplementedError("This method should be overridden by subclasses")
 
     @abstractmethod

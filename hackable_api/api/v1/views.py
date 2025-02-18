@@ -2,34 +2,38 @@ from fastapi import APIRouter
 
 from hackable_api.app import settings
 
-from hackable_api.api.v1.schemas import ArticlesResponse, ArticleResponse
+from hackable_api.api.v1.schemas import (
+    ArticlesResponse,
+    ArticleResponse,
+    ArticleRequest
+)
 
 from hackable_api.db.db_driver import DbDriver
 
-from hackable_api.db.repositories.article_repository import ArticleRepository
+from hackable_api.db.repositories.articles_repository import ArticlesRepository
 
-from hackable_api.services.article_service import ArticleService
+from hackable_api.services.articles_service import ArticlesService
 
 router = APIRouter(prefix="/v1")
 
-@router.get("/articles", response_model=ArticlesResponse)
+@router.get("/article_previews", response_model=ArticlesResponse)
 async def get_articles():
-    """API endpoint to get all articles"""
+    """API endpoint to get all article previews"""
 
     session = await DbDriver(settings.db_url).get_db_session()
 
-    article_repository = ArticleRepository(session)
-    articles = await ArticleService(article_repository).get_articles()
+    article_repository = ArticlesRepository(session)
+    articles = await ArticlesService(article_repository).get_articles_previews()
 
     return ArticlesResponse(articles=articles)
 
-@router.get("/create_article", response_model=ArticlesResponse)
-async def create_article():
+@router.post("/create_article", response_model=ArticlesResponse)
+async def create_article(article: ArticleRequest):
     """API endpoint to create an article"""
 
     session = await DbDriver(settings.db_url).get_db_session()
 
-    article_repository = ArticleRepository(session)
-    article = await ArticleService(article_repository).create_article()
+    article_repository = ArticlesRepository(session)
+    article = await ArticlesService(article_repository).create_article(article)
 
     return ArticleResponse(title=article.title, body=article.body)

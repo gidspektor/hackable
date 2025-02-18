@@ -1,12 +1,15 @@
 from pydantic import BaseModel
 from typing import List
 
+from hackable_api.app.settings import settings
+
 
 class ArticleResponse(BaseModel):
 	"""
-	Response schema for any article.
+	Response schema for an article.
 	"""
 
+	id: int
 	title: str
 	body: str
 
@@ -17,3 +20,15 @@ class ArticlesResponse(BaseModel):
 	"""
 
 	articles: List[ArticleResponse]
+
+
+class ArticleRequest(BaseModel):
+	"""
+	Request schema for creating an article.
+	"""
+
+	title: str
+	body: str
+
+	class Config:
+		str_max_length = settings.request_max_lenth
