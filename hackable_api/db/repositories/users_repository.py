@@ -1,5 +1,5 @@
-from hackable_api.interfaces.driver_interfaces.db_driver_interface import DbDriverInterface
-from hackable_api.interfaces.repository_interfaces.users_repository_interface import UsersRepositoryInterface
+from interfaces.driver_interfaces.db_driver_interface import DbDriverInterface
+from interfaces.repository_interfaces.users_repository_interface import UsersRepositoryInterface
 
 
 class UsersRepository(UsersRepositoryInterface):

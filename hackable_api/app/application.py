@@ -6,9 +6,8 @@ from fastapi.responses import UJSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from hackable_api.api.router import api_router
-from hackable_api.app.settings import settings
-from hackable_api.api.middlewares.jwt_middleware import JWTMiddleware
+from api.router import api_router
+from app.settings import settings
 
 APP_ROOT = Path(__file__).parent.parent
 
@@ -16,7 +15,7 @@ def get_app() -> FastAPI:
 	"""Get the FastAPI application."""
 
 	app = FastAPI(
-		title="hackable-api",
+		title="hackable_api",
 		docs_url=None,
 		redoc_url=None,
 		openapi_url="/api/openapi.json",
@@ -30,7 +29,6 @@ def get_app() -> FastAPI:
 		allow_methods=settings.allowed_methods,
 		allow_headers=settings.allowed_headers,
 	)
-	app.add_middleware(JWTMiddleware)
 
 	app.include_router(router=api_router, prefix="/api")
 
@@ -48,9 +46,8 @@ def run_app() -> None:
     """Run the FastAPI app."""
 
     uvicorn.run(
-        "app.api.app.application:get_app",
-        host=settings.HOST,
-        port=settings.PORT,
-        log_level=settings.LOG_LEVEL,
-        reload=settings.RELOAD
+        "app.application:get_app",
+        host=settings.host,
+        port=settings.port,
+        reload=settings.reload
     )

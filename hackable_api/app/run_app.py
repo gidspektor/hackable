@@ -1,4 +1,4 @@
-from hackable_api.app.application import run_app
+from app.application import run_app
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     run_app()

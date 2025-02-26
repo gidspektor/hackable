@@ -9,10 +9,10 @@ import sys
 
 sys.path = ['', '..'] + sys.path[1:]
 
-from hackable_api.db.models.base import Base
-from hackable_api.db.models.articles import Articles
-from hackable_api.db.models.users import Users
-from hackable_api.app.settings import settings
+from db.models.base import Base
+from db.models.articles import Articles
+from db.models.users import Users
+from app.settings import settings
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

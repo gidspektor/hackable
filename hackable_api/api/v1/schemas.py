@@ -1,7 +1,7 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List
 
-from hackable_api.app.settings import settings
+from app.settings import settings
 
 
 class ArticleResponse(BaseModel):
@@ -11,7 +11,7 @@ class ArticleResponse(BaseModel):
 
 	id: int
 	title: str
-	body: str
+	content: str
 
 
 class ArticlesResponse(BaseModel):
@@ -23,12 +23,9 @@ class ArticlesResponse(BaseModel):
 
 
 class ArticleRequest(BaseModel):
-	"""
-	Request schema for creating an article.
-	"""
+    """
+    Request schema for creating an article.
+    """
 
-	title: str
-	body: str
-
-	class Config:
-		str_max_length = settings.request_max_lenth
+    title: str = Field(max_length=settings.request_max_length)
+    content: str = Field(max_length=settings.request_max_length)

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, Depends
 from fastapi.openapi.docs import (
     get_redoc_html,
     get_swagger_ui_html,
@@ -7,7 +7,6 @@ from fastapi.openapi.docs import (
 from fastapi.responses import HTMLResponse
 
 router = APIRouter()
-
 
 @router.get("/docs", include_in_schema=False)
 async def swagger_ui_html(request: Request) -> HTMLResponse:

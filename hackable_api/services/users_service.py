@@ -1,6 +1,6 @@
 import bcrypt
 
-from hackable_api.interfaces.repository_interfaces.users_repository_interface import UsersRepositoryInterface
+from interfaces.repository_interfaces.users_repository_interface import UsersRepositoryInterface
 
 
 class UsersService:

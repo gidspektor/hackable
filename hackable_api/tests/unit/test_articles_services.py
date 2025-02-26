@@ -1,8 +1,8 @@
 import pytest
 from unittest.mock import AsyncMock, MagicMock
 
-from hackable_api.services.articles_service import ArticlesService
-from hackable_api.interfaces.repository_interfaces.articles_repository_interface import ArticlesRepositoryInterface
+from services.articles_service import ArticlesService
+from interfaces.repository_interfaces.articles_repository_interface import ArticlesRepositoryInterface
 
 @pytest.fixture
 def mock_article_repository():

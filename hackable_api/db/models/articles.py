@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String
 from sqlalchemy import ForeignKey
 
-from hackable_api.db.models.base import Base
+from db.models.base import Base
 
 
 class Articles(Base):

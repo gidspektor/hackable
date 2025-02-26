@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
-from hackable_api.interfaces.driver_interfaces.db_driver_interface import DbDriverInterface
+from interfaces.driver_interfaces.db_driver_interface import DbDriverInterface
 
 
 class DbDriver(DbDriverInterface):

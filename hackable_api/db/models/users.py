@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String
 
-from hackable_api.db.models.base import Base
+from db.models.base import Base
 
 
 class Users(Base):
