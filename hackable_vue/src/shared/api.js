@@ -4,15 +4,6 @@ import { API_URL } from './constants.js'
 const baseURL = API_URL
 
 export default {
-	async SIGN_IN(authUrl) {
-		return Axios.get(authUrl)
-	},
-	async SIGN_OUT(authUrl) {
-		return Axios.get(authUrl, {
-			headers: getHeaders(),
-		})
-	},
-
 	async GET(route, params, anonymous = false) {
 		const _params = params && Object.keys(params)?.length ? cleanParams(params) : ''
 		const url = `${baseURL}/${route}${_params}`

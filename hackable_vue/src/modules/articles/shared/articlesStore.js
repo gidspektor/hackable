@@ -175,4 +175,8 @@ export const useArticlesStore = defineStore('articles', () => {
 		]
 		// state.userCommentedOnArticles = await ArticlesService.getUserCommentedOnArticles()
 	}
-})
+},
+	{
+		persist: true,
+	}
+)

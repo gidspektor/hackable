@@ -16,32 +16,36 @@
 </template>
 
 <script setup lang="ts">
-import { created } from 'vue'
-import { RouterLink, RouterView } from 'vue-router'
-import HomeView from './views/HomeView.vue'
+import { useHackableStore } from '@/shared/hackableStore'
+import { onMounted } from 'vue'
+import { RouterLink, RouterView, useRouter } from 'vue-router'
 
-// created(async () => {
-// 	let securePages = ['eventPage', 'account']
-// 	let tokenState = inspectToken()
+const hackableStore = useHackableStore()
+const router = useRouter();
 
-// 	if (tokenState === 'active') {
-// 		await this.$store.dispatch('getUserInfo', localStorage.getItem('t'))
-// 	}
+onMounted(async () => {
+	let tokenState = hackableStore.inspectToken()
 
-// 	if (tokenState === 'refresh') {
-// 		await this.$store.dispatch('refreshToken').catch((error) => {
-// 			console.log(error)
-// 			localStorage.removeItem('t')
-// 			this.$router.push('/')
-// 		})
-// 	}
+	if (tokenState === 'active') {
+		await hackableStore.getUser().catch((error: unknown) => {
+			localStorage.removeItem('t')
+			console.log(error)
+			router.push({ name: 'login' })
+		})
+	}
 
-// 	if (tokenState === 'expired' && securePages.includes(this.$route.name)) {
-// 		this.$router.push('Login')
-// 	}
+	if (tokenState === 'refresh') {
+		await hackableStore.refreshToken().catch((error: unknown) => {
+			localStorage.removeItem('t')
+			console.log(error)
+			router.push({ name: 'login' })
+		})
+	}
 
-// 	this.loaded = true
-// })
+	if (tokenState === 'expired') {
+		router.push({ name: 'login' })
+	}
+})
 </script>
 
 <style scoped>

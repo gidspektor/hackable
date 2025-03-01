@@ -45,7 +45,8 @@ class Settings(BaseSettings):
     password_min_length: int = os.environ.get("PASSWORD_MIN_LENGTH", 8)
 
     # JWT
-    access_token_expire_minutes: int = int(os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES", 2))
+    token_expire_minutes: int = int(os.environ.get("TOKEN_EXPIRE_MINUTES", 2))
+    refresh_token_expire_minutes: int = int(os.environ.get("REFRESH_TOKEN_EXPIRE_MINUTES", 5000))
     jwt_secret_key: str = os.environ.get("SECRET_KEY", "653bb80bd4799aa4ef080f6af5523928e15492e905295ce5cde3090150cfd358fbfe6b206b2335ac09a3c41c13421899dc90617c2423c46e5ea78ab8d3e01378")
     jwt_algorithm: str = os.environ.get("ALGORITHM", "HS256")
 

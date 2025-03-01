@@ -6,14 +6,14 @@ from app.settings import settings
 
 
 class AuthService:
-    def create_access_token(data: dict):
+    def create_access_token(self, data: dict, expires: int):
         to_encode = data.copy()
-        expire = datetime.utcnow() + (timedelta(minutes=settings.access_token_expire_minutes))
+        expire = datetime.utcnow() + (timedelta(minutes=expires))
         to_encode.update({"exp": expire})
 
         return jwt.encode(to_encode, settings.jwt_secret_key, algorithm=settings.jwt_algorithm)
 
-    def verify_token(token: str):
+    def verify_token(self, token: str):
         try:
             payload = jwt.decode(token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm])
             return payload

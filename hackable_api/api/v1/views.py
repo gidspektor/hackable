@@ -8,12 +8,13 @@ from api.v1.schemas import (
     ArticleRequest
 )
 
+from api.dependencies import auth_exception_handler
+
 from db.db_driver import DbDriver
 from db.repositories.articles_repository import ArticlesRepository
 from services.articles_service import ArticlesService
-from api.middlewares.jwt_middleware import JWTMiddleware
 
-router = APIRouter(prefix="/v1", dependencies=[Depends(JWTMiddleware())])
+router = APIRouter(prefix="/v1")
 
 @router.get("/article_previews", response_model=ArticlesResponse)
 async def get_articles() -> ArticlesResponse:
@@ -25,7 +26,9 @@ async def get_articles() -> ArticlesResponse:
 
     return ArticlesResponse(articles=articles)
 
-@router.post("/create_article", response_model=ArticlesResponse)
+# Open to be hit by anyone, should be checking the JWT token for the user
+# and then confirming if it's an admin user in the db.
+@router.post("/create_article", response_model=ArticleResponse, dependencies=[Depends(auth_exception_handler)])
 async def create_article(article: ArticleRequest) -> ArticleResponse:
     """API endpoint to create an article"""
 
