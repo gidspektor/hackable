@@ -10,9 +10,9 @@ class UsersService:
     def get_user(self, user_id: int) -> UsersRepositoryInterface:
         return self._users_repository.get_user(user_id)
 
-    def create_user(self, username: str, password: str, is_admin: bool = False) -> UsersRepositoryInterface:
+    def create_user(self, username: str, password: str) -> UsersRepositoryInterface:
         hased_password = bcrypt.hashpw(password.encode('utf-8'))
-        return self._users_repository.create_user(username, hased_password, is_admin)
+        return self._users_repository.create_user(username, hased_password)
 
     def login(self, username: str, password: str) -> UsersRepositoryInterface:
         # ideal code to combat injection and not just directly return the db response
@@ -26,5 +26,5 @@ class UsersService:
 
         return user
 
-    def upload_image(self, image: str) -> str:
-        return self._users_repository.upload_image(image)
+    def upload_image_name(self, image_name: str) -> str:
+        return self._users_repository.upload_image_name(image_name)

@@ -76,10 +76,10 @@ const featuredArticles = computed(() => articlesStore.featuredArticles);
 const isLoading = ref<boolean>(false);
 const showModal = ref<boolean>(false)
 
-const getArticles = async () => {
+const getArticlePreviews = async () => {
 	isLoading.value = true;
 	try {
-		await articlesStore.getArticles();
+		await articlesStore.getArticlePreviews();
 	} catch (error) {
 		console.error('Failed to fetch articles:', error);
 	} finally {
@@ -101,7 +101,7 @@ const openLoginModal = () => {
 
 onMounted(async () => {
 	await getFeaturedArticles();
-	await getArticles();
+	await getArticlePreviews();
 });
 </script>
 

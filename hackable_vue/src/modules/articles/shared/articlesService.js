@@ -2,12 +2,12 @@ import api from '@/shared/api.js'
 import { BASE_ROUTE } from '@/shared/constants.js'
 
 export default class ArticlesService {
-	async getArticles() {
-		return await api.GET(`${BASE_ROUTE}/articles/`)
+	async getArticlePreviews() {
+		return await api.GET(`${BASE_ROUTE}/articles/`, '', true)
 	}
 
 	async getArticle(id) {
-		return await api.GET(`${BASE_ROUTE}/article/${id}`)
+		return await api.GET(`${BASE_ROUTE}/article/${id}`, '', true)
 	}
 
 	async createArticle(params) {
@@ -31,6 +31,6 @@ export default class ArticlesService {
 	}
 
 	async getFeaturedArticles() {
-		return await api.GET(`${BASE_ROUTE}/featured/articles`)
+		return await api.GET(`${BASE_ROUTE}/featured/articles`, '', true)
 	}
 }

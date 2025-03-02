@@ -19,7 +19,7 @@ export const useArticlesStore = defineStore('articles', () => {
 		userCommentedOnArticles: computed(() => state.userCommentedOnArticles),
 		selectedArticleComments: computed(() => state.selectedArticleComments),
 		featuredArticles: computed(() => state.featuredArticles),
-		getArticles,
+		getArticlePreviews,
 		getArticle,
 		getArticleComments,
 		createComment,
@@ -29,7 +29,7 @@ export const useArticlesStore = defineStore('articles', () => {
 		getFeaturedArticles,
 	}
 
-	async function getArticles() {
+	async function getArticlePreviews() {
 		state.articles = [
 			{
 				id: 1,
@@ -48,7 +48,7 @@ export const useArticlesStore = defineStore('articles', () => {
 			},
 		]
 
-		// state.articles = await ArticlesService.getArticles()
+		// state.articles = await ArticlesService.getArticlePreviews()
 	}
 
 	async function getArticle(articleId) {

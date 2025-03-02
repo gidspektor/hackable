@@ -13,7 +13,7 @@ export default {
 				? {
 						'Content-Type': 'application/json',
 					}
-				: getHeaders()),
+				: getAuthHeaders()),
 		}
 
 		return Axios.get(url, { headers }).catch(handleUnauthorized)
@@ -27,7 +27,7 @@ export default {
 				? {
 						'Content-Type': 'application/json',
 					}
-				: getHeaders()),
+				: getAuthHeaders(false, true)),
 		}
 		return Axios.post(url, params, { headers }).catch(handleUnauthorized)
 	},
@@ -42,7 +42,7 @@ export default {
 				? {
 						'Content-Type': 'application/json',
 					}
-				: getHeaders(isFormData)),
+				: getAuthHeaders(isFormData)),
 		}
 
 		return Axios.put(url, isFormData ? formData : JSON.stringify(params), { headers }).catch(
@@ -60,7 +60,7 @@ export default {
 				? {
 						'Content-Type': 'application/json',
 					}
-				: getHeaders(isFormData)),
+				: getAuthHeaders(isFormData)),
 		}
 		return Axios.patch(url, isFormData ? formData : JSON.stringify(params), { headers }).catch(
 			handleUnauthorized,
@@ -76,7 +76,7 @@ export default {
 				? {
 						'Content-Type': 'application/json',
 					}
-				: getHeaders()),
+				: getAuthHeaders()),
 		}
 
 		return Axios.delete(url, { headers }).catch(handleUnauthorized)
@@ -95,19 +95,20 @@ function cleanParams(params) {
 	return `?${new URLSearchParams(cleanedParams).toString()}`
 }
 
-function getHeaders(isFormData = false) {
-	const sessionVars = session.getSession()
-	if (!sessionVars.jwt || !sessionVars.sessionid) {
+function getAuthHeaders(isFormData = false) {
+	const jwt = localStorage.getItem('jwt')
+
+	if (!jwt) {
 		// Prevent requests if there isn't even session data
 		const signInError = new Error('Need to sign in first')
 		signInError.sessionError = true
 		signInError.skipUserMessage = true
-		useRouter().push({ name: 'sign-in' })
+		useRouter().push({ name: 'login' })
 		throw signInError
 	}
 
 	const headers = {
-		...sessionVars,
+		Authorization: `Bearer ${jwt}`,
 	}
 
 	if (!isFormData) {

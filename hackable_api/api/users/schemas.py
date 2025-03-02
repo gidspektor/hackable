@@ -3,6 +3,14 @@ from pydantic import BaseModel, Field
 from app.settings import settings
 
 
+class TokenResponse(BaseModel):
+    """
+    Response schema for a token.
+    """
+
+    jwt: str
+
+
 class UserResponse(BaseModel):
     """
     Response schema for a user.
@@ -11,7 +19,7 @@ class UserResponse(BaseModel):
     id: int
     username: str
     is_admin: bool
-    jwt: str
+    jwt: TokenResponse
 
 
 class UserRequest(BaseModel):

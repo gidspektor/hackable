@@ -37,3 +37,7 @@ async def create_article(article: ArticleRequest) -> ArticleResponse:
         article = await ArticlesService(article_repository).create_article(article)
 
     return ArticleResponse(title=article.title, content=article.content)
+
+@router.get("/article/{article_id}", response_model=ArticleResponse)
+
+@router.get("featured_articles", response_model=ArticleResponse)

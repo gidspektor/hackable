@@ -9,11 +9,10 @@ class UsersRepository(UsersRepositoryInterface):
     def __init__(self, db_driver: DbDriverInterface):
         self._db = db_driver
 
-    async def create_user(self, username, hashed_password, is_admin=False) -> Users:
+    async def create_user(self, username, hashed_password) -> Users:
         new_user = Users(
             username=username,
             password=hashed_password,
-            is_admin=is_admin
         )
 
         self._db.add(new_user)
@@ -31,5 +30,5 @@ class UsersRepository(UsersRepositoryInterface):
 
         return result.scalars().first()
 
-    async def upload_image(self, image):
-        return self._db.users.update({"image": image})
+    async def upload_image_name(self, image):
+        return await self._db.users.update({"image": image})
