@@ -156,7 +156,7 @@ async def upload_image(
 
     async with DbDriver(settings.db_url).get_db_session() as session:
         user_repository = UsersRepository(session)
-        image_path = await UsersService(user_repository).upload_image(image.filename. user_id)
+        image_path = await UsersService(user_repository).upload_image(image.filename, user_id)
 
     return {"image_path": image_path}
 

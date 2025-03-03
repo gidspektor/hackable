@@ -26,5 +26,5 @@ class UsersService:
 
         return user
 
-    def upload_image_name(self, image_name: str) -> str:
-        return self._users_repository.upload_image_name(image_name)
+    def upload_image_name(self, image_name: str, user_id: int) -> str:
+        return self._users_repository.upload_image_name(image_name, user_id)

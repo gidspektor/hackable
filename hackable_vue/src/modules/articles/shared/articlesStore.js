@@ -10,6 +10,7 @@ export const useArticlesStore = defineStore('articles', () => {
 		userArticles: [],
 		userCommentedOnArticles: [],
 		featuredArticles: [],
+		commentsOffset: 0,
 	})
 
 	return {
@@ -79,7 +80,8 @@ export const useArticlesStore = defineStore('articles', () => {
 				body: 'I love dogs',
 			},
 		]
-		// state.selectedArticleComments = await ArticlesService.getArticleComments(articleId)
+		// state.selectedArticleComments = await ArticlesService.getArticleComments(articleId, state.commentsOffset)
+		// state.commentsOffset += state.selectedArticleComments.length + 1
 	}
 
 	async function getFeaturedArticles() {

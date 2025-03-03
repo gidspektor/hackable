@@ -22,10 +22,55 @@ class ArticlesResponse(BaseModel):
 	articles: List[ArticleResponse]
 
 
-class ArticleRequest(BaseModel):
+class ArticleCreateRequest(BaseModel):
     """
     Request schema for creating an article.
     """
 
     title: str = Field(max_length=settings.request_max_length)
     content: str = Field(max_length=settings.request_max_length)
+
+
+class ArticleGetRequest(BaseModel):
+	"""
+	Request schema for getting an article.
+	"""
+
+	article_id: int = Field(max_length=settings.request_max_length)
+
+
+class ArticleCommentResponse(BaseModel):
+	"""
+	Response schema for an article comment.
+	"""
+
+	id: int
+	author_id: int
+	article_id: int
+	comment: str
+
+
+class ArticleCommentsResponse(BaseModel):
+	"""
+	Response schema for multiple article comments.
+	"""
+
+	comments: List[ArticleCommentResponse]
+
+
+class ArticleCommentGetRequest(BaseModel):
+	"""
+	Request schema for getting article comments.
+	"""
+
+	article_id: int = Field(max_length=settings.request_max_length)
+	offset: int = Field(max_length=settings.request_max_length)
+
+
+class ArticleCommentPostRequest(BaseModel):
+	"""
+	Request schema for creating an article comment.
+	"""
+
+	article_id: int = Field(max_length=settings.request_max_length)
+	comment: str = Field(max_length=settings.request_max_length)

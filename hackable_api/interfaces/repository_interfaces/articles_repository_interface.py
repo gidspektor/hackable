@@ -7,17 +7,21 @@ class ArticlesRepositoryInterface(ABC):
         raise NotImplementedError("This method should be overridden by subclasses")
 
     @abstractmethod
-    def get_article(self, article_id):
+    def get_article(self, article_id: int):
         raise NotImplementedError("This method should be overridden by subclasses")
 
     @abstractmethod
-    def create_article(self, article):
+    def create_article(self, article: int, user_id: int):
         raise NotImplementedError("This method should be overridden by subclasses")
 
     @abstractmethod
-    def update_article(self, article_id, article):
+    def update_article(self, article_id: int, user_id: int):
         raise NotImplementedError("This method should be overridden by subclasses")
 
     @abstractmethod
-    def delete_article(self, article_id):
+    def delete_article(self, article_id: int):
+        raise NotImplementedError("This method should be overridden by subclasses")
+
+    @abstractmethod
+    def get_featured_articles(self):
         raise NotImplementedError("This method should be overridden by subclasses")

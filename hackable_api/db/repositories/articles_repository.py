@@ -11,6 +11,7 @@ from db.models.articles import Articles
 class ArticlesRepository(ArticlesRepositoryInterface):
     def __init__(self, db_driver: DbDriverInterface):
         self._db = db_driver
+        self.featured_limit = 3
 
     async def get_articles_previews(self) -> list[dict]:
         stmt = select(
@@ -36,11 +37,24 @@ class ArticlesRepository(ArticlesRepositoryInterface):
             if article \
             else None
 
-    async def create_article(self, article: dict) -> Articles:
+    async def create_article(self, article: dict, user_id: int) -> Articles:
         return await self._db.add(article)
 
-    async def update_article(self):
+    async def update_article(self, user_id: int, article: dict) -> Articles:
         return await []
 
     async def delete_article(self, article_id: int) -> Articles:
         return await self._db.query(Articles).filter(Articles.id == article_id).delete()
+
+    async def get_featured_articles(self) -> list[dict]:
+        stmt = select(
+            Articles.id,
+            Articles.title,
+            func.substr(Articles.content, 1, 200).label("body")
+        ).where(Articles.featured == True).limit(self.featured_limit)
+
+        result = await self._db.execute(stmt)
+
+        rows: list[Row] = result.fetchall()
+
+        return [{"id": row.id, "title": row.title, "content": row.content} for row in rows]

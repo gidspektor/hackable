@@ -9,7 +9,7 @@ class UsersRepository(UsersRepositoryInterface):
     def __init__(self, db_driver: DbDriverInterface):
         self._db = db_driver
 
-    async def create_user(self, username, hashed_password) -> Users:
+    async def create_user(self, username: str, hashed_password: str) -> Users:
         new_user = Users(
             username=username,
             password=hashed_password,
@@ -23,12 +23,12 @@ class UsersRepository(UsersRepositoryInterface):
 
         return new_user
 
-    async def get_user(self, user_id) -> Users:
+    async def get_user(self, user_id: int) -> Users:
         stmt = select(Users).where(Users.id == user_id)
 
         result = await self._db.execute(stmt)
 
         return result.scalars().first()
 
-    async def upload_image_name(self, image):
-        return await self._db.users.update({"image": image})
+    async def upload_image_name(self, image_name: str, user_id: int) -> Users:
+        return await self._db.users.update({"image_name": image_name}).where(Users.id == user_id).returning(Users).gino.scalar()

@@ -31,6 +31,10 @@ export default class ArticlesService {
 	}
 
 	async getFeaturedArticles() {
-		return await api.GET(`${BASE_ROUTE}/featured/articles`, '', true)
+		return await api.GET(`${BASE_ROUTE}/articles/featured`, '', true)
+	}
+
+	async getArticleComments(id, offset) {
+		return await api.GET(`${BASE_ROUTE}/article/${id}/comments${offset}`)
 	}
 }

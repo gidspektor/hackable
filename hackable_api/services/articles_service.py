@@ -11,11 +11,14 @@ class ArticlesService:
     async def get_article(self, article_id: int) -> ArticlesRepositoryInterface|None:
         return await self._article_repository.get_article(article_id)
 
-    async def create_article(self, article: dict) -> ArticlesRepositoryInterface:
-        return await self._article_repository.create_article(article)
+    async def create_article(self, article: dict, user_id: int) -> ArticlesRepositoryInterface:
+        return await self._article_repository.create_article(article, user_id)
 
-    async def update_article(self, article_id: int, article: dict) -> ArticlesRepositoryInterface:
-        return await self._article_repository.update_article(article_id, article)
+    async def update_article(self, article_id: int, article: dict, user_id: int) -> ArticlesRepositoryInterface:
+        return await self._article_repository.update_article(article_id, article, user_id)
 
     async def delete_article(self, article_id: int) -> ArticlesRepositoryInterface:
         return await self._article_repository.delete_article(article_id)
+
+    async def get_featured_articles(self) -> ArticlesRepositoryInterface:
+        return await self._article_repository.get_featured_articles()
