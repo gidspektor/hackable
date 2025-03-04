@@ -11,7 +11,7 @@ from app.settings import settings
 
 from api.users.schemas import (
     UserRequest, UserResponse,
-    TokenResponse,
+    TokenResponse, UserLoginResponse
 )
 
 from api.dependencies import auth_exception_handler
@@ -47,7 +47,7 @@ async def login(user_request: UserRequest, response: Response) -> UserResponse:
         secure=True, samesite="Lax", max_age=2592000 # 30 days
     )
 
-    return UserResponse(id=user.id, username=user.username, is_admin=user.is_admin, jwt=token)
+    return UserLoginResponse(id=user.id, username=user.username, is_admin=user.is_admin, jwt=token)
 
 @router.post("/refresh", response_model=TokenResponse)
 async def refresh_token(request: Request) -> TokenResponse:
@@ -91,10 +91,10 @@ async def get_user(decoded_token: str = Depends(auth_exception_handler)) -> User
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    return UserResponse(id=user.id, username=user.username, is_admin=user.is_admin, jwt="")
+    return UserResponse(id=user.id, username=user.username, is_admin=user.is_admin)
 
-@router.post("/user", response_model=UserResponse)
-async def create_user(user_request: UserRequest, response: Response) -> UserResponse:
+@router.post("/user", response_model=UserLoginResponse)
+async def create_user(user_request: UserRequest, response: Response) -> UserLoginResponse:
     """
     Creates a user.
     """
@@ -115,7 +115,7 @@ async def create_user(user_request: UserRequest, response: Response) -> UserResp
         secure=True, samesite="Lax", max_age=2592000 # 30 days
     )
 
-    return UserResponse(id=user.id, username=user.username, is_admin=user.is_admin, jwt=token)
+    return UserLoginResponse(id=user.id, username=user.username, is_admin=user.is_admin, jwt=token)
 
 @router.post("/logout")
 async def logout(response: Response) -> dict[str, str]:
@@ -145,6 +145,13 @@ async def upload_image(
 
     if not image:
         raise HTTPException(status_code=400, detail="Image missing")
+
+    async with DbDriver(settings.db_url).get_db_session() as session:
+        user_repository = UsersRepository(session)
+        image_path = await UsersService(user_repository).upload_image_name(image.filename, user_id)
+
+    if not image_path:
+        raise HTTPException(status_code=400, detail="Could not save image")
     
     file_location = os.path.join("static/upload", image.filename)
 
@@ -153,10 +160,6 @@ async def upload_image(
     # Also the file should be saved in a non public location.
     with open(file_location, "wb") as f:
         f.write(await image.read())
-
-    async with DbDriver(settings.db_url).get_db_session() as session:
-        user_repository = UsersRepository(session)
-        image_path = await UsersService(user_repository).upload_image(image.filename, user_id)
 
     return {"image_path": image_path}
 

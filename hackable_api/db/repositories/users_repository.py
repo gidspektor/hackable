@@ -1,4 +1,4 @@
-from sqlalchemy.future import select, create
+from sqlalchemy.future import select, update
 
 from interfaces.driver_interfaces.db_driver_interface import DbDriverInterface
 from interfaces.repository_interfaces.users_repository_interface import UsersRepositoryInterface
@@ -26,9 +26,16 @@ class UsersRepository(UsersRepositoryInterface):
     async def get_user(self, user_id: int) -> Users:
         stmt = select(Users).where(Users.id == user_id)
 
+        result = await self._db.execute(stmt).first()
+
+        return result
+
+    async def upload_image_name(self, image_name: str, user_id: int) -> Users|bool:
+        stmt = update(Users).where(Users.id == user_id).values(image_name=image_name)
         result = await self._db.execute(stmt)
+        await self._db.commit()
 
-        return result.scalars().first()
-
-    async def upload_image_name(self, image_name: str, user_id: int) -> Users:
-        return await self._db.users.update({"image_name": image_name}).where(Users.id == user_id).returning(Users).gino.scalar()
+        if result.rowcount == 0:
+            return False
+        
+        return result

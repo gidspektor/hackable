@@ -28,112 +28,40 @@ export const useArticlesStore = defineStore('articles', () => {
 		getUserArticles,
 		getUserCommentedOnArticles,
 		getFeaturedArticles,
+		updateCommentsOffset,
 	}
 
 	async function getArticlePreviews() {
-		state.articles = [
-			{
-				id: 1,
-				title: 'pies are ok',
-				body: 'but not cats',
-			},
-			{
-				id: 2,
-				title: 'cats are better',
-				body: 'but not dogs',
-			},
-			{
-				id: 3,
-				title: 'dogs are the best',
-				body: 'but not cats',
-			},
-		]
-
-		// state.articles = await ArticlesService.getArticlePreviews()
+		state.articles = await ArticlesService.getArticlePreviews()
 	}
 
 	async function getArticle(articleId) {
-		state.selectedArticle = {
-			id: 1,
-			userId: 1,
-			user: 'user1',
-			title: 'pies are ok',
-			body: 'but not cats'
-		}
-		// state.selectedArticle = await ArticlesService.getArticle(articleId)
+		state.selectedArticle = await ArticlesService.getArticle(articleId)
 	}
 
 	async function getArticleComments(articleId) {
-		state.selectedArticleComments =  [
-			{
-				id: 1,
-				articleId: 1,
-				userId: 1,
-				user: 'user1',
-				body: 'I love cats',
-			},
-			{
-				id: 2,
-				articleId: 1,
-				userId: 2,
-				user: 'user2',
-				body: 'I love dogs',
-			},
-		]
-		// state.selectedArticleComments = await ArticlesService.getArticleComments(articleId, state.commentsOffset)
-		// state.commentsOffset += state.selectedArticleComments.length + 1
+		state.selectedArticleComments = await ArticlesService.getArticleComments(articleId, state.commentsOffset)
+		updateCommentsOffset(state.commentsOffset + state.selectedArticleComments.length)
+	}
+
+	function updateCommentsOffset(offset) {
+		state.commentsOffset = offset
 	}
 
 	async function getFeaturedArticles() {
-		state.featuredArticles = [
-			{
-				id: 1,
-				title: 'pies are ok',
-				body: 'but not cats',
-			},
-			{
-				id: 2,
-				title: 'cats are better',
-				body: 'but not dogs',
-			},
-			{
-				id: 3,
-				title: 'dogs are the best',
-				body: 'but not cats',
-			},
-		]
-		// const response = await ArticlesService.getFeaturedArticles()
-		// response.length = 3 ? state.featuredArticles = response : state.featuredArticles = response.slice(0, 3)
+		const response = await ArticlesService.getFeaturedArticles()
+		response.length = 3 ? state.featuredArticles = response : state.featuredArticles = response.slice(0, 3)
 	}
 
-	async function createComment(articleId, comment) {
-		// return response = await ArticlesService.createComment({'id': postId, 'body': comment})
-		// await getArticleComments(articleId)
+	async function createComment(comment) {
+		response = await ArticlesService.createComment({'id': postId, 'body': comment})
+		state.selectedArticleComments.push(response)
+
+		updateCommentsOffset(state.commentsOffset + 1)
 	}
 
-	async function createArticle(userId, title, body) {
-		// state.selectedArticle = {
-		// 	id: 1,
-		// 	userId: 1,
-		// 	user: 'user1',
-		// 	title: title,
-		// 	body: body,
-		// 	comments: [
-		// 		{
-		// 			id: 1,
-		// 			userId: 1,
-		// 			user: 'user1',
-		// 			body: 'I love cats',
-		// 		},
-		// 		{
-		// 			id: 2,
-		// 			userId: 2,
-		// 			user: 'user2',
-		// 			body: 'I love dogs',
-		// 		},
-		// 	],
-		// }
-		// return response = await ArticlesService.createArticle({'user_id': userId, 'body': body, 'title': title})
+	async function createArticle(title, body) {
+		return await ArticlesService.createArticle({'body': body, 'title': title})
 	}
 
 	async function getUserArticles() {

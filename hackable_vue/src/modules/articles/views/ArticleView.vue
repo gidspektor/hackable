@@ -52,7 +52,7 @@ const getArticle = async () => {
 	try {
 		await articlesStore.getArticle(articleId.value)
 	} catch (error) {
-		console.error('Failed to fetch articles:', error)
+		console.error('Failed to fetch article:', error)
 	} finally {
 		isLoading.value = false
 	}
@@ -60,6 +60,7 @@ const getArticle = async () => {
 
 const getArticleComments = async () => {
 	isLoadingComments.value = true
+	articlesStore.updateCommentsOffset(0)
 	try {
 		await articlesStore.getArticleComments(articleId.value)
 	} catch (error) {

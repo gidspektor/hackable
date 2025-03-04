@@ -19,7 +19,6 @@ class UserResponse(BaseModel):
     id: int
     username: str
     is_admin: bool
-    jwt: TokenResponse
 
 
 class UserRequest(BaseModel):
@@ -29,3 +28,14 @@ class UserRequest(BaseModel):
 
     username: str = Field(max_length=settings.request_max_length)
     password: str = Field(max_length=settings.request_max_length)
+
+
+class UserLoginResponse(BaseModel):
+    """
+    Response schema for a user login.
+    """
+
+    id: int
+    username: str
+    is_admin: bool
+    jwt: str

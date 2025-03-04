@@ -7,6 +7,7 @@ from api.v1.schemas import (
     ArticleCreateRequest, ArticleCommentGetRequest,
     ArticleCommentsResponse, ArticleCommentResponse,
     ArticleGetRequest, ArticleCommentPostRequest,
+    UsersArticlesResponse,
 )
 
 from api.dependencies import auth_exception_handler
@@ -96,3 +97,35 @@ async def get_featured_articles() -> ArticlesResponse:
         article = await ArticlesService(article_repository).get_featured_articles()
 
     return ArticlesResponse(id=article.id, title=article.title, content=article.content)
+
+@router.delete("/article/{article_id}", response_model=dict[str, str])
+async def delete_article(article: int) -> dict[str, str]:
+    """API endpoint to delete an article"""
+
+    deleted = False
+
+    async with DbDriver(settings.db_url).get_db_session() as session:
+        article_repository = ArticlesRepository(session)
+        deleted = await ArticlesService(article_repository).delete_article(article.article_id)
+
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Article not found")
+
+    return {"message": "Ok"}
+
+@router.get("/articles/{user_id}", response_model=UsersArticlesResponse)
+async def get_user_articles(user_id: str, decoded_token: str = Depends(auth_exception_handler)) -> UsersArticlesResponse:
+    """API endpoint to get all articles for a user"""
+
+    user_id: str = decoded_token.get("sub")
+
+    if not user_id.isalnum():
+        raise HTTPException(status_code=400, detail="Invalid user ID")
+
+    async with DbDriver(settings.db_url).get_db_session() as session:
+        article_repository = ArticlesRepository(session)
+        articles = await ArticlesService(article_repository).get_articles_by_user(user_id)
+
+    return UsersArticlesResponse(articles=articles)
+
+@router.get("/articles/comments/{user_id}", response_model=)

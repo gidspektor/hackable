@@ -21,15 +21,12 @@ import { useHackableStore } from '@/shared/hackableStore'
 import { useRouter } from 'vue-router'
 
 const articlesStore = useArticlesStore()
-const hackableStore = useHackableStore()
 
 const router = useRouter()
 
-const editor = ref(''); 
 const title = ref<string>('')
 const richText = ref<string>('')
 const error = ref<string>('')
-const user = computed(() => hackableStore.user)
 
 const cancelArticle = () => {
 	title.value = ''
@@ -42,7 +39,6 @@ const createArticle = async () => {
 	if (title.value && richText.value) {
 
 		const response = await articlesStore.createArticle(
-			user.value.id,
 			title.value,
 			richText.value
 		);
