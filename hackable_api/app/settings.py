@@ -41,6 +41,11 @@ class Settings(BaseSettings):
     allowed_headers: list = os.environ.get("ALLOWED_HEADERS", ["Authorization", "Content-Type", "X-Api-Key"])
     allowed_methods: list = os.environ.get("ALLOWED_METHODS", ["GET", "POST", "PUT", "DELETE", "OPTIONS"])
 
+    title_max_length: int = os.environ.get("TITLE_MAX_LENGTH", 500)
+    article_max_length: int = os.environ.get("ARTICLE_MAX_LENGTH", 5000)
+
+    comment_max_length: int = os.environ.get("COMMENT_MAX_LENGTH", 1000)
+
     request_max_length: int = os.environ.get("REQUEST_MAX_LENGTH", 1000)
     password_min_length: int = os.environ.get("PASSWORD_MIN_LENGTH", 8)
 

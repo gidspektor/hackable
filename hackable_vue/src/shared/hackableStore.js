@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { reactive, computed } from 'vue'
 import HackableService from './hackableService.js'
 import jwtDecode from 'jwt-decode'
+import { API_URL } from '@shared/constants.js'
 
 export const useHackableStore = defineStore('hackable', () => {
 	const state = reactive({
@@ -22,69 +23,52 @@ export const useHackableStore = defineStore('hackable', () => {
 	}
 
 	async function login(email, password) {
-		let user = {
-			id: 1,
-			first_name: 'peter',
-			last_name: 'parker',
-			email: 'pparker@dailybuggle.com',
-		}
-
-		// state.user = await HackableService.login({'email': email, 'password': password})
-		// state.jwt = 'jwt'
-
-		state.user = user
+		response = await HackableService.login({'email': email, 'password': password})
+		state.user = response.data
+		localStorage.setItem('jwt', state.user.jwt)
+		
+		// Broken access control
+		document.cookie = `is_admin=${state.user.is_admin}; path=/;`
 	}
 
 	async function getUser() {
-		state.user = await HackableService.getUserInfo()
+		response = await HackableService.getUserInfo()
+		state.user = response.data
 	}
 
-	async function createAccount(firstName, lastName, email, password, passwordRepeat) {
-		let user = {
-			id: 1,
-			first_name: 'peter',
-			last_name: 'parker',
-			email: 'pparker@dailybuggle.com',
+	async function createAccount(username, password, passwordRepeat) {
+		response = await HackableService.createAccount(
+				{
+					'username': username,
+					'password': password, 'passwordRepeat': passwordRepeat
+				}
+		)
+
+		if (response.status === 201) {
+			state.user = response.data
+			localStorage.setItem('jwt', state.user.jwt)
+
+			// Broken access control
+			document.cookie = `is_admin=${state.user.is_admin}; path=/;`
 		}
 
-		// response = await HackableService.createAccount(
-		// 		{
-		// 			'firstName': firstName, 'lastNmae': lastName, 'email': email,
-		// 			'password': password, 'passwordRepeat': passwordRepeat
-		// 		}
-		// )
-
-		// if (response.status === 201) {
-		// 	this.user = response.data
-		// }
-		// state.jwt = 'jwt'
-		// return response
-
-		state.user = user
+		return response
 	}
 
-	// async function refreshToken() {
-
-	// }
-
-	// async function refreshUserData() {
-
-	// }
-
 	async function getUserImage() {
-		// state.userImageUrl = HackableService.getUserImageUrl()
-		state.userImageUrl = 'https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50'
+		response = HackableService.getUserImageUrl()
+		state.userImageUrl = API_URL + response.data
 	}
 
 	async function uploadUserImage(image) {
-		// response = await HackableService.uploadUserImage(image)
-		// await getUserImage()
-		// return response
+		response = await HackableService.uploadUserImage(image)
+		state.userImageUrl = API_URL + response.data
+		return response
 	}
 
 	async function refreshToken() {
-		// response = await HackableService.refreshToken()
-		// return response
+		response = await HackableService.refreshToken()
+		return response
 	}
 
 	function inspectToken () {

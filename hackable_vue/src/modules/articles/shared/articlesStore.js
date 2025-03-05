@@ -8,7 +8,7 @@ export const useArticlesStore = defineStore('articles', () => {
 		selectedArticle: [],
 		selectedArticleComments: [],
 		userArticles: [],
-		userCommentedOnArticles: [],
+		userComments: [],
 		featuredArticles: [],
 		commentsOffset: 0,
 	})
@@ -17,7 +17,7 @@ export const useArticlesStore = defineStore('articles', () => {
 		articles: computed(() => state.articles),
 		selectedArticle: computed(() => state.selectedArticle),
 		userArticles: computed(() => state.userArticles),
-		userCommentedOnArticles: computed(() => state.userCommentedOnArticles),
+		userComments: computed(() => state.userComments),
 		selectedArticleComments: computed(() => state.selectedArticleComments),
 		featuredArticles: computed(() => state.featuredArticles),
 		getArticlePreviews,
@@ -32,15 +32,20 @@ export const useArticlesStore = defineStore('articles', () => {
 	}
 
 	async function getArticlePreviews() {
-		state.articles = await ArticlesService.getArticlePreviews()
+		response = await ArticlesService.getArticlePreviews()
+		state.articles = response.data
 	}
 
 	async function getArticle(articleId) {
-		state.selectedArticle = await ArticlesService.getArticle(articleId)
+		response = await ArticlesService.getArticle(articleId)
+		state.selectedArticle = response.data
 	}
 
 	async function getArticleComments(articleId) {
-		state.selectedArticleComments = await ArticlesService.getArticleComments(articleId, state.commentsOffset)
+		response = await ArticlesService.getArticleComments(articleId, state.commentsOffset)
+
+		state.selectedArticleComments = response.data
+
 		updateCommentsOffset(state.commentsOffset + state.selectedArticleComments.length)
 	}
 
@@ -50,12 +55,12 @@ export const useArticlesStore = defineStore('articles', () => {
 
 	async function getFeaturedArticles() {
 		const response = await ArticlesService.getFeaturedArticles()
-		response.length = 3 ? state.featuredArticles = response : state.featuredArticles = response.slice(0, 3)
+		response.length = 3 ? state.featuredArticles = response.data : state.featuredArticles = response.data.slice(0, 3)
 	}
 
 	async function createComment(comment) {
 		response = await ArticlesService.createComment({'id': postId, 'body': comment})
-		state.selectedArticleComments.push(response)
+		state.selectedArticleComments.push(response.data)
 
 		updateCommentsOffset(state.commentsOffset + 1)
 	}
@@ -65,45 +70,13 @@ export const useArticlesStore = defineStore('articles', () => {
 	}
 
 	async function getUserArticles() {
-		state.userArticles = [
-			{
-				id: 1,
-				title: 'pies are ok',
-				body: 'but not cats',
-			},
-			{
-				id: 2,
-				title: 'cats are better',
-				body: 'but not dogs',
-			},
-			{
-				id: 3,
-				title: 'dogs are the best',
-				body: 'but not cats',
-			},
-		]
-		// state.userArticles = await ArticlesService.getUserArticles()
+		response = await ArticlesService.getUserArticles()
+		state.userArticles = response.data
 	}
 
 	async function getUserCommentedOnArticles() {
-		state.userCommentedOnArticles = [
-			{
-				id: 1,
-				title: 'pies are ok',
-				body: 'but not cats',
-			},
-			{
-				id: 2,
-				title: 'cats are better',
-				body: 'but not dogs',
-			},
-			{
-				id: 3,
-				title: 'dogs are the best',
-				body: 'but not cats',
-			},
-		]
-		// state.userCommentedOnArticles = await ArticlesService.getUserCommentedOnArticles()
+		response = await ArticlesService.getUserCommentedOnArticles()
+		state.userComments = response.data
 	}
 },
 	{

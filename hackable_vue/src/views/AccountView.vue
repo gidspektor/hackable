@@ -60,12 +60,12 @@
 			</i>
 			<div>
 				<router-link
-					v-for="userCommentedOnArticle in userCommentedOnArticles"
-					:key="userCommentedOnArticle.id"
-					:to="{ name: 'article', params: { id: userCommentedOnArticle.id } }"
+					v-for="userComments in userComments"
+					:key="userComments.id"
+					:to="{ name: 'article', params: { id: userComments.article_id } }"
 					class="post-item"
 				>
-					{{ userCommentedOnArticle.title }}
+					{{ userComments.title }}
 				</router-link>
 			</div>
 		</div>
@@ -83,7 +83,7 @@ const hackableStore = useHackableStore();
 
 const user = computed(() => hackableStore.user);
 const userArticles = computed(() => articlesStore.userArticles);
-const userCommentedOnArticles = computed(() => articlesStore.userCommentedOnArticles);
+const userComments = computed(() => articlesStore.userComments);
 const userImageUrl = computed(() => hackableStore.userImageUrl);
 
 const getUserArticles = async () => {
@@ -94,11 +94,11 @@ const getUserArticles = async () => {
 	}
 };
 
-const getUserCommentedOnArticles = async () => {
+const getUserComments = async () => {
 	try {
-		await articlesStore.getUserCommentedOnArticles();
+		await articlesStore.getUserComments();
 	} catch (error) {
-		console.error('Failed to fetch user commented on articles:', error);
+		console.error('Failed to fetch user comments:', error);
 	}
 };
 
@@ -125,7 +125,7 @@ const handelFileUpload = async (event: Event) => {
 };
 
 onMounted(async () => {
-	await getUserCommentedOnArticles();
+	await getUserComments();
 	await getUserArticles();
 	await getUserImage();
 });

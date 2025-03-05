@@ -14,12 +14,12 @@
 						<div>
 							<div class="form-group">
 								<input
-									v-model="email"
-									type="email"
+									v-model="username"
+									type="username"
 									class="input-field"
-									placeholder="Email Address"
+									placeholder="username Address"
 								/>
-								<div v-if="emailError" class="error-message">{{ emailError }}</div>
+								<div v-if="usernameError" class="error-message">{{ usernameError }}</div>
 								<input
 									v-model="password"
 									type="password"
@@ -36,10 +36,8 @@
 					</template>
 					<template v-else>
 						<div class="form-group">
-							<input v-model="name" class="input-field" placeholder="Full Name" type="text" />
-							<div v-if="nameError" class="error-message">{{ nameError }}</div>
-							<input v-model="email" class="input-field" placeholder="Email Address" type="email" />
-							<div v-if="emailError" class="error-message">{{ emailError }}</div>
+							<input v-model="username" class="input-field" placeholder="username Address" type="username" />
+							<div v-if="usernameError" class="error-message">{{ usernameError }}</div>
 							<input
 								v-model="password"
 								class="input-field"
@@ -77,12 +75,12 @@ const hackableStore = useHackableStore()
 const formValid = ref<boolean>(false)
 const signUpUser = ref<boolean>(false)
 const isLoading = ref<boolean>(false)
-const email = ref<string>('')
+const username = ref<string>('')
 const password = ref<string>('')
 const name = ref<string>('')
 const passwordRepeat = ref<string>('')
 const error = ref<string>('')
-const emailError = ref<string>('')
+const usernameError = ref<string>('')
 const nameError = ref<string>('')
 const passwordLengthError = ref<string>('')
 const passwordNotMatchError = ref<string>('')
@@ -94,7 +92,7 @@ const closeModal = () => {
 	emit('close')
 }
 const login = () => {
-	hackableStore.login(email.value, password.value)
+	hackableStore.login(username.value, password.value)
 }
 const signUp = () => {
 	signUpUser.value = true
@@ -106,11 +104,8 @@ const createAccount = () => {
 	validateForm()
 
 	if (formValid.value) {
-		cleanedName.value = name.value.replace(/[^a-z'A-Z ]/, '').replace(/[/(){};:*]/g, '')
 		let response = hackableStore.createAccount(
-			name.value.split(' ')[0],
-			name.value.split(' ')[1],
-			email.value,
+			username.value,
 			password.value,
 			passwordRepeat.value,
 		)
@@ -126,13 +121,8 @@ const createAccount = () => {
 const validateForm = () => {
 	formValid.value = false
 
-	nameError.value = ''
 	passwordLengthError.value = ''
 	passwordNotMatchError.value = ''
-
-	if (name.value.split(' ').length === 1 || !name.value) {
-		nameError.value = 'Please input full name'
-	}
 
 	if (password.value.length < 8) {
 		passwordLengthError.value = 'Password must be a minimum of 8 characters'
@@ -241,7 +231,7 @@ const validateForm = () => {
 	background-color: #218838;
 }
 
-.email-button {
+.username-button {
 	width: 100%;
 	padding: 0.75rem;
 	margin-top: 0.5rem;
@@ -253,7 +243,7 @@ const validateForm = () => {
 	background-color: white;
 }
 
-.email-button:hover {
+.username-button:hover {
 	background-color: #f7f7f7;
 }
 

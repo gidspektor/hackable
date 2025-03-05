@@ -27,8 +27,8 @@ class ArticleCreateRequest(BaseModel):
 	Request schema for creating an article.
 	"""
 
-	title: str = Field(max_length=settings.request_max_length)
-	content: str = Field(max_length=settings.request_max_length)
+	title: str = Field(max_length=settings.title_max_length)
+	content: str = Field(max_length=settings.article_max_length)
 	featured: bool
 
 
@@ -37,7 +37,7 @@ class ArticleGetRequest(BaseModel):
 	Request schema for getting an article.
 	"""
 
-	article_id: int = Field(max_length=settings.request_max_length)
+	article_id: int = Field(max_length=settings.article_max_length)
 
 
 class ArticleCommentResponse(BaseModel):
@@ -74,7 +74,7 @@ class ArticleCommentPostRequest(BaseModel):
 	"""
 
 	article_id: int = Field(max_length=settings.request_max_length)
-	comment: str = Field(max_length=settings.request_max_length)
+	comment: str = Field(max_length=settings.comment_max_length)
 
 
 class UsersArticleResponse(BaseModel):

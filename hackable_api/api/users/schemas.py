@@ -27,7 +27,7 @@ class UserRequest(BaseModel):
     """
 
     username: str = Field(max_length=settings.request_max_length)
-    password: str = Field(max_length=settings.request_max_length)
+    password: str = Field(max_length=settings.request_max_length, min_length=settings.password_min_length)
 
 
 class UserLoginResponse(BaseModel):

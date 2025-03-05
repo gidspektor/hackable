@@ -128,4 +128,19 @@ async def get_user_articles(user_id: str, decoded_token: str = Depends(auth_exce
 
     return UsersArticlesResponse(articles=articles)
 
-@router.get("/articles/comments/{user_id}", response_model=)
+@router.get("/articles/comments/{user_id}", response_model=ArticleCommentsResponse)
+async def get_user_comments(user_id: str, decoded_token: str = Depends(auth_exception_handler)) -> ArticleCommentsResponse:
+    """API endpoint to get all comments for a user"""
+
+    user_id: str = decoded_token.get("sub")
+
+    if not user_id.isalnum():
+        raise HTTPException(status_code=400, detail="Invalid user ID")
+
+    async with DbDriver(settings.db_url).get_db_session() as session:
+        article_comments_repository = ArticlesCommentsRepository(session)
+        comments = await ArticlesCommentsService(
+            article_comments_repository
+        ).get_comments_by_user(user_id)
+
+    return ArticleCommentsResponse(comments=comments)

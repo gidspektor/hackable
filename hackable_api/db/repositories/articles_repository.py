@@ -52,7 +52,7 @@ class ArticlesRepository(ArticlesRepositoryInterface):
 
         if result.rowcount == 0:
             False
-        
+
         return result
 
     async def get_featured_articles(self) -> list[dict]:
