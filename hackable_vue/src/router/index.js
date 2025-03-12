@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import { useHackableStore } from '@/shared/hackableStore'
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,6 +18,7 @@ const router = createRouter({
 					path: 'create',
 					name: 'create-article',
 					component: () => import('@articles/views/CreateArticleView.vue'),
+					meta: { requiresAdmin: true },
 				},
 				{
 					path: 'article/:id',
@@ -29,6 +31,7 @@ const router = createRouter({
 			path: '/account',
 			name: 'account',
 			component: () => import('@/views/AccountView.vue'),
+			meta: { requiresUser: true },
 		},
 		{
 			path: '/walkthrough',
@@ -37,5 +40,27 @@ const router = createRouter({
 		},
 	],
 })
+
+router.beforeEach((to, from, next) => {
+	if (to.meta.requiresAdmin) {
+		const admin = document.cookie
+			.split('; ')
+			.find((row) => row.startsWith('is_admin='))
+			?.split("=")[1];
+
+		if (admin !== 'true') {
+			alert('You must be an admin to access this page!');
+			return next('/');
+		}
+	} else if (to.meta.requiresUser) {
+		const hackableStore = useHackableStore()
+
+		if (!hackableStore.user) {
+			alert('You must be logged in to access this page!');
+			return next('/');
+		}
+	}
+	next();
+});
 
 export default router

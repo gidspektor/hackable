@@ -17,7 +17,7 @@
 									v-model="username"
 									type="username"
 									class="input-field"
-									placeholder="username Address"
+									placeholder="username"
 								/>
 								<div v-if="usernameError" class="error-message">{{ usernameError }}</div>
 								<input
@@ -36,7 +36,7 @@
 					</template>
 					<template v-else>
 						<div class="form-group">
-							<input v-model="username" class="input-field" placeholder="username Address" type="username" />
+							<input v-model="username" class="input-field" placeholder="username" type="username" />
 							<div v-if="usernameError" class="error-message">{{ usernameError }}</div>
 							<input
 								v-model="password"
@@ -77,22 +77,26 @@ const signUpUser = ref<boolean>(false)
 const isLoading = ref<boolean>(false)
 const username = ref<string>('')
 const password = ref<string>('')
-const name = ref<string>('')
 const passwordRepeat = ref<string>('')
 const error = ref<string>('')
 const usernameError = ref<string>('')
 const nameError = ref<string>('')
 const passwordLengthError = ref<string>('')
 const passwordNotMatchError = ref<string>('')
-const cleanedName = ref<string>('')
 
 const emit = defineEmits(['close'])
 
 const closeModal = () => {
 	emit('close')
 }
-const login = () => {
-	hackableStore.login(username.value, password.value)
+const login = async () => {
+	let response = await hackableStore.login(username.value, password.value)
+	console.log(response)
+	if (response.status !== 200) {
+		error.value = response.error
+	} else {
+		emit('close')
+	}
 }
 const signUp = () => {
 	signUpUser.value = true
@@ -100,11 +104,11 @@ const signUp = () => {
 const signIn = () => {
 	signUpUser.value = false
 }
-const createAccount = () => {
+const createAccount = async () => {
 	validateForm()
 
 	if (formValid.value) {
-		let response = hackableStore.createAccount(
+		let response = await hackableStore.createAccount(
 			username.value,
 			password.value,
 			passwordRepeat.value,

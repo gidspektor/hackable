@@ -1,4 +1,4 @@
-from sqlalchemy.future import select, delete
+from sqlalchemy import select, delete
 from sqlalchemy.sql import func
 from sqlalchemy.engine import Row
 
@@ -31,14 +31,15 @@ class ArticlesRepository(ArticlesRepositoryInterface):
             Articles.id, Articles.title, Articles.content
         ).where(Articles.id == article_id)
 
-        article = await self._db.execute(stmt).first()
+        article = await self._db.execute(stmt).scalar_one_or_none()
 
-        return {"id": article.id, "title": article.title, "content": article.content} \
-            if article \
-            else None
+        return article
 
-    async def create_article(self, article: dict, user_id: int) -> Articles:
-        new_article = Articles(**article, author_id=user_id)
+    async def create_article(self, title: str, content: str, featured: bool, user_id: int) -> Articles:
+        new_article = Articles(
+            title=title, content=content,
+            featured=featured, author_id=user_id
+        )
         await self._db.add(new_article)
         await self._db.commit()
         await self._db.refresh(new_article)

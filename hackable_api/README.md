@@ -40,7 +40,7 @@ poetry run pytest hackable_api/tests/unit/
 ```
 
 db make migrations with poetry
-alembic revision --autogenerate -m "Create users table"
+poetry run alembic revision --autogenerate -m "Create users table"
 
 db run migrations with poetry
 poetry run alembic upgrade head

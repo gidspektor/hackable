@@ -39,9 +39,9 @@ const cancelComment = () => {
 	active.value = false
 }
 
-const submitComment = () => {
+const submitComment = async () => {
 	if (comment.value) {
-		articlesStore.createComment(props.articleId, comment.value)
+		await articlesStore.createComment(props.articleId, comment.value)
 		active.value = false
 	}
 }

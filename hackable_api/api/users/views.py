@@ -24,8 +24,8 @@ from db.repositories.users_repository import UsersRepository
 
 router = APIRouter()
 
-@router.post("/login", response_model=UserResponse)
-async def login(user_request: UserRequest, response: Response) -> UserResponse:
+@router.post("/login", response_model=UserLoginResponse)
+async def login(user_request: UserRequest, response: Response) -> UserLoginResponse:
     """
     Logs the user in.
 
@@ -39,12 +39,12 @@ async def login(user_request: UserRequest, response: Response) -> UserResponse:
     if not user:
         raise HTTPException(status_code=401, detail=str(user))
 
-    token = AuthService.create_access_token({"sub": user.id}, settings.token_expire_minutes)
-    refresh_token = AuthService.create_access_token({"sub": user.id}, settings.refresh_token_expire_minutes)
+    token = AuthService.create_access_token(data={"sub": user.id}, expires=settings.token_expire_minutes)
+    refresh_token = AuthService.create_access_token(data={"sub": user.id}, expires=settings.refresh_token_expire_minutes)
 
     response.set_cookie(
         "refresh_token", refresh_token, httponly=True,
-        secure=True, samesite="Lax", max_age=2592000 # 30 days
+        secure=settings.environment == 'prod', samesite="Lax", max_age=2592000 # 30 days
     )
 
     return UserLoginResponse(id=user.id, username=user.username, is_admin=user.is_admin, jwt=token)

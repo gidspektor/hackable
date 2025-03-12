@@ -1,6 +1,10 @@
 <template>
 	<div class="container">
 		<div class="post-box">
+			<label>
+				<input type="checkbox" v-model="isFeatured" />
+				Featured
+			</label>
 			<input v-model="title" class="title-input" placeholder="Click Bait Title" />
 			<textarea v-model="richText" class="body-input" placeholder="Only subjective facts here."></textarea>
 			<div v-if="error" class="error-message">{{ error }}</div>
@@ -14,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 
 import { useArticlesStore } from '@articles/shared/articlesStore'
 import { useHackableStore } from '@/shared/hackableStore'
@@ -27,10 +31,12 @@ const router = useRouter()
 const title = ref<string>('')
 const richText = ref<string>('')
 const error = ref<string>('')
+const isFeatured = ref<boolean>(false)
 
 const cancelArticle = () => {
 	title.value = ''
 	richText.value = ''
+	isFeatured.value = false
 	router.push({ name: 'articles' })
 }
 
@@ -40,7 +46,8 @@ const createArticle = async () => {
 
 		const response = await articlesStore.createArticle(
 			title.value,
-			richText.value
+			richText.value,
+			isFeatured.value
 		);
 
 		if (response.error) {

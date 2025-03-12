@@ -36,9 +36,11 @@ class Settings(BaseSettings):
 
     # Database URL
     db_url: str = os.environ.get("DB_URL", "sqlite+aiosqlite:///db/database.db")
+    # Database URL without async driver for migrations
+    sync_db_url: str = db_url.replace("+aiosqlite", "")
 
-    allowed_origins: list = os.environ.get("ALLOWED_HOSTS", ["http://localhost:3000"])
-    allowed_headers: list = os.environ.get("ALLOWED_HEADERS", ["Authorization", "Content-Type", "X-Api-Key"])
+    allowed_origins: list = os.environ.get("ALLOWED_HOSTS", ["http://localhost:5173"])
+    allowed_headers: list = os.environ.get("ALLOWED_HEADERS", ["Authorization", "Content-Type", "Set-Cookie"])
     allowed_methods: list = os.environ.get("ALLOWED_METHODS", ["GET", "POST", "PUT", "DELETE", "OPTIONS"])
 
     title_max_length: int = os.environ.get("TITLE_MAX_LENGTH", 500)
@@ -50,8 +52,8 @@ class Settings(BaseSettings):
     password_min_length: int = os.environ.get("PASSWORD_MIN_LENGTH", 8)
 
     # JWT
-    token_expire_minutes: int = int(os.environ.get("TOKEN_EXPIRE_MINUTES", 2))
-    refresh_token_expire_minutes: int = int(os.environ.get("REFRESH_TOKEN_EXPIRE_MINUTES", 5000))
+    token_expire_minutes: int = os.environ.get("TOKEN_EXPIRE_MINUTES", 2)
+    refresh_token_expire_minutes: int = os.environ.get("REFRESH_TOKEN_EXPIRE_MINUTES", 5000)
     jwt_secret_key: str = os.environ.get("SECRET_KEY", "653bb80bd4799aa4ef080f6af5523928e15492e905295ce5cde3090150cfd358fbfe6b206b2335ac09a3c41c13421899dc90617c2423c46e5ea78ab8d3e01378")
     jwt_algorithm: str = os.environ.get("ALGORITHM", "HS256")
 

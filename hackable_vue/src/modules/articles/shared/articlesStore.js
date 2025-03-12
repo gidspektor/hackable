@@ -32,19 +32,19 @@ export const useArticlesStore = defineStore('articles', () => {
 	}
 
 	async function getArticlePreviews() {
-		response = await ArticlesService.getArticlePreviews()
-		state.articles = response.data
+		const response = await ArticlesService.getArticlePreviews()
+		state.articles = response?.data
 	}
 
 	async function getArticle(articleId) {
-		response = await ArticlesService.getArticle(articleId)
-		state.selectedArticle = response.data
+		const response = await ArticlesService.getArticle(articleId)
+		state.selectedArticle = response?.data
 	}
 
 	async function getArticleComments(articleId) {
-		response = await ArticlesService.getArticleComments(articleId, state.commentsOffset)
+		const response = await ArticlesService.getArticleComments(articleId, state.commentsOffset)
 
-		state.selectedArticleComments = response.data
+		state.selectedArticleComments = response?.data
 
 		updateCommentsOffset(state.commentsOffset + state.selectedArticleComments.length)
 	}
@@ -55,28 +55,30 @@ export const useArticlesStore = defineStore('articles', () => {
 
 	async function getFeaturedArticles() {
 		const response = await ArticlesService.getFeaturedArticles()
-		response.length = 3 ? state.featuredArticles = response.data : state.featuredArticles = response.data.slice(0, 3)
+		state.featuredArticles = response.length = 3 ? response?.data : response?.data.slice(0, 3)
 	}
 
 	async function createComment(comment) {
-		response = await ArticlesService.createComment({'id': postId, 'body': comment})
-		state.selectedArticleComments.push(response.data)
+		const response = await ArticlesService.createComment({'id': postId, 'body': comment})
+		state.selectedArticleComments.push(response?.data)
 
 		updateCommentsOffset(state.commentsOffset + 1)
 	}
 
-	async function createArticle(title, body) {
-		return await ArticlesService.createArticle({'body': body, 'title': title})
+	async function createArticle(title, body, isFeatured) {
+		const response = await ArticlesService.createArticle({'body': body, 'title': title, 'featured': isFeatured})
+
+		return response?.data
 	}
 
 	async function getUserArticles() {
-		response = await ArticlesService.getUserArticles()
-		state.userArticles = response.data
+		const response = await ArticlesService.getUserArticles()
+		state.userArticles = response?.data
 	}
 
 	async function getUserCommentedOnArticles() {
-		response = await ArticlesService.getUserCommentedOnArticles()
-		state.userComments = response.data
+		const response = await ArticlesService.getUserCommentedOnArticles()
+		state.userComments = response?.data
 	}
 },
 	{

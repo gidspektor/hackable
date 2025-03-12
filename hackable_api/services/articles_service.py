@@ -11,8 +11,8 @@ class ArticlesService:
     async def get_article(self, article_id: int) -> ArticlesRepositoryInterface|None:
         return await self._article_repository.get_article(article_id)
 
-    async def create_article(self, article: dict, user_id: int) -> ArticlesRepositoryInterface:
-        return await self._article_repository.create_article(article, user_id)
+    async def create_article(self, title: str, content: str, featured: bool, user_id: int) -> ArticlesRepositoryInterface:
+        return await self._article_repository.create_article(title, content, featured, user_id)
 
     async def delete_article(self, article_id: int) -> ArticlesRepositoryInterface:
         return await self._article_repository.delete_article(article_id)

@@ -1,7 +1,9 @@
 import Axios from 'axios'
 import { API_URL } from './constants.js'
+import { useRouter } from 'vue-router'
 
 const baseURL = API_URL
+const router = useRouter()
 
 export default {
 	async GET(route, params, anonymous = false) {
@@ -96,14 +98,14 @@ function cleanParams(params) {
 }
 
 function getAuthHeaders(isFormData = false) {
-	const jwt = localStorage.getItem('jwt')
+	const jwt = localStorage.getItem('t')
 
 	if (!jwt) {
 		// Prevent requests if there isn't even session data
 		const signInError = new Error('Need to sign in first')
 		signInError.sessionError = true
 		signInError.skipUserMessage = true
-		useRouter().push({ name: 'login' })
+		router.push({ name: 'articles' })
 		throw signInError
 	}
 
@@ -116,4 +118,25 @@ function getAuthHeaders(isFormData = false) {
 	}
 
 	return headers
+}
+
+async function handleUnauthorized(error) {
+	if (localStorage.getItem('t') && error.response?.status === 401) {
+        localStorage.removeItem('t')
+
+        try {
+            const response = await hackableStore.refreshToken()
+            if (!response) throw new Error("Token refresh failed")
+
+            const config = error.config
+            config.headers['Authorization'] = `Bearer ${localStorage.getItem('t')}`
+
+            return Axios.request(config)
+        } catch (error) {
+            console.log(error);
+            router.push({ name: 'login' })
+        }
+    }
+
+	return Promise.reject(error)
 }

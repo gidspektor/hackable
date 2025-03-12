@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
 import { reactive, computed } from 'vue'
 import HackableService from './hackableService.js'
-import jwtDecode from 'jwt-decode'
-import { API_URL } from '@shared/constants.js'
+import { jwtDecode } from 'jwt-decode'
+import { API_URL } from '@/shared/constants.js'
 
 export const useHackableStore = defineStore('hackable', () => {
 	const state = reactive({
@@ -22,31 +22,36 @@ export const useHackableStore = defineStore('hackable', () => {
 		refreshToken
 	}
 
-	async function login(email, password) {
-		response = await HackableService.login({'email': email, 'password': password})
-		state.user = response.data
-		localStorage.setItem('jwt', state.user.jwt)
-		
-		// Broken access control
-		document.cookie = `is_admin=${state.user.is_admin}; path=/;`
+	async function login(username, password) {
+		const response = await HackableService.login({'username': username, 'password': password})
+
+		if (response.status === 200) {
+			state.user = response.data
+			localStorage.setItem('t', state.user.jwt)
+
+			// Broken access control
+			document.cookie = `is_admin=${state.user.is_admin}; path=/;`
+		}
+
+		return response
 	}
 
 	async function getUser() {
-		response = await HackableService.getUserInfo()
+		const response = await HackableService.getUserInfo()
 		state.user = response.data
 	}
 
 	async function createAccount(username, password, passwordRepeat) {
-		response = await HackableService.createAccount(
+		const response = await HackableService.createAccount(
 				{
 					'username': username,
 					'password': password, 'passwordRepeat': passwordRepeat
 				}
 		)
 
-		if (response.status === 201) {
+		if (response.status === 200) {
 			state.user = response.data
-			localStorage.setItem('jwt', state.user.jwt)
+			localStorage.setItem('t', state.user.jwt)
 
 			// Broken access control
 			document.cookie = `is_admin=${state.user.is_admin}; path=/;`
@@ -56,18 +61,19 @@ export const useHackableStore = defineStore('hackable', () => {
 	}
 
 	async function getUserImage() {
-		response = HackableService.getUserImageUrl()
+		const response = HackableService.getUserImageUrl()
 		state.userImageUrl = API_URL + response.data
 	}
 
 	async function uploadUserImage(image) {
-		response = await HackableService.uploadUserImage(image)
+		const response = await HackableService.uploadUserImage(image)
 		state.userImageUrl = API_URL + response.data
 		return response
 	}
 
 	async function refreshToken() {
-		response = await HackableService.refreshToken()
+		const response = await HackableService.refreshToken()
+		localStorage.setItem('t', response.data.jwt)
 		return response
 	}
 

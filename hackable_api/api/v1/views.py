@@ -43,7 +43,10 @@ async def create_article(article: ArticleCreateRequest, decoded_token: str = Dep
 
     async with DbDriver(settings.db_url).get_db_session() as session:
         article_repository = ArticlesRepository(session)
-        article = await ArticlesService(article_repository).create_article(article, user_id)
+        article = await ArticlesService(article_repository).create_article(
+            article.title, article.content,
+            user_id, article.featured
+        )
 
     return ArticleResponse(title=article.title, content=article.content)
 

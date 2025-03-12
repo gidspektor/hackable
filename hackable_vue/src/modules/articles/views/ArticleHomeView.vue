@@ -1,6 +1,6 @@
 <template>
 	<nav>
-		<p class="sidebar-link">
+		<p v-if="user" class="sidebar-link">
 			<router-link
 				:to="{ name: 'create-article' }"
 			>
@@ -99,10 +99,10 @@ const openLoginModal = () => {
 	showModal.value = true
 }
 
-onMounted(async () => {
-	await getFeaturedArticles();
-	await getArticlePreviews();
-});
+// onMounted(async () => {
+// 	await getFeaturedArticles();
+// 	await getArticlePreviews();
+// });
 </script>
 
 <style scoped>

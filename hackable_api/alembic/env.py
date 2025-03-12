@@ -11,6 +11,7 @@ sys.path = ['', '..'] + sys.path[1:]
 
 from db.models.base import Base
 from db.models.articles import Articles
+from db.models.articles_comments import ArticlesComments
 from db.models.users import Users
 from app.settings import settings
 
@@ -18,7 +19,7 @@ from app.settings import settings
 # access to the values within the .ini file in use.
 config = context.config
 
-config.set_main_option("sqlalchemy.url", settings.db_url)
+config.set_main_option("sqlalchemy.url", settings.sync_db_url)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.

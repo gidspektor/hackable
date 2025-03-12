@@ -11,7 +11,7 @@ class ArticlesRepositoryInterface(ABC):
         raise NotImplementedError("This method should be overridden by subclasses")
 
     @abstractmethod
-    def create_article(self, article: int, user_id: int):
+    def create_article(self, title: str, content: str, featured: bool, user_id: int):
         raise NotImplementedError("This method should be overridden by subclasses")
 
     @abstractmethod
