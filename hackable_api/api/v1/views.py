@@ -20,7 +20,7 @@ from db.repositories.articles_comments_repository import ArticlesCommentsReposit
 
 router = APIRouter(prefix="/v1")
 
-@router.get("/article_previews", response_model=ArticlesResponse)
+@router.get("/article_previews/", response_model=ArticlesResponse)
 async def get_articles() -> ArticlesResponse:
     """API endpoint to get all article previews"""
 
@@ -32,8 +32,8 @@ async def get_articles() -> ArticlesResponse:
 
 # Open to be hit by anyone, should be checking the JWT token for the user
 # and then confirming if it's an admin user in the db.
-@router.post("/article", response_model=ArticleResponse)
-async def create_article(article: ArticleCreateRequest, decoded_token: str = Depends(auth_exception_handler)) -> ArticleResponse:
+@router.post("/article/", response_model=ArticleResponse)
+async def create_article(article: ArticleCreateRequest, decoded_token: dict = Depends(auth_exception_handler)) -> ArticleResponse:
     """API endpoint to create an article"""
 
     user_id: str = decoded_token.get("sub")
@@ -48,9 +48,9 @@ async def create_article(article: ArticleCreateRequest, decoded_token: str = Dep
             user_id, article.featured
         )
 
-    return ArticleResponse(title=article.title, content=article.content)
+    return ArticleResponse(id=article.id, title=article.title, content=article.content)
 
-@router.get("/article/{article_id}", response_model=ArticleResponse)
+@router.get("/article/{article_id}/", response_model=ArticleResponse)
 async def get_article(article: ArticleGetRequest) -> ArticleResponse:
     """API endpoint to get a single article"""
 
@@ -60,7 +60,7 @@ async def get_article(article: ArticleGetRequest) -> ArticleResponse:
 
     return ArticleResponse(id=article.id, title=article.title, content=article.content)
 
-@router.get("/article/{article_id}/comments/{offset}", response_model=ArticleCommentsResponse)
+@router.get("/article/{article_id}/comments/{offset}/", response_model=ArticleCommentsResponse)
 async def get_article_comments(article_comment: ArticleCommentGetRequest) -> ArticleCommentsResponse:
     """API endpoint to get article comments"""
 
@@ -72,8 +72,8 @@ async def get_article_comments(article_comment: ArticleCommentGetRequest) -> Art
 
     return ArticleCommentsResponse(comments=comments)
 
-@router.post("/comment", response_model=ArticleCommentResponse)
-async def create_comment(article_comment: ArticleCommentPostRequest, decoded_token: str = Depends(auth_exception_handler)) -> ArticleCommentResponse:
+@router.post("/comment/", response_model=ArticleCommentResponse)
+async def create_comment(article_comment: ArticleCommentPostRequest, decoded_token: dict = Depends(auth_exception_handler)) -> ArticleCommentResponse:
     """API endpoint to create a comment"""
 
     user_id: str = decoded_token.get("sub")
@@ -91,15 +91,15 @@ async def create_comment(article_comment: ArticleCommentPostRequest, decoded_tok
         id=comment.id, author_id=comment.author_id, article_id=comment.article_id, comment=comment.comment
     )
 
-@router.get("articles/featured", response_model=ArticlesResponse)
+@router.get("/articles/featured/", response_model=ArticlesResponse)
 async def get_featured_articles() -> ArticlesResponse:
     """API endpoint to get a featured article"""
 
     async with DbDriver(settings.db_url).get_db_session() as session:
         article_repository = ArticlesRepository(session)
-        article = await ArticlesService(article_repository).get_featured_articles()
+        articles = await ArticlesService(article_repository).get_featured_articles()
 
-    return ArticlesResponse(id=article.id, title=article.title, content=article.content)
+    return ArticlesResponse(articles=articles)
 
 @router.delete("/article/{article_id}", response_model=dict[str, str])
 async def delete_article(article: int) -> dict[str, str]:
@@ -116,8 +116,8 @@ async def delete_article(article: int) -> dict[str, str]:
 
     return {"message": "Ok"}
 
-@router.get("/articles/{user_id}", response_model=UsersArticlesResponse)
-async def get_user_articles(user_id: str, decoded_token: str = Depends(auth_exception_handler)) -> UsersArticlesResponse:
+@router.get("/user/articles/", response_model=UsersArticlesResponse)
+async def get_user_articles(decoded_token: dict = Depends(auth_exception_handler)) -> UsersArticlesResponse:
     """API endpoint to get all articles for a user"""
 
     user_id: str = decoded_token.get("sub")
@@ -131,8 +131,8 @@ async def get_user_articles(user_id: str, decoded_token: str = Depends(auth_exce
 
     return UsersArticlesResponse(articles=articles)
 
-@router.get("/articles/comments/{user_id}", response_model=ArticleCommentsResponse)
-async def get_user_comments(user_id: str, decoded_token: str = Depends(auth_exception_handler)) -> ArticleCommentsResponse:
+@router.get("/user/commented/articles/", response_model=ArticleCommentsResponse)
+async def get_user_comments(decoded_token: dict = Depends(auth_exception_handler)) -> ArticleCommentsResponse:
     """API endpoint to get all comments for a user"""
 
     user_id: str = decoded_token.get("sub")

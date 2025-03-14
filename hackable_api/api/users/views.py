@@ -39,7 +39,7 @@ async def login(user_request: UserRequest, response: Response) -> UserLoginRespo
     if not user:
         raise HTTPException(status_code=401, detail=str(user))
 
-    token = AuthService.create_access_token(data={"sub": user.id}, expires=settings.token_expire_minutes)
+    token = AuthService.create_access_token(data={"sub": str(user.id)}, expires=settings.token_expire_minutes)
     refresh_token = AuthService.create_access_token(data={"sub": user.id}, expires=settings.refresh_token_expire_minutes)
 
     response.set_cookie(
@@ -74,7 +74,7 @@ async def refresh_token(request: Request) -> TokenResponse:
     return TokenResponse(jwt=access_token)
 
 @router.get("/user", response_model=UserResponse)
-async def get_user(decoded_token: str = Depends(auth_exception_handler)) -> UserResponse:
+async def get_user(decoded_token: dict = Depends(auth_exception_handler)) -> UserResponse:
     """
     Gets the user.
     """
@@ -129,7 +129,7 @@ async def logout(response: Response) -> dict[str, str]:
 
 @router.post("/upload", response_model=dict[str, str])
 async def upload_image(
-        decoded_token: str = Depends(auth_exception_handler),
+        decoded_token: dict = Depends(auth_exception_handler),
         image: UploadFile = File(...)
     ) -> dict[str, str]:
     """
@@ -164,7 +164,7 @@ async def upload_image(
     return {"image_path": image_path}
 
 @router.get("/image", response_model=dict[str, str])
-async def get_image(decoded_token: str = Depends(auth_exception_handler)) -> dict[str, str]:
+async def get_image(decoded_token: dict = Depends(auth_exception_handler)) -> dict[str, str]:
     """
     Gets the user image.
     """

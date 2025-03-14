@@ -41,12 +41,12 @@
 		<div v-else class="posts-container">
 			<div class="posts">
 				<router-link
-					v-for="article in articles"
+					v-for="article in articlesPreviews"
 					:key="article.id"
 					:to="{ name: 'article', params: { id: article.id } }"
 					class="post-item"
 				>
-					<ArticlePreview :title="article.title" :body="article.body" />
+					<ArticlePreview :title="article.title" :content="article.content" />
 				</router-link>
 			</div>
 			<router-view></router-view>
@@ -71,7 +71,7 @@ const hackableStore = useHackableStore()
 const articlesStore = useArticlesStore();
 
 const user = computed(() => hackableStore.user)
-const articles = computed(() => articlesStore.articles);
+const articlesPreviews = computed(() => articlesStore.articlesPreviews);
 const featuredArticles = computed(() => articlesStore.featuredArticles);
 const isLoading = ref<boolean>(false);
 const showModal = ref<boolean>(false)
@@ -99,10 +99,10 @@ const openLoginModal = () => {
 	showModal.value = true
 }
 
-// onMounted(async () => {
-// 	await getFeaturedArticles();
-// 	await getArticlePreviews();
-// });
+onMounted(async () => {
+	await getFeaturedArticles();
+	await getArticlePreviews();
+});
 </script>
 
 <style scoped>
@@ -140,7 +140,7 @@ nav {
 	width: 100%;
 	background-color: none;
 	display: flex;
-	position: absolute;
+	position: fixed;
 	top: 7%;
 	left: 40%;
 }

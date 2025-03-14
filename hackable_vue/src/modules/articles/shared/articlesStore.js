@@ -4,7 +4,7 @@ import { reactive, computed } from 'vue'
 
 export const useArticlesStore = defineStore('articles', () => {
 	const state = reactive({
-		articles: [],
+		articlesPreviews: [],
 		selectedArticle: [],
 		selectedArticleComments: [],
 		userArticles: [],
@@ -14,7 +14,7 @@ export const useArticlesStore = defineStore('articles', () => {
 	})
 
 	return {
-		articles: computed(() => state.articles),
+		articlesPreviews: computed(() => state.articlesPreviews),
 		selectedArticle: computed(() => state.selectedArticle),
 		userArticles: computed(() => state.userArticles),
 		userComments: computed(() => state.userComments),
@@ -33,7 +33,7 @@ export const useArticlesStore = defineStore('articles', () => {
 
 	async function getArticlePreviews() {
 		const response = await ArticlesService.getArticlePreviews()
-		state.articles = response?.data
+		state.articlesPreviews = response?.data?.articles
 	}
 
 	async function getArticle(articleId) {
@@ -44,7 +44,7 @@ export const useArticlesStore = defineStore('articles', () => {
 	async function getArticleComments(articleId) {
 		const response = await ArticlesService.getArticleComments(articleId, state.commentsOffset)
 
-		state.selectedArticleComments = response?.data
+		state.selectedArticleComments = response?.data?.comments
 
 		updateCommentsOffset(state.commentsOffset + state.selectedArticleComments.length)
 	}
@@ -59,14 +59,14 @@ export const useArticlesStore = defineStore('articles', () => {
 	}
 
 	async function createComment(comment) {
-		const response = await ArticlesService.createComment({'id': postId, 'body': comment})
+		const response = await ArticlesService.createComment({'id': postId, 'comment': comment})
 		state.selectedArticleComments.push(response?.data)
 
 		updateCommentsOffset(state.commentsOffset + 1)
 	}
 
 	async function createArticle(title, body, isFeatured) {
-		const response = await ArticlesService.createArticle({'body': body, 'title': title, 'featured': isFeatured})
+		const response = await ArticlesService.createArticle({'content': body, 'title': title, 'featured': isFeatured})
 
 		return response?.data
 	}

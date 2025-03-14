@@ -1,9 +1,8 @@
 import Axios from 'axios'
 import { API_URL } from './constants.js'
-import { useRouter } from 'vue-router'
+import router from '@/router/index.js'
 
 const baseURL = API_URL
-const router = useRouter()
 
 export default {
 	async GET(route, params, anonymous = false) {
@@ -105,7 +104,7 @@ function getAuthHeaders(isFormData = false) {
 		const signInError = new Error('Need to sign in first')
 		signInError.sessionError = true
 		signInError.skipUserMessage = true
-		router.push({ name: 'articles' })
+		router.push({ name: 'login' })
 		throw signInError
 	}
 

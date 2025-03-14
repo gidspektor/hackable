@@ -21,7 +21,6 @@
 import { ref } from 'vue'
 
 import { useArticlesStore } from '@articles/shared/articlesStore'
-import { useHackableStore } from '@/shared/hackableStore'
 import { useRouter } from 'vue-router'
 
 const articlesStore = useArticlesStore()

@@ -17,14 +17,14 @@ class ArticlesRepository(ArticlesRepositoryInterface):
         stmt = select(
             Articles.id,
             Articles.title,
-            func.substr(Articles.content, 1, 200).label("body")
+            func.substr(Articles.content, 1, 200).label("content")
         )
 
         result = await self._db.execute(stmt)
 
-        rows: list[Row] = result.fetchall()
+        rows = result.mappings().all()
 
-        return [{"id": row.id, "title": row.title, "content": row.content} for row in rows]
+        return rows
 
     async def get_article(self, article_id: int) -> dict|None:
         stmt = select(
@@ -40,9 +40,9 @@ class ArticlesRepository(ArticlesRepositoryInterface):
             title=title, content=content,
             featured=featured, author_id=user_id
         )
-        await self._db.add(new_article)
-        await self._db.commit()
-        await self._db.refresh(new_article)
+        self._db.add(new_article)
+        self._db.commit()
+        self._db.refresh(new_article)
 
         return new_article
 
