@@ -4,6 +4,17 @@ from typing import List
 from app.settings import settings
 
 
+class ArticlePreviewResponse(BaseModel):
+	"""
+	Response schema for an article preview.
+	"""
+
+	id: int
+	title: str
+	content: str
+	featured: bool
+
+
 class ArticleResponse(BaseModel):
 	"""
 	Response schema for an article.
@@ -12,14 +23,16 @@ class ArticleResponse(BaseModel):
 	id: int
 	title: str
 	content: str
+	featured: bool
+	username: str
 
 
-class ArticlesResponse(BaseModel):
+class ArticlesPreviewsResponse(BaseModel):
 	"""
 	Response schema for multiple articles.
 	"""
 
-	articles: List[ArticleResponse]
+	articles: List[ArticlePreviewResponse]
 
 
 class ArticleCreateRequest(BaseModel):
@@ -30,14 +43,6 @@ class ArticleCreateRequest(BaseModel):
 	title: str = Field(max_length=settings.title_max_length)
 	content: str = Field(max_length=settings.article_max_length)
 	featured: bool
-
-
-class ArticleGetRequest(BaseModel):
-	"""
-	Request schema for getting an article.
-	"""
-
-	article_id: int = Field(max_length=settings.article_max_length)
 
 
 class ArticleCommentResponse(BaseModel):
@@ -57,15 +62,6 @@ class ArticleCommentsResponse(BaseModel):
 	"""
 
 	comments: List[ArticleCommentResponse]
-
-
-class ArticleCommentGetRequest(BaseModel):
-	"""
-	Request schema for getting article comments.
-	"""
-
-	article_id: int = Field(max_length=settings.request_max_length)
-	offset: int = Field(max_length=settings.request_max_length)
 
 
 class ArticleCommentPostRequest(BaseModel):

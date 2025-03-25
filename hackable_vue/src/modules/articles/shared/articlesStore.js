@@ -1,10 +1,9 @@
 import { defineStore } from 'pinia'
 import ArticlesService from './articlesService.js'
-import { reactive, computed } from 'vue'
+import { reactive, toRefs, shallowRef } from 'vue'
 
 export const useArticlesStore = defineStore('articles', () => {
 	const state = reactive({
-		articlesPreviews: [],
 		selectedArticle: [],
 		selectedArticleComments: [],
 		userArticles: [],
@@ -13,13 +12,11 @@ export const useArticlesStore = defineStore('articles', () => {
 		commentsOffset: 0,
 	})
 
+	const articlesPreviews = shallowRef([])
+
 	return {
-		articlesPreviews: computed(() => state.articlesPreviews),
-		selectedArticle: computed(() => state.selectedArticle),
-		userArticles: computed(() => state.userArticles),
-		userComments: computed(() => state.userComments),
-		selectedArticleComments: computed(() => state.selectedArticleComments),
-		featuredArticles: computed(() => state.featuredArticles),
+		...toRefs(state),
+		articlesPreviews,
 		getArticlePreviews,
 		getArticle,
 		getArticleComments,
@@ -33,7 +30,7 @@ export const useArticlesStore = defineStore('articles', () => {
 
 	async function getArticlePreviews() {
 		const response = await ArticlesService.getArticlePreviews()
-		state.articlesPreviews = response?.data?.articles
+		articlesPreviews.value = response?.data?.articles
 	}
 
 	async function getArticle(articleId) {
@@ -55,7 +52,7 @@ export const useArticlesStore = defineStore('articles', () => {
 
 	async function getFeaturedArticles() {
 		const response = await ArticlesService.getFeaturedArticles()
-		state.featuredArticles = response.length = 3 ? response?.data : response?.data.slice(0, 3)
+		state.featuredArticles = response?.data?.length === 3 ? response?.data?.articles : response?.data?.articles.slice(0, 3)
 	}
 
 	async function createComment(comment) {

@@ -100,8 +100,17 @@ const openLoginModal = () => {
 }
 
 onMounted(async () => {
-	await getFeaturedArticles();
-	await getArticlePreviews();
+	try {
+		await getArticlePreviews();
+	} catch (error) {
+		console.error('Failed to fetch articles:', error);
+	}
+
+	try {
+		await getFeaturedArticles();
+	} catch (error) {
+		console.error('Failed to fetch featured articles:', error);
+	}
 });
 </script>
 

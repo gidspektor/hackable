@@ -7,7 +7,7 @@ class ArticlesService {
 	}
 
 	async getArticle(id) {
-		return await api.GET(`${BASE_ROUTE}/v1/article/${id}`, '', true)
+		return await api.GET(`${BASE_ROUTE}/v1/article/${id}/`, '', true)
 	}
 
 	async createArticle(params) {
@@ -19,19 +19,19 @@ class ArticlesService {
 	}
 
 	async getUserArticles() {
-		return await api.GET(`${BASE_ROUTE}/v1/user/articles`)
+		return await api.GET(`${BASE_ROUTE}/v1/user/articles/`)
 	}
 
 	async getUserCommentedOnArticles() {
-		return await api.GET(`${BASE_ROUTE}/v1/user/commented/articles`)
+		return await api.GET(`${BASE_ROUTE}/v1/user/commented/articles/`)
 	}
 
 	async getFeaturedArticles() {
-		return await api.GET(`${BASE_ROUTE}/v1/articles/featured`, '', true)
+		return await api.GET(`${BASE_ROUTE}/v1/articles/featured/`, '', true)
 	}
 
 	async getArticleComments(id, offset) {
-		return await api.GET(`${BASE_ROUTE}/v1/article/${id}/comments${offset}`)
+		return await api.GET(`${BASE_ROUTE}/v1/article/${id}/comments${offset}/`)
 	}
 }
 

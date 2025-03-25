@@ -6,6 +6,7 @@ from interfaces.driver_interfaces.db_driver_interface import DbDriverInterface
 from interfaces.repository_interfaces.articles_repository_interface import ArticlesRepositoryInterface
 
 from db.models.articles import Articles
+from db.models.users import Users
 
 
 class ArticlesRepository(ArticlesRepositoryInterface):
@@ -15,10 +16,10 @@ class ArticlesRepository(ArticlesRepositoryInterface):
 
     async def get_articles_previews(self) -> list[dict]:
         stmt = select(
-            Articles.id,
-            Articles.title,
-            func.substr(Articles.content, 1, 200).label("content")
-        )
+            Articles.id, Articles.title,
+            func.substr(Articles.content, 1, 200).label("content"),
+            Articles.featured, Articles.author_id
+        ).where(Articles.featured == False)
 
         result = await self._db.execute(stmt)
 
@@ -28,12 +29,14 @@ class ArticlesRepository(ArticlesRepositoryInterface):
 
     async def get_article(self, article_id: int) -> dict|None:
         stmt = select(
-            Articles.id, Articles.title, Articles.content
-        ).where(Articles.id == article_id)
+            Articles.id, Articles.title,
+            Articles.content, Articles.featured,
+            Articles.author_id, Users.username
+        ).join(Users, Articles.author_id == Users.id).where(Articles.id == article_id)
 
-        article = await self._db.execute(stmt).scalar_one_or_none()
+        article = await self._db.execute(stmt)
 
-        return article
+        return article.first()
 
     async def create_article(self, title: str, content: str, featured: bool, user_id: int) -> Articles:
         new_article = Articles(
@@ -60,14 +63,15 @@ class ArticlesRepository(ArticlesRepositoryInterface):
         stmt = select(
             Articles.id,
             Articles.title,
-            func.substr(Articles.content, 1, 200).label("body")
+            func.substr(Articles.content, 1, 200).label("content"),
+            Articles.featured
         ).where(Articles.featured == True).limit(self.featured_limit)
 
         result = await self._db.execute(stmt)
 
-        rows: list[Row] = result.fetchall()
+        rows = result.mappings().all()
 
-        return [dict(row) for row in rows]
+        return rows
 
     async def get_articles_by_user(self, user_id: int) -> list[dict]:
         stmt = select(

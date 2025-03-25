@@ -1,8 +1,8 @@
 <template>
 	<div class="post">
 		<h1 class="post-title" v-html="article.title"></h1>
-		<p class="post-content" v-html="article.body"></p>
-		<p class="post-user">{{ article.user }}</p>
+		<p class="post-content" v-html="article.content"></p>
+		<p class="post-user">{{ article.username }}</p>
 	</div>
 </template>
 
@@ -10,15 +10,8 @@
 defineProps<{
 	article: {
 		title: string
-		body: string
-		user: string
-		userId: number
-		comments: {
-			id: number
-			userId: number
-			user: string
-			body: string
-		}[]
+		content: string
+		username: string
 	}
 }>()
 

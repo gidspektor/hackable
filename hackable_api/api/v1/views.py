@@ -3,10 +3,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.settings import settings
 
 from api.v1.schemas import (
-    ArticlesResponse, ArticleResponse,
-    ArticleCreateRequest, ArticleCommentGetRequest,
-    ArticleCommentsResponse, ArticleCommentResponse,
-    ArticleGetRequest, ArticleCommentPostRequest,
+    ArticlesPreviewsResponse, ArticleResponse,
+    ArticleCreateRequest, ArticleCommentsResponse,
+    ArticleCommentResponse, ArticleCommentPostRequest,
     UsersArticlesResponse,
 )
 
@@ -20,15 +19,25 @@ from db.repositories.articles_comments_repository import ArticlesCommentsReposit
 
 router = APIRouter(prefix="/v1")
 
-@router.get("/article_previews/", response_model=ArticlesResponse)
-async def get_articles() -> ArticlesResponse:
+@router.get("/article_previews/", response_model=ArticlesPreviewsResponse)
+async def get_articles() -> ArticlesPreviewsResponse:
     """API endpoint to get all article previews"""
 
     async with DbDriver(settings.db_url).get_db_session() as session:
         article_repository = ArticlesRepository(session)
         articles = await ArticlesService(article_repository).get_articles_previews()
 
-    return ArticlesResponse(articles=articles)
+    return ArticlesPreviewsResponse(articles=articles)
+
+@router.get("/articles/featured/", response_model=ArticlesPreviewsResponse)
+async def get_featured_articles() -> ArticlesPreviewsResponse:
+    """API endpoint to get a featured article"""
+
+    async with DbDriver(settings.db_url).get_db_session() as session:
+        article_repository = ArticlesRepository(session)
+        articles = await ArticlesService(article_repository).get_featured_articles()
+
+    return ArticlesPreviewsResponse(articles=articles)
 
 # Open to be hit by anyone, should be checking the JWT token for the user
 # and then confirming if it's an admin user in the db.
@@ -45,30 +54,38 @@ async def create_article(article: ArticleCreateRequest, decoded_token: dict = De
         article_repository = ArticlesRepository(session)
         article = await ArticlesService(article_repository).create_article(
             article.title, article.content,
-            user_id, article.featured
+            article.featured, user_id
         )
 
-    return ArticleResponse(id=article.id, title=article.title, content=article.content)
+    return ArticleResponse(
+        id=article.id, title=article.title,
+        content=article.content, featured=article.featured,
+        username=article.username
+    )
 
 @router.get("/article/{article_id}/", response_model=ArticleResponse)
-async def get_article(article: ArticleGetRequest) -> ArticleResponse:
+async def get_article(article_id: int) -> ArticleResponse:
     """API endpoint to get a single article"""
 
     async with DbDriver(settings.db_url).get_db_session() as session:
         article_repository = ArticlesRepository(session)
-        article = await ArticlesService(article_repository).get_article(article.article_id)
+        article = await ArticlesService(article_repository).get_article(article_id)
 
-    return ArticleResponse(id=article.id, title=article.title, content=article.content)
+    return ArticleResponse(
+        id=article.id, title=article.title,
+        content=article.content, featured=article.featured,
+        username=article.username
+    )
 
 @router.get("/article/{article_id}/comments/{offset}/", response_model=ArticleCommentsResponse)
-async def get_article_comments(article_comment: ArticleCommentGetRequest) -> ArticleCommentsResponse:
+async def get_article_comments(article_id: int, offset: int) -> ArticleCommentsResponse:
     """API endpoint to get article comments"""
 
     async with DbDriver(settings.db_url).get_db_session() as session:
         article_comments_repository = ArticlesCommentsRepository(session)
         comments = await ArticlesCommentsService(
             article_comments_repository
-        ).get_article_comments(article_comment.article_id, article_comment.offset)
+        ).get_article_comments(article_id, offset)
 
     return ArticleCommentsResponse(comments=comments)
 
@@ -90,16 +107,6 @@ async def create_comment(article_comment: ArticleCommentPostRequest, decoded_tok
     return ArticleCommentResponse(
         id=comment.id, author_id=comment.author_id, article_id=comment.article_id, comment=comment.comment
     )
-
-@router.get("/articles/featured/", response_model=ArticlesResponse)
-async def get_featured_articles() -> ArticlesResponse:
-    """API endpoint to get a featured article"""
-
-    async with DbDriver(settings.db_url).get_db_session() as session:
-        article_repository = ArticlesRepository(session)
-        articles = await ArticlesService(article_repository).get_featured_articles()
-
-    return ArticlesResponse(articles=articles)
 
 @router.delete("/article/{article_id}", response_model=dict[str, str])
 async def delete_article(article: int) -> dict[str, str]:
