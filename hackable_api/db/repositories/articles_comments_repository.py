@@ -6,7 +6,6 @@ from interfaces.repository_interfaces.articles_comments_repository_interface imp
 
 from db.models.articles_comments import ArticlesComments
 from db.models.users import Users
-from db.models.articles import Articles
 
 
 class ArticlesCommentsRepository(ArticlesCommentsRepositoryInterface):
@@ -17,23 +16,30 @@ class ArticlesCommentsRepository(ArticlesCommentsRepositoryInterface):
     async def get_article_comments(self, article_id: int, offset: int) -> dict|None:
         stmt = select(
             ArticlesComments.id, ArticlesComments.article_id,
-            ArticlesComments.comment, ArticlesComments.author_id
-        ).where(ArticlesComments.article_id == article_id).offset(offset).limit(self.comment_limmit)
+            ArticlesComments.comment, ArticlesComments.author_id,
+            Users.username
+        ).join(
+            Users, ArticlesComments.author_id == Users.id
+        ).where(
+            ArticlesComments.article_id == article_id
+        ).order_by(
+            ArticlesComments.created_at.desc()
+        ).offset(offset).limit(self.comment_limmit)
 
-        article_comments: list[Row] = await self._db.execute(stmt).fetchall()
+        article_comments = await self._db.execute(stmt)
 
-        return [dict(article_comment) for article_comment in article_comments]
+        return article_comments.mappings().all()
 
-    async def create_article_comment(self, article_comment: str, author_id: Users, article_id: Articles) -> ArticlesComments:
+    async def create_article_comment(self, article_comment: str, author_id: int, article_id: int) -> ArticlesComments:
         new_comment = ArticlesComments(
-            article_id=article_id.id,
+            article_id=article_id,
             comment=article_comment,
-            author_id=author_id.id
+            author_id=author_id
         )
 
-        await self._db.add(new_comment)
-        await self._db.commit()
-        await self._db.refresh(new_comment)
+        self._db.add(new_comment)
+        self._db.commit()
+        self._db.refresh(new_comment)
 
         return new_comment
 
@@ -43,6 +49,6 @@ class ArticlesCommentsRepository(ArticlesCommentsRepositoryInterface):
             ArticlesComments.comment, ArticlesComments.author_id
         ).where(ArticlesComments.author_id == user_id)
 
-        comments: list[Row] = await self._db.execute(stmt).fetchall()
+        comments = await self._db.execute(stmt)
 
-        return [dict(comment) for comment in comments]
+        return comments.mappings().all()

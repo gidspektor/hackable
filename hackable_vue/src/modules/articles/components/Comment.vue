@@ -1,18 +1,17 @@
 <template>
 	<div class="comment">
-		<p class="comment-user">{{ comment.user }}</p>
-		<p>{{ comment.body }}</p>
+		<p class="comment-user">{{ comment.username }}</p>
+		<p>{{ comment.comment }}</p>
 	</div>
 </template>
 
 <script setup lang="ts">
 defineProps<{
-	comment: Array<{
+	comment: {
 		id: number
-		userId: number
-		user: string
-		body: string
-	}>
+		username: string
+		comment: string
+	}
 }>()
 </script>
 

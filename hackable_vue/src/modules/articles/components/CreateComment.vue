@@ -18,7 +18,7 @@ import { useHackableStore } from '@/shared/hackableStore'
 import { useArticlesStore } from '@articles/shared/articlesStore'
 import { ref, computed } from 'vue'
 
-defineProps<{
+const props = defineProps<{
 	articleId: number
 }>()
 

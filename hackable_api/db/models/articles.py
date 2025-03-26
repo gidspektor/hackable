@@ -1,5 +1,5 @@
-from sqlalchemy import Column, Integer, String, Boolean
-from sqlalchemy import ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey
+from sqlalchemy.sql import func
 
 from app.settings import settings
 
@@ -14,6 +14,7 @@ class Articles(Base):
     content = Column(String(settings.article_max_length), nullable=False)
     author_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     featured = Column(Boolean, default=False)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
 
     def __repr__(self):
         return f"<Article(title='{self.title}', id='{self.id}')>"

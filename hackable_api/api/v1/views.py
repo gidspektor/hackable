@@ -42,7 +42,10 @@ async def get_featured_articles() -> ArticlesPreviewsResponse:
 # Open to be hit by anyone, should be checking the JWT token for the user
 # and then confirming if it's an admin user in the db.
 @router.post("/article/", response_model=ArticleResponse)
-async def create_article(article: ArticleCreateRequest, decoded_token: dict = Depends(auth_exception_handler)) -> ArticleResponse:
+async def create_article(
+        article: ArticleCreateRequest,
+        decoded_token: dict = Depends(auth_exception_handler)
+    ) -> ArticleResponse:
     """API endpoint to create an article"""
 
     user_id: str = decoded_token.get("sub")
@@ -90,7 +93,10 @@ async def get_article_comments(article_id: int, offset: int) -> ArticleCommentsR
     return ArticleCommentsResponse(comments=comments)
 
 @router.post("/comment/", response_model=ArticleCommentResponse)
-async def create_comment(article_comment: ArticleCommentPostRequest, decoded_token: dict = Depends(auth_exception_handler)) -> ArticleCommentResponse:
+async def create_comment(
+        article_comment: ArticleCommentPostRequest,
+        decoded_token: dict = Depends(auth_exception_handler)
+    ) -> ArticleCommentResponse:
     """API endpoint to create a comment"""
 
     user_id: str = decoded_token.get("sub")
@@ -105,7 +111,8 @@ async def create_comment(article_comment: ArticleCommentPostRequest, decoded_tok
         ).create_article_comment(article_comment.comment, user_id, article_comment.article_id)
 
     return ArticleCommentResponse(
-        id=comment.id, author_id=comment.author_id, article_id=comment.article_id, comment=comment.comment
+        id=comment.id, username=comment.author_id.username,
+        article_id=comment.article_id, comment=comment.comment
     )
 
 @router.delete("/article/{article_id}", response_model=dict[str, str])

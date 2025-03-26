@@ -43,7 +43,7 @@ export const useArticlesStore = defineStore('articles', () => {
 
 		state.selectedArticleComments = response?.data?.comments
 
-		updateCommentsOffset(state.commentsOffset + state.selectedArticleComments.length)
+		updateCommentsOffset(state.selectedArticleComments.length)
 	}
 
 	function updateCommentsOffset(offset) {
@@ -55,9 +55,9 @@ export const useArticlesStore = defineStore('articles', () => {
 		state.featuredArticles = response?.data?.length === 3 ? response?.data?.articles : response?.data?.articles.slice(0, 3)
 	}
 
-	async function createComment(comment) {
-		const response = await ArticlesService.createComment({'id': postId, 'comment': comment})
-		state.selectedArticleComments.push(response?.data)
+	async function createComment(articleId, comment) {
+		const response = await ArticlesService.createComment({'article_id': articleId, 'comment': comment})
+		state.selectedArticleComments.push(response?.data?.comments)
 
 		updateCommentsOffset(state.commentsOffset + 1)
 	}

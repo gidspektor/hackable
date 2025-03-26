@@ -1,6 +1,6 @@
 <template>
 	<div v-if="isLoading">
-		<p class="green">Loading articles...</p>
+		<p class="green">Loading article...</p>
 	</div>
 	<div v-else class="posts-container">
 		<div class="post">
@@ -61,6 +61,7 @@ const getArticle = async () => {
 const getArticleComments = async () => {
 	isLoadingComments.value = true
 	articlesStore.updateCommentsOffset(0)
+
 	try {
 		await articlesStore.getArticleComments(articleId.value)
 	} catch (error) {

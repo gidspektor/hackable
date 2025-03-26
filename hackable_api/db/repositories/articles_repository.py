@@ -36,7 +36,7 @@ class ArticlesRepository(ArticlesRepositoryInterface):
 
         article = await self._db.execute(stmt)
 
-        return article.first()
+        return article.mappings().first()
 
     async def create_article(self, title: str, content: str, featured: bool, user_id: int) -> Articles:
         new_article = Articles(

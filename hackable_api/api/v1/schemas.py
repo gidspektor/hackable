@@ -51,7 +51,7 @@ class ArticleCommentResponse(BaseModel):
 	"""
 
 	id: int
-	author_id: int
+	username: str
 	article_id: int
 	comment: str
 
@@ -69,7 +69,7 @@ class ArticleCommentPostRequest(BaseModel):
 	Request schema for creating an article comment.
 	"""
 
-	article_id: int = Field(max_length=settings.request_max_length)
+	article_id: int
 	comment: str = Field(max_length=settings.comment_max_length)
 
 

@@ -7,7 +7,7 @@
 			<div v-else>
 				<div class="modal-header">
 					<div @click="closeModal" class="close-button">&times;</div>
-					<h5 class="modal-title">Log in or Sign up</h5>
+					<h5 class="modal-title">Login or Sign up</h5>
 				</div>
 				<div class="modal-content">
 					<template v-if="!signUpUser">
@@ -31,7 +31,7 @@
 								</div>
 								<div v-if="error" class="error-message">{{ error }}</div>
 							</div>
-							<button @click="login" class="action-button">Continue</button>
+							<button @click="login" class="action-button">Login</button>
 						</div>
 					</template>
 					<template v-else>
@@ -140,6 +140,19 @@ const validateForm = () => {
 		formValid.value = true
 	}
 }
+
+const handleKeyPress = (event: KeyboardEvent) => {
+	if (event.key === 'Enter') {
+		if (signUpUser.value) {
+			createAccount()
+		} else {
+			login()
+		}
+	}
+}
+
+document.addEventListener('keydown', handleKeyPress)
+
 </script>
 
 <style scoped>

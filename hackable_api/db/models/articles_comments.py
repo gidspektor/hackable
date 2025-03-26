@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
+from sqlalchemy.sql import func
 
 from app.settings import settings
 
@@ -12,3 +13,4 @@ class ArticlesComments(Base):
     article_id = Column(Integer, ForeignKey("articles.id"), nullable=False)
     comment = Column(String(settings.comment_max_length), nullable=False)
     author_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    created_at = Column(DateTime, server_default=func.now(), nullable=False)
