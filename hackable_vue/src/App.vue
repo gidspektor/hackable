@@ -5,7 +5,7 @@
 				<nav>
 					<RouterLink :to="{ name: 'home' }">Home</RouterLink>
 					<RouterLink :to="{ name: 'articles' }">Articles</RouterLink>
-					<RouterLink :to="{ name: 'walkthrough' }">Vulnerabilities Walkthrough</RouterLink>
+					<RouterLink :to="{ name: 'login' }">Login/Signup</RouterLink>
 				</nav>
 			</div>
 		</header>

@@ -7,7 +7,7 @@ class HackableService {
 	}
 
 	async createAccount(params) {
-		return await api.POST(`${BASE_ROUTE}/user`, params)
+		return await api.POST(`${BASE_ROUTE}/user`, params, true)
 	}
 
 	async getUserImageUrl() {

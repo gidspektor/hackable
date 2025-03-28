@@ -28,7 +28,7 @@ export default {
 				? {
 						'Content-Type': 'application/json',
 					}
-				: getAuthHeaders(false, true)),
+				: getAuthHeaders(false)),
 		}
 		return Axios.post(url, params, { headers }).catch(handleUnauthorized)
 	},

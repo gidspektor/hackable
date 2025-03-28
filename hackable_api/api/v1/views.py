@@ -11,11 +11,14 @@ from api.v1.schemas import (
 
 from api.dependencies import auth_exception_handler
 
-from db.db_driver import DbDriver
-from db.repositories.articles_repository import ArticlesRepository
+from services.users_service import UsersService
 from services.articles_service import ArticlesService
 from services.articles_comments_service import ArticlesCommentsService
+
+from db.db_driver import DbDriver
+from db.repositories.articles_repository import ArticlesRepository
 from db.repositories.articles_comments_repository import ArticlesCommentsRepository
+from db.repositories.users_repository import UsersRepository
 
 router = APIRouter(prefix="/v1")
 
@@ -110,8 +113,11 @@ async def create_comment(
             article_comments_repository
         ).create_article_comment(article_comment.comment, user_id, article_comment.article_id)
 
+        user_repository = UsersRepository(session)
+        username = await UsersService(user_repository).get_username(user_id)
+
     return ArticleCommentResponse(
-        id=comment.id, username=comment.author_id.username,
+        id=comment.id, username=username,
         article_id=comment.article_id, comment=comment.comment
     )
 

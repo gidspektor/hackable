@@ -1,5 +1,6 @@
 from sqlalchemy.future import select
-from sqlalchemy.engine import Row
+
+from datetime import datetime
 
 from interfaces.driver_interfaces.db_driver_interface import DbDriverInterface
 from interfaces.repository_interfaces.articles_comments_repository_interface import ArticlesCommentsRepositoryInterface
@@ -23,7 +24,7 @@ class ArticlesCommentsRepository(ArticlesCommentsRepositoryInterface):
         ).where(
             ArticlesComments.article_id == article_id
         ).order_by(
-            ArticlesComments.created_at.desc()
+            ArticlesComments.created_at.asc()
         ).offset(offset).limit(self.comment_limmit)
 
         article_comments = await self._db.execute(stmt)
@@ -32,14 +33,13 @@ class ArticlesCommentsRepository(ArticlesCommentsRepositoryInterface):
 
     async def create_article_comment(self, article_comment: str, author_id: int, article_id: int) -> ArticlesComments:
         new_comment = ArticlesComments(
-            article_id=article_id,
-            comment=article_comment,
-            author_id=author_id
+            article_id=article_id, comment=article_comment,
+            author_id=author_id, created_at=datetime.utcnow()
         )
 
         self._db.add(new_comment)
-        self._db.commit()
-        self._db.refresh(new_comment)
+        await self._db.commit()
+        await self._db.refresh(new_comment)
 
         return new_comment
 

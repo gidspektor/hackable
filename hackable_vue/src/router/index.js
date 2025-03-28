@@ -34,10 +34,10 @@ const router = createRouter({
 			meta: { requiresUser: true },
 		},
 		{
-			path: '/walkthrough',
-			name: 'walkthrough',
-			component: () => import('@/views/WalkthroughView.vue'),
-		},
+			path: '/login',
+			name: 'login',
+			component: () => import('@/views/LoginSignUpView.vue'),
+		}
 	],
 })
 

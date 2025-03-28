@@ -101,7 +101,7 @@ async def create_user(user_request: UserRequest, response: Response) -> UserLogi
 
     async with DbDriver(settings.db_url).get_db_session() as session:
         user_repository = UsersRepository(session)
-        user = await UsersService(user_repository).create_user(user_request.username, user_request.password)
+        user = await UsersService(user_repository).create_user(user_request.dict())
 
     if not user:
         raise HTTPException(status_code=400, detail="User not created")

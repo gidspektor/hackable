@@ -1,6 +1,7 @@
 from sqlalchemy import select, delete
 from sqlalchemy.sql import func
-from sqlalchemy.engine import Row
+
+from datetime import datetime
 
 from interfaces.driver_interfaces.db_driver_interface import DbDriverInterface
 from interfaces.repository_interfaces.articles_repository_interface import ArticlesRepositoryInterface
@@ -41,7 +42,8 @@ class ArticlesRepository(ArticlesRepositoryInterface):
     async def create_article(self, title: str, content: str, featured: bool, user_id: int) -> Articles:
         new_article = Articles(
             title=title, content=content,
-            featured=featured, author_id=user_id
+            featured=featured, author_id=user_id,
+            created_at=datetime.utcnow()
         )
         self._db.add(new_article)
         self._db.commit()
@@ -81,6 +83,6 @@ class ArticlesRepository(ArticlesRepositoryInterface):
 
         result = await self._db.execute(stmt)
 
-        rows: list[Row] = result.fetchall()
+        rows = result.mappings().all()
 
-        return [dict(row) for row in rows]
+        return rows

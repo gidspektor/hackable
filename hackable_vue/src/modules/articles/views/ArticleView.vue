@@ -31,7 +31,7 @@ import { useArticlesStore } from '@articles/shared/articlesStore'
 import Article from '@articles/components/Article.vue'
 import Comment from '@articles/components/Comment.vue'
 import CreateComment from '@articles/components/CreateComment.vue'
-import LoginSignupModal from '@articles/components/modals/LoginSignupModal.vue'
+import LoginSignupModal from '@/components/modals/LoginSignupModal.vue'
 
 const route = useRoute()
 const showModal = ref<boolean>(false)

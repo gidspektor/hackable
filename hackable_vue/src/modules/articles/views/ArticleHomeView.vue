@@ -14,13 +14,6 @@
 				My Account
 			</router-link>
 		</p>
-		<p v-else class="sidebar-link" @click="openLoginModal">
-			<router-link
-				to="#"
-			>
-				Login/Sign Up
-			</router-link>
-		</p>
 	</nav>
 
 	<main class="main-content">
@@ -52,11 +45,6 @@
 			<router-view></router-view>
 		</div>
 	</main>
-	<div class="overlay" v-show="showModal">
-		<transition name="fade">
-			<LoginSignupModal id="modal" class="myModal" v-show="showModal" @close="showModal = false" />
-		</transition>
-	</div>
 </template>
 
 <script setup lang="ts">
@@ -65,7 +53,6 @@ import { ref, onMounted, computed } from 'vue';
 import { useArticlesStore } from '@articles/shared/articlesStore';
 import { useHackableStore } from '@/shared/hackableStore'
 import ArticlePreview from '@articles/components/ArticlePreview.vue';
-import LoginSignupModal from '@articles/components/modals/LoginSignupModal.vue'
 
 const hackableStore = useHackableStore()
 const articlesStore = useArticlesStore();
@@ -74,7 +61,6 @@ const user = computed(() => hackableStore.user)
 const articlesPreviews = computed(() => articlesStore.articlesPreviews);
 const featuredArticles = computed(() => articlesStore.featuredArticles);
 const isLoading = ref<boolean>(false);
-const showModal = ref<boolean>(false)
 
 const getArticlePreviews = async () => {
 	isLoading.value = true;
@@ -95,10 +81,6 @@ const getFeaturedArticles = async () => {
 	}
 };
 
-const openLoginModal = () => {
-	showModal.value = true
-}
-
 onMounted(async () => {
 	try {
 		await getArticlePreviews();
@@ -115,26 +97,6 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.overlay {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100vw;
-	height: 100vh;
-	background-color: rgba(128, 128, 128, 0.5);
-}
-
-.myModal {
-	z-index: 1000;
-	position: fixed;
-	top: 40%;
-	left: 50%;
-	width: 30em;
-	height: 18em;
-	margin-top: -9em;
-	margin-left: -15em;
-}
-
 nav a {
 	display: inline-block;
 	padding: 0 1rem;

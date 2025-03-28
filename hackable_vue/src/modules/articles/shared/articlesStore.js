@@ -1,10 +1,9 @@
 import { defineStore } from 'pinia'
 import ArticlesService from './articlesService.js'
-import { reactive, toRefs, shallowRef } from 'vue'
+import { reactive, toRefs, ref } from 'vue'
 
 export const useArticlesStore = defineStore('articles', () => {
 	const state = reactive({
-		selectedArticle: [],
 		selectedArticleComments: [],
 		userArticles: [],
 		userComments: [],
@@ -12,11 +11,13 @@ export const useArticlesStore = defineStore('articles', () => {
 		commentsOffset: 0,
 	})
 
-	const articlesPreviews = shallowRef([])
+	const articlesPreviews = ref([])
+	const selectedArticle = ref([])
 
 	return {
 		...toRefs(state),
 		articlesPreviews,
+		selectedArticle,
 		getArticlePreviews,
 		getArticle,
 		getArticleComments,
@@ -35,7 +36,7 @@ export const useArticlesStore = defineStore('articles', () => {
 
 	async function getArticle(articleId) {
 		const response = await ArticlesService.getArticle(articleId)
-		state.selectedArticle = response?.data
+		selectedArticle.value = response?.data
 	}
 
 	async function getArticleComments(articleId) {
@@ -57,7 +58,7 @@ export const useArticlesStore = defineStore('articles', () => {
 
 	async function createComment(articleId, comment) {
 		const response = await ArticlesService.createComment({'article_id': articleId, 'comment': comment})
-		state.selectedArticleComments.push(response?.data?.comments)
+		state.selectedArticleComments.push(response?.data)
 
 		updateCommentsOffset(state.commentsOffset + 1)
 	}
