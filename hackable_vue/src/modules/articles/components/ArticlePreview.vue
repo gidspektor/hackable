@@ -1,14 +1,14 @@
 <template>
 	<div class="card-container">
 		<h1 class="card-title">{{ title }}</h1>
-		<p class="card-body">{{ content }}</p>
+		<p v-if="content" class="card-body">{{ content }}</p>
 	</div>
 </template>
 
 <script setup lang="ts">
 defineProps<{
 	title: string
-	content: string
+	content?: string
 }>()
 </script>
 

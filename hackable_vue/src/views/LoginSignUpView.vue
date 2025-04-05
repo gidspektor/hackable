@@ -68,6 +68,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useHackableStore } from '@/shared/hackableStore'
+import router from '@/router/index.js'
 
 const hackableStore = useHackableStore()
 
@@ -85,16 +86,13 @@ const passwordNotMatchError = ref<string>('')
 
 const emit = defineEmits(['close'])
 
-const closeModal = () => {
-	emit('close')
-}
 const login = async () => {
 	let response = await hackableStore.login(username.value, password.value)
-	console.log(response)
+
 	if (response.status !== 200) {
 		error.value = response.error
 	} else {
-		emit('close')
+		router.push({name: 'articles'})
 	}
 }
 const signUp = () => {
@@ -116,7 +114,7 @@ const createAccount = async () => {
 		if (response.error) {
 			error.value = response.error
 		} else {
-			emit('close')
+			router.push({name: 'articles'})
 		}
 	}
 }

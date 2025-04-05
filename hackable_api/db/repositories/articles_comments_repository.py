@@ -1,4 +1,5 @@
 from sqlalchemy.future import select
+from sqlalchemy.sql import func
 
 from datetime import datetime
 
@@ -46,7 +47,7 @@ class ArticlesCommentsRepository(ArticlesCommentsRepositoryInterface):
     async def get_comments_by_user(self, user_id: int) -> dict|None:
         stmt = select(
             ArticlesComments.id, ArticlesComments.article_id,
-            ArticlesComments.comment, ArticlesComments.author_id
+            func.substr(ArticlesComments.comment, 1, 100).label("comment")
         ).where(ArticlesComments.author_id == user_id)
 
         comments = await self._db.execute(stmt)

@@ -45,6 +45,24 @@ class ArticleCreateRequest(BaseModel):
 	featured: bool
 
 
+class UserArticleCommentResponse(BaseModel):
+	"""
+	Response schema for a user comment.
+	"""
+
+	id: int
+	comment: str
+	article_id: int
+
+
+class UserArticleCommentsResponse(BaseModel):
+	"""
+	Response schema for multiple user comments.
+	"""
+
+	comments: List[UserArticleCommentResponse]
+
+
 class ArticleCommentResponse(BaseModel):
 	"""
 	Response schema for an article comment.

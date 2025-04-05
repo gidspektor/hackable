@@ -6,7 +6,7 @@ from api.v1.schemas import (
     ArticlesPreviewsResponse, ArticleResponse,
     ArticleCreateRequest, ArticleCommentsResponse,
     ArticleCommentResponse, ArticleCommentPostRequest,
-    UsersArticlesResponse,
+    UsersArticlesResponse, UserArticleCommentsResponse,
 )
 
 from api.dependencies import auth_exception_handler
@@ -151,9 +151,9 @@ async def get_user_articles(decoded_token: dict = Depends(auth_exception_handler
 
     return UsersArticlesResponse(articles=articles)
 
-@router.get("/user/commented/articles/", response_model=ArticleCommentsResponse)
-async def get_user_comments(decoded_token: dict = Depends(auth_exception_handler)) -> ArticleCommentsResponse:
-    """API endpoint to get all comments for a user"""
+@router.get("/user/comments/", response_model=UserArticleCommentsResponse)
+async def get_user_comments(decoded_token: dict = Depends(auth_exception_handler)) -> UserArticleCommentsResponse:
+    """API endpoint to get all comments by a user"""
 
     user_id: str = decoded_token.get("sub")
 
@@ -166,4 +166,4 @@ async def get_user_comments(decoded_token: dict = Depends(auth_exception_handler
             article_comments_repository
         ).get_comments_by_user(user_id)
 
-    return ArticleCommentsResponse(comments=comments)
+    return UserArticleCommentsResponse(comments=comments)

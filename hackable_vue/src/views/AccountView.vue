@@ -17,16 +17,16 @@
 		</form>
 	</div>
 	<div class="section">
-		<h6>Full Name</h6>
+		<h6>Username</h6>
 		<div class="col-sm-9 text-secondary">
-			{{ user.first_name }} {{ user.last_name }}
+			{{ user.username }}
 		</div>
 	</div>
 
 	<div class="section">
-		<h6 class="mb-0">Email</h6>
+		<h6 class="mb-0">Admin user</h6>
 		<div class="col-4 text-secondary">
-			{{ user.email }}
+			{{ user.is_admin }}
 		</div>
 	</div>
 
@@ -56,16 +56,16 @@
 
 		<div class="router-section">
 			<i>
-				Articles You've Commented On
+				Your comments
 			</i>
 			<div>
 				<router-link
-					v-for="userComments in userComments"
-					:key="userComments.id"
-					:to="{ name: 'article', params: { id: userComments.article_id } }"
+					v-for="userComment in userComments"
+					:key="userComment.id"
+					:to="{ name: 'article', params: { id: userComment.article_id } }"
 					class="post-item"
 				>
-					{{ userComments.title }}
+					{{ userComment.comment }}
 				</router-link>
 			</div>
 		</div>

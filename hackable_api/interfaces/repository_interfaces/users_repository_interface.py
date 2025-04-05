@@ -22,3 +22,7 @@ class UsersRepositoryInterface(ABC):
     @abstractmethod
     def get_username(self, user_id: int) -> str:
         raise NotImplementedError("This method should be overridden by subclasses")
+
+    @abstractmethod
+    def get_user_image_url(self, user_id: int) -> str:
+        raise NotImplementedError("This method should be overridden by subclasses")

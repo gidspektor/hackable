@@ -55,8 +55,7 @@ router.beforeEach((to, from, next) => {
 	} else if (to.meta.requiresUser) {
 		const hackableStore = useHackableStore()
 
-		if (!hackableStore.user) {
-			alert('You must be logged in to access this page!');
+		if (!hackableStore.getJwtToken()) {
 			return next('/');
 		}
 	}

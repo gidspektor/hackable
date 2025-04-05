@@ -24,7 +24,7 @@ export const useArticlesStore = defineStore('articles', () => {
 		createComment,
 		createArticle,
 		getUserArticles,
-		getUserCommentedOnArticles,
+		getUserComments,
 		getFeaturedArticles,
 		updateCommentsOffset,
 	}
@@ -71,12 +71,12 @@ export const useArticlesStore = defineStore('articles', () => {
 
 	async function getUserArticles() {
 		const response = await ArticlesService.getUserArticles()
-		state.userArticles = response?.data
+		state.userArticles = response?.data?.articles
 	}
 
-	async function getUserCommentedOnArticles() {
-		const response = await ArticlesService.getUserCommentedOnArticles()
-		state.userComments = response?.data
+	async function getUserComments() {
+		const response = await ArticlesService.getUserComments()
+		state.userComments = response?.data?.comments
 	}
 },
 	{

@@ -1,36 +1,36 @@
 import { defineStore } from 'pinia'
-import { reactive, computed } from 'vue'
+import { ref } from 'vue'
 import HackableService from './hackableService.js'
-import { jwtDecode } from 'jwt-decode'
 import { API_URL } from '@/shared/constants.js'
 
 export const useHackableStore = defineStore('hackable', () => {
-	const state = reactive({
-		user: null,
-		userImageUrl: null,
-	})
+	const user = ref([])
+	const userImageUrl = ref(null)
+	const jwt = ref('')
 
 	return {
-		user: computed(() => state.user),
-		userImageUrl: computed(() => state.userImageUrl),
+		jwt,
+		user,
+		userImageUrl,
 		login,
 		createAccount,
 		getUserImage,
 		uploadUserImage,
-		inspectToken,
 		getUser,
-		refreshToken
+		refreshToken,
+		getJwtToken,
+		removeJwtToken,
 	}
 
 	async function login(username, password) {
 		const response = await HackableService.login({'username': username, 'password': password})
 
 		if (response.status === 200) {
-			state.user = response.data
-			localStorage.setItem('t', state.user.jwt)
+			user.value = response.data
+			jwt.value = user.value.jwt
 
 			// Broken access control
-			document.cookie = `is_admin=${state.user.is_admin}; path=/;`
+			document.cookie = `is_admin=${user.value.is_admin}; path=/;`
 		}
 
 		return response
@@ -38,7 +38,7 @@ export const useHackableStore = defineStore('hackable', () => {
 
 	async function getUser() {
 		const response = await HackableService.getUserInfo()
-		state.user = response.data
+		user.value = response?.data
 	}
 
 	async function createAccount(username, password, passwordRepeat) {
@@ -50,11 +50,8 @@ export const useHackableStore = defineStore('hackable', () => {
 		)
 
 		if (response.status === 200) {
-			state.user = response.data
-			localStorage.setItem('t', state.user.jwt)
-
-			// Broken access control
-			document.cookie = `is_admin=${state.user.is_admin}; path=/;`
+			user.value = response?.data
+			jwt.value = user.value.jwt
 		}
 
 		return response
@@ -62,46 +59,27 @@ export const useHackableStore = defineStore('hackable', () => {
 
 	async function getUserImage() {
 		const response = HackableService.getUserImageUrl()
-		state.userImageUrl = API_URL + response.data
+		userImageUrl.value = response?.data?.image_path ? API_URL + response?.data?.image_path : null
 	}
 
 	async function uploadUserImage(image) {
-		const response = await HackableService.uploadUserImage(image)
-		state.userImageUrl = API_URL + response.data
+		const response = await HackableService.uploadUserImage({image})
+		userImageUrl.value = API_URL + response?.data?.image_path
 		return response
 	}
 
 	async function refreshToken() {
 		const response = await HackableService.refreshToken()
-		localStorage.setItem('t', response.data.jwt)
+		jwt.value = response?.data?.jwt
 		return response
 	}
 
-	function inspectToken () {
-		let state = ''
-	  
-		if (localStorage.getItem('t')) {
-		  const decoded = jwtDecode(localStorage.getItem('t'))
-	  
-		  const exp = parseFloat(decoded.exp)
-		  let iat = null
-	  
-		  if (Object.keys(decoded).includes('orig_at')) {
-			iat = parseFloat(decoded.orig_iat)
-		  } else {
-			iat = parseFloat(decoded.iat)
-		  }
-	  
-		  if (exp - (Date.now() / 1000) < 1800 && (Date.now() / 1000) - iat > 86400) {
-			state = 'refresh'
-		  } else if (exp - (Date.now() / 1000) < 3600 && exp - (Date.now() / 1000) > 0) {
-			state = 'active'
-		  } else {
-			state = 'expired'
-		  }
-		}
-	  
-		return state
+	function getJwtToken() {
+		return jwt.value
+	}
+
+	function removeJwtToken() {
+		jwt.value = ''
 	}
 },
 	{

@@ -1,21 +1,4 @@
 <template>
-	<nav>
-		<p v-if="user" class="sidebar-link">
-			<router-link
-				:to="{ name: 'create-article' }"
-			>
-				Create Article
-			</router-link>
-		</p>
-		<p v-if="user" class="sidebar-link" @click="">
-			<router-link
-				:to="{ name: 'account' }"
-			>
-				My Account
-			</router-link>
-		</p>
-	</nav>
-
 	<main class="main-content">
 		<p>Featured</p>
 		<div class="top-boxes">
@@ -57,7 +40,6 @@ import ArticlePreview from '@articles/components/ArticlePreview.vue';
 const hackableStore = useHackableStore()
 const articlesStore = useArticlesStore();
 
-const user = computed(() => hackableStore.user)
 const articlesPreviews = computed(() => articlesStore.articlesPreviews);
 const featuredArticles = computed(() => articlesStore.featuredArticles);
 const isLoading = ref<boolean>(false);
@@ -97,44 +79,6 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-nav a {
-	display: inline-block;
-	padding: 0 1rem;
-	border-left: 1px solid var(--color-border, #ddd);
-}
-
-nav a:first-of-type {
-	border: none;
-}
-
-nav {
-	width: 100%;
-	background-color: none;
-	display: flex;
-	position: fixed;
-	top: 7%;
-	left: 40%;
-}
-
-.sidebar-link {
-	text-decoration: none;
-	color: green;
-	font-size: 1.2rem;
-	font-weight: bold;
-	margin-bottom: 1rem;
-}
-
-.sidebar-link:hover {
-	background: none;
-	cursor: pointer;
-}
-
-.main-content {
-	flex: 1;
-	padding: 1rem;
-	overflow-y: auto;
-}
-
 .loading {
 	width: 100%;
 	padding: 1rem;

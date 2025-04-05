@@ -51,3 +51,9 @@ class UsersRepository(UsersRepositoryInterface):
         result = await self._db.execute(stmt)
 
         return result.scalar_one_or_none()
+    
+    async def get_user_image_url(self, user_id: int) -> str:
+        stmt = select(Users.image_name).where(Users.id == user_id)
+        result = await self._db.execute(stmt)
+
+        return result.scalar_one_or_none()

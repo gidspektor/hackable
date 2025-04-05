@@ -19,5 +19,6 @@ class AuthService:
         try:
             payload = jwt.decode(token, settings.jwt_secret_key, algorithms=[settings.jwt_algorithm])
             return payload
-        except JWTError:
+        except JWTError as e:
+            print(e)
             return None

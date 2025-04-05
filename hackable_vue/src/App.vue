@@ -5,7 +5,9 @@
 				<nav>
 					<RouterLink :to="{ name: 'home' }">Home</RouterLink>
 					<RouterLink :to="{ name: 'articles' }">Articles</RouterLink>
-					<RouterLink :to="{ name: 'login' }">Login/Signup</RouterLink>
+					<RouterLink v-if="!user" :to="{ name: 'login' }">Login/Signup</RouterLink>
+					<RouterLink v-if="user" :to="{ name: 'account' }">My Account</RouterLink>
+					<RouterLink v-if="user" :to="{ name: 'create-article' }">Create Article</RouterLink>
 				</nav>
 			</div>
 		</header>
@@ -17,33 +19,19 @@
 
 <script setup lang="ts">
 import { useHackableStore } from '@/shared/hackableStore'
-import { onMounted } from 'vue'
-import { RouterLink, RouterView, useRouter } from 'vue-router'
+import { onMounted, computed } from 'vue'
+import { RouterLink, RouterView } from 'vue-router'
 
 const hackableStore = useHackableStore()
-const router = useRouter();
+
+const user = computed(() => hackableStore.user)
 
 onMounted(async () => {
-	let tokenState = hackableStore.inspectToken()
-
-	if (tokenState === 'active') {
-		await hackableStore.getUser().catch((error: unknown) => {
-			localStorage.removeItem('t')
-			console.log(error)
-			router.push({ name: 'login' })
-		})
-	}
-
-	if (tokenState === 'refresh') {
-		await hackableStore.refreshToken().catch((error: unknown) => {
-			localStorage.removeItem('t')
-			console.log(error)
-			router.push({ name: 'login' })
-		})
-	}
-
-	if (tokenState === 'expired') {
-		router.push({ name: 'login' })
+	try {
+		await hackableStore.refreshToken()
+		await hackableStore.getUser()
+	} catch (error) {
+		console.error('Failed to get user data:', error)
 	}
 })
 </script>

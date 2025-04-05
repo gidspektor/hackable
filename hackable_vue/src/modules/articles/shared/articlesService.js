@@ -22,8 +22,8 @@ class ArticlesService {
 		return await api.GET(`${BASE_ROUTE}/v1/user/articles/`)
 	}
 
-	async getUserCommentedOnArticles() {
-		return await api.GET(`${BASE_ROUTE}/v1/user/commented/articles/`)
+	async getUserComments() {
+		return await api.GET(`${BASE_ROUTE}/v1/user/comments/`)
 	}
 
 	async getFeaturedArticles() {

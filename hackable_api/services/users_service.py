@@ -1,10 +1,9 @@
 import bcrypt
 
 from interfaces.repository_interfaces.users_repository_interface import UsersRepositoryInterface
-from interfaces.service_interfaces.users_service_interface import UsersServiceInterface
 
 
-class UsersService(UsersServiceInterface):
+class UsersService:
     def __init__(self, users_repository: UsersRepositoryInterface):
         self._users_repository = users_repository
 
@@ -19,7 +18,7 @@ class UsersService(UsersServiceInterface):
     async def login(self, username: str, password: str) -> dict:
         user = await self._users_repository.get_user_by_username(username)
 
-        if user and bcrypt.checkpw(password.encode("utf-8"), user.password_hash):
+        if user and bcrypt.checkpw(password.encode("utf-8"), user.password_hash.encode("utf-8")):
             return user
 
     async def upload_image_name(self, image_name: str, user_id: int) -> str:
@@ -27,3 +26,6 @@ class UsersService(UsersServiceInterface):
 
     async def get_username(self, user_id: int) -> str:
         return await self._users_repository.get_username(user_id)
+
+    async def get_user_image_url(self, user_id: int) -> str:
+        return await self._users_repository.get_user_image_url(user_id)

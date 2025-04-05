@@ -1,6 +1,7 @@
 import Axios from 'axios'
 import { API_URL } from './constants.js'
 import router from '@/router/index.js'
+import { useHackableStore } from '@/shared/hackableStore.js'
 
 const baseURL = API_URL
 
@@ -30,7 +31,7 @@ export default {
 					}
 				: getAuthHeaders(false)),
 		}
-		return Axios.post(url, params, { headers }).catch(handleUnauthorized)
+		return Axios.post(url, params, { headers, withCredentials: true }).catch(handleUnauthorized)
 	},
 
 	async PUT(route, params, anonymous = false) {
@@ -97,7 +98,8 @@ function cleanParams(params) {
 }
 
 function getAuthHeaders(isFormData = false) {
-	const jwt = localStorage.getItem('t')
+	const hackableStore = useHackableStore()
+	const jwt = hackableStore.getJwtToken()
 
 	if (!jwt) {
 		// Prevent requests if there isn't even session data
@@ -120,15 +122,17 @@ function getAuthHeaders(isFormData = false) {
 }
 
 async function handleUnauthorized(error) {
-	if (localStorage.getItem('t') && error.response?.status === 401) {
-        localStorage.removeItem('t')
+	const hackableStore = useHackableStore()
+
+	if (hackableStore.getJwtToken() && error.response?.status === 401) {
+        hackableStore.removeJwtToken()
 
         try {
             const response = await hackableStore.refreshToken()
             if (!response) throw new Error("Token refresh failed")
 
             const config = error.config
-            config.headers['Authorization'] = `Bearer ${localStorage.getItem('t')}`
+            config.headers['Authorization'] = `Bearer ${hackableStore.getJwtToken()}`
 
             return Axios.request(config)
         } catch (error) {
