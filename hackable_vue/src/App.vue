@@ -5,9 +5,9 @@
 				<nav>
 					<RouterLink :to="{ name: 'home' }">Home</RouterLink>
 					<RouterLink :to="{ name: 'articles' }">Articles</RouterLink>
-					<RouterLink v-if="!user" :to="{ name: 'login' }">Login/Signup</RouterLink>
-					<RouterLink v-if="user" :to="{ name: 'account' }">My Account</RouterLink>
-					<RouterLink v-if="user" :to="{ name: 'create-article' }">Create Article</RouterLink>
+					<RouterLink v-if="Object.keys(user).length == 0" :to="{ name: 'login' }">Login/Signup</RouterLink>
+					<RouterLink v-if="Object.keys(user).length > 0" :to="{ name: 'account' }">My Account</RouterLink>
+					<RouterLink v-if="Object.keys(user).length > 0" :to="{ name: 'create-article' }">Create Article</RouterLink>
 				</nav>
 			</div>
 		</header>

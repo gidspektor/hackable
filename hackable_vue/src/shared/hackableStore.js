@@ -4,7 +4,7 @@ import HackableService from './hackableService.js'
 import { API_URL } from '@/shared/constants.js'
 
 export const useHackableStore = defineStore('hackable', () => {
-	const user = ref([])
+	const user = ref({})
 	const userImageUrl = ref(null)
 	const jwt = ref('')
 
@@ -58,13 +58,15 @@ export const useHackableStore = defineStore('hackable', () => {
 	}
 
 	async function getUserImage() {
-		const response = HackableService.getUserImageUrl()
-		userImageUrl.value = response?.data?.image_path ? API_URL + response?.data?.image_path : null
+		const response = await HackableService.getUserImageUrl()
+		userImageUrl.value = response?.data?.image_path ? API_URL + '/' + response?.data?.image_path : null
+
+		return response
 	}
 
 	async function uploadUserImage(image) {
 		const response = await HackableService.uploadUserImage({image})
-		userImageUrl.value = API_URL + response?.data?.image_path
+		userImageUrl.value = response?.data?.image_path ? API_URL + '/' + response?.data?.image_path : null
 		return response
 	}
 

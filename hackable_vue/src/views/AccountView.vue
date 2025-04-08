@@ -158,6 +158,7 @@ onMounted(async () => {
 
 img {
 	border-radius: 20px;
+	height: 100px;
 }
 
 .image-not-uploaded {

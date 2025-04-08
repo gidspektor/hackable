@@ -41,7 +41,7 @@ class Settings(BaseSettings):
 
     allowed_origins: list = os.environ.get("ALLOWED_HOSTS", ["http://localhost:5173"])
     allowed_headers: list = os.environ.get("ALLOWED_HEADERS", ["Authorization", "Content-Type", "Set-Cookie"])
-    allowed_methods: list = os.environ.get("ALLOWED_METHODS", ["GET", "POST", "PUT", "DELETE", "OPTIONS"])
+    allowed_methods: list = os.environ.get("ALLOWED_METHODS", ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"])
 
     title_max_length: int = os.environ.get("TITLE_MAX_LENGTH", 500)
     article_max_length: int = os.environ.get("ARTICLE_MAX_LENGTH", 5000)

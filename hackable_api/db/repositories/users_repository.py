@@ -41,9 +41,6 @@ class UsersRepository(UsersRepositoryInterface):
         result = await self._db.execute(stmt)
         await self._db.commit()
 
-        if result.rowcount == 0:
-            return False
-        
         return result
 
     async def get_username(self, user_id: int) -> str:
@@ -57,3 +54,10 @@ class UsersRepository(UsersRepositoryInterface):
         result = await self._db.execute(stmt)
 
         return result.scalar_one_or_none()
+
+    async def change_password(self, new_password: str, user_id: int) -> Users:
+        stmt = update(Users).where(Users.id == user_id).values(password_hash=new_password)
+        result = await self._db.execute(stmt)
+        await self._db.commit()
+
+        return result

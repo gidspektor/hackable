@@ -143,3 +143,17 @@ async function handleUnauthorized(error) {
 
 	return Promise.reject(error)
 }
+
+function prepareFormData(params) {
+	const formData = new FormData()
+	let isFormData = false
+
+	Object.keys(params).forEach(key => {
+	  if (params[key] instanceof File) {
+		formData.append(key, params[key])
+		isFormData = true
+	  }
+	})
+
+	return [formData, isFormData]
+  }

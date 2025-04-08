@@ -39,3 +39,13 @@ class UserLoginResponse(BaseModel):
     username: str
     is_admin: bool
     jwt: str
+
+
+class passwordChangeRequest(BaseModel):
+    """
+    Request schema for changing a password.
+    """
+
+    old_password: str = Field(max_length=settings.request_max_length, min_length=settings.password_min_length)
+    new_password: str = Field(max_length=settings.request_max_length, min_length=settings.password_min_length)
+    new_password_match: str = Field(max_length=settings.request_max_length, min_length=settings.password_min_length)

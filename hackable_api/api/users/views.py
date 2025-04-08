@@ -1,4 +1,5 @@
 import os
+import shutil
 
 from fastapi import (
     APIRouter, HTTPException,
@@ -11,7 +12,8 @@ from app.settings import settings
 
 from api.users.schemas import (
     UserRequest, UserResponse,
-    TokenResponse, UserLoginResponse
+    TokenResponse, UserLoginResponse,
+    passwordChangeRequest,
 )
 
 from api.dependencies import auth_exception_handler
@@ -129,11 +131,11 @@ async def logout(response: Response) -> dict[str, str]:
 
     return response
 
-@router.post("/upload/image/", response_model=dict[str, str])
+@router.patch("/upload/image/", response_model=dict)
 async def upload_image(
         decoded_token: dict = Depends(auth_exception_handler),
         image: UploadFile = File(...)
-    ) -> dict[str, str]:
+    ) -> dict:
     """
     Uploads a user image image.
 
@@ -147,27 +149,36 @@ async def upload_image(
 
     if not image:
         raise HTTPException(status_code=400, detail="Image missing")
+    
+    image_name = image.filename.replace(" ", "_")
 
     async with DbDriver(settings.db_url).get_db_session() as session:
         user_repository = UsersRepository(session)
-        image_path = await UsersService(user_repository).upload_image_name(image.filename, user_id)
+        image_path = await UsersService(user_repository).upload_image_name(image_name, user_id)
 
     if not image_path:
         raise HTTPException(status_code=400, detail="Could not save image")
 
-    file_location = os.path.join(f"static/upload/{user_id}/", image.filename)
-
+    # 🚨 Insecure file handling
     # Insecure reverse shell exploit,
     # needs checks for the file type and also the file size.
     # User input name shouldn't be used.
     # Also the file should be saved in a non public location.
+    file_location = os.path.join(f"static/upload/{user_id}/", image_name)
+    directory = os.path.dirname(f"static/upload/{user_id}/")
+
+    if os.path.exists(directory):
+        shutil.rmtree(directory)
+
+    os.makedirs(directory)
+
     with open(file_location, "wb") as f:
         f.write(await image.read())
 
-    return {"image_path": image_path}
+    return {"image_path": file_location}
 
-@router.get("/user/image/", response_model=dict[str, str])
-async def get_image(decoded_token: dict = Depends(auth_exception_handler)) -> dict[str, str]:
+@router.get("/user/image/", response_model=dict)
+async def get_image(decoded_token: dict = Depends(auth_exception_handler)) -> dict:
     """
     Gets the user image.
     """
@@ -181,14 +192,35 @@ async def get_image(decoded_token: dict = Depends(auth_exception_handler)) -> di
         user_repository = UsersRepository(session)
         image_url = await UsersService(user_repository).get_user_image_url(user_id)
 
-    if not image_url:
-        raise HTTPException(status_code=404, detail="Not found")
-
-    file_location = os.path.join(f"static/upload{user_id}/", image_url) \
-        if image_url \
-        else ''
+    file_location = os.path.join(f"static/upload/{user_id}/", image_url)
 
     if not os.path.exists(file_location):
         raise HTTPException(status_code=404, detail="Image not found")
 
     return {"image_path": file_location}
+
+@router.patch("/user/password/", response_model=dict)
+async def change_password(
+        password_change_request: passwordChangeRequest,
+        decoded_token: dict = Depends(auth_exception_handler)
+    ) -> dict:
+    """
+    Changes the user password.
+    """
+
+    user_id: str = decoded_token.get("sub")
+
+    if not user_id.isalnum():
+        raise HTTPException(status_code=400, detail="Invalid user ID")
+
+    async with DbDriver(settings.db_url).get_db_session() as session:
+        user_repository = UsersRepository(session)
+        result = await UsersService(user_repository).change_password(
+            password_change_request.new_password, password_change_request.new_password_match,
+            password_change_request.old_password, user_id
+        )
+
+    if not result:
+        raise HTTPException(status_code=400, detail="Password not changed")
+
+    return {"Ok"}

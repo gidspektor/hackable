@@ -25,6 +25,10 @@ class HackableService {
 	async refreshToken() {
 		return await api.POST(`${BASE_ROUTE}/refresh/`, null, true)
 	}
+
+	async changePassword(params) {
+		return await api.PATCH(`${BASE_ROUTE}/user/password/`, params)
+	}
 }
 
 export default new HackableService()
