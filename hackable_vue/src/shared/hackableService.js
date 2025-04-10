@@ -29,6 +29,10 @@ class HackableService {
 	async changePassword(params) {
 		return await api.PATCH(`${BASE_ROUTE}/user/password/`, params)
 	}
+
+	async logout() {
+		return await api.POST(`${BASE_ROUTE}/logout/`)
+	}
 }
 
 export default new HackableService()

@@ -61,3 +61,9 @@ class UsersRepository(UsersRepositoryInterface):
         await self._db.commit()
 
         return result
+
+    async def get_user_password_by_id(self, user_id: int) -> str:
+        stmt = select(Users.password_hash).where(Users.id == user_id)
+        result = await self._db.execute(stmt)
+
+        return result.scalar_one_or_none()

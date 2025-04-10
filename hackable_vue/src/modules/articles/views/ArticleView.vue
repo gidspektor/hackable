@@ -24,57 +24,57 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
-import { useRoute } from 'vue-router'
-import { useArticlesStore } from '@articles/shared/articlesStore'
+	import { ref, onMounted, computed } from 'vue'
+	import { useRoute } from 'vue-router'
+	import { useArticlesStore } from '@articles/shared/articlesStore'
 
-import Article from '@articles/components/Article.vue'
-import Comment from '@articles/components/Comment.vue'
-import CreateComment from '@articles/components/CreateComment.vue'
-import LoginSignupModal from '@/components/modals/LoginSignupModal.vue'
+	import Article from '@articles/components/Article.vue'
+	import Comment from '@articles/components/Comment.vue'
+	import CreateComment from '@articles/components/CreateComment.vue'
+	import LoginSignupModal from '@/components/modals/LoginSignupModal.vue'
 
-const route = useRoute()
-const showModal = ref<boolean>(false)
-const articlesStore = useArticlesStore()
+	const route = useRoute()
+	const showModal = ref<boolean>(false)
+	const articlesStore = useArticlesStore()
 
-const articleId = ref<number>(Number(route.params.id))
-const isLoading = ref<boolean>(false)
-const isLoadingComments = ref<boolean>(false)
-const article = computed(() => articlesStore.selectedArticle)
-const articleComments = computed(() => articlesStore.selectedArticleComments)
+	const articleId = ref<number>(Number(route.params.id))
+	const isLoading = ref<boolean>(false)
+	const isLoadingComments = ref<boolean>(false)
+	const article = computed(() => articlesStore.selectedArticle)
+	const articleComments = computed(() => articlesStore.selectedArticleComments)
 
-const openLoginModal = () => {
-	showModal.value = true
-}
-
-const getArticle = async () => {
-	isLoading.value = true
-	try {
-		await articlesStore.getArticle(articleId.value)
-	} catch (error) {
-		console.error('Failed to fetch article:', error)
-	} finally {
-		isLoading.value = false
+	const openLoginModal = () => {
+		showModal.value = true
 	}
-}
 
-const getArticleComments = async () => {
-	isLoadingComments.value = true
-	articlesStore.updateCommentsOffset(0)
-
-	try {
-		await articlesStore.getArticleComments(articleId.value)
-	} catch (error) {
-		console.error('Failed to fetch comments:', error)
-	} finally {
-		isLoadingComments.value = false
+	const getArticle = async () => {
+		isLoading.value = true
+		try {
+			await articlesStore.getArticle(articleId.value)
+		} catch (error) {
+			console.error('Failed to fetch article:', error)
+		} finally {
+			isLoading.value = false
+		}
 	}
-}
 
-onMounted(async () => {
-	await getArticle()
-	await getArticleComments()
-})
+	const getArticleComments = async () => {
+		isLoadingComments.value = true
+		articlesStore.updateCommentsOffset(0)
+
+		try {
+			await articlesStore.getArticleComments(articleId.value)
+		} catch (error) {
+			console.error('Failed to fetch comments:', error)
+		} finally {
+			isLoadingComments.value = false
+		}
+	}
+
+	onMounted(async () => {
+		await getArticle()
+		await getArticleComments()
+	})
 </script>
 
 <style scoped>

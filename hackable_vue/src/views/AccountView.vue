@@ -33,7 +33,7 @@
 	<div class="section">
 		<h6 class="mb-0">Update Password?</h6>
 		<div class="col-4 text-secondary">
-			<a href="#/Account" @click="updatePassword">Click to update password</a>
+			<a href="#/Account" @click="openPasswordModal">Click to update password</a>
 		</div>
 	</div>
 
@@ -70,68 +70,100 @@
 			</div>
 		</div>
 	</div>
+	<div class="overlay" v-show="showModal">
+		<transition name="fade">
+			<UpdatePasswordModal id="modal" class="myModal" v-show="showModal" @close="showModal = false" />
+		</transition>
+	</div>
 </template>
 
 <script setup lang='ts'>
-import { onMounted, computed } from 'vue';
+	import { onMounted, computed, ref } from 'vue';
 
-import { useArticlesStore } from '@articles/shared/articlesStore';
-import { useHackableStore } from '@/shared/hackableStore';
+	import { useArticlesStore } from '@articles/shared/articlesStore';
+	import { useHackableStore } from '@/shared/hackableStore';
 
-const articlesStore = useArticlesStore();
-const hackableStore = useHackableStore();
+	import UpdatePasswordModal from '@/components/modals/UpdatePasswordModal.vue';
 
-const user = computed(() => hackableStore.user);
-const userArticles = computed(() => articlesStore.userArticles);
-const userComments = computed(() => articlesStore.userComments);
-const userImageUrl = computed(() => hackableStore.userImageUrl);
+	const articlesStore = useArticlesStore();
+	const hackableStore = useHackableStore();
 
-const getUserArticles = async () => {
-	try {
-		await articlesStore.getUserArticles();
-	} catch (error) {
-		console.error('Failed to fetch user articles:', error);
-	}
-};
+	const user = computed(() => hackableStore.user);
+	const userArticles = computed(() => articlesStore.userArticles);
+	const userComments = computed(() => articlesStore.userComments);
+	const userImageUrl = computed(() => hackableStore.userImageUrl);
+	const showModal = ref<boolean>(false)
 
-const getUserComments = async () => {
-	try {
-		await articlesStore.getUserComments();
-	} catch (error) {
-		console.error('Failed to fetch user comments:', error);
-	}
-};
-
-const getUserImage = async () => {
-	try {
-		await hackableStore.getUserImage();
-	} catch (error) {
-		console.error('Failed to fetch user image:', error);
-	}
-};
-
-const handelFileUpload = async (event: Event) => {
-	const target = event.target as HTMLInputElement;
-	const file = target.files?.[0];
-	if (!file) {
-		return;
+	const openPasswordModal = () => {
+		showModal.value = true
 	}
 
-	try {
-		await hackableStore.uploadUserImage(file);
-	} catch (error) {
-		console.error('Failed to upload user image:', error);
-	}
-};
+	const getUserArticles = async () => {
+		try {
+			await articlesStore.getUserArticles();
+		} catch (error) {
+			console.error('Failed to fetch user articles:', error);
+		}
+	};
 
-onMounted(async () => {
-	await getUserComments();
-	await getUserArticles();
-	await getUserImage();
-});
+	const getUserComments = async () => {
+		try {
+			await articlesStore.getUserComments();
+		} catch (error) {
+			console.error('Failed to fetch user comments:', error);
+		}
+	};
+
+	const getUserImage = async () => {
+		try {
+			await hackableStore.getUserImage();
+		} catch (error) {
+			console.error('Failed to fetch user image:', error);
+		}
+	};
+
+	const handelFileUpload = async (event: Event) => {
+		const target = event.target as HTMLInputElement;
+		const file = target.files?.[0];
+		if (!file) {
+			return;
+		}
+
+		try {
+			await hackableStore.uploadUserImage(file);
+		} catch (error) {
+			console.error('Failed to upload user image:', error);
+		}
+	};
+
+	onMounted(async () => {
+		await getUserComments();
+		await getUserArticles();
+		await getUserImage();
+	});
 </script>
 
 <style scoped>
+.overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background-color: rgba(128, 128, 128, 0.5);
+}
+
+.myModal {
+	z-index: 1000;
+	position: fixed;
+	top: 40%;
+	left: 50%;
+	width: 30em;
+	height: 18em;
+	margin-top: -9em;
+	margin-left: -15em;
+}
+
 .section {
 	border-bottom: 1px solid white;
 	margin-bottom: 1rem;

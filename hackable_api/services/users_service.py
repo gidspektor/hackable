@@ -18,7 +18,7 @@ class UsersService:
     async def login(self, username: str, password: str) -> dict:
         user = await self._users_repository.get_user_by_username(username)
 
-        if user and bcrypt.checkpw(password.encode("utf-8"), user.password_hash.encode("utf-8")):
+        if user and bcrypt.checkpw(password.encode("utf-8"), user.password_hash):
             return user
 
     async def upload_image_name(self, image_name: str, user_id: int) -> str:
@@ -34,9 +34,9 @@ class UsersService:
         if new_password_match != new_password:
             return False
 
-        user =  await self._users_repository.get_user_by_id(user_id)
+        password_hash = await self._users_repository.get_user_password_by_id(user_id)
 
-        if user and bcrypt.checkpw(old_password.encode("utf-8"), user.password_hash.encode("utf-8")):
+        if password_hash and bcrypt.checkpw(old_password.encode("utf-8"), password_hash):
             new_password = bcrypt.hashpw(new_password.encode("utf-8"), bcrypt.gensalt())
             await self._users_repository.change_password(new_password, user_id)
 

@@ -67,91 +67,91 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useHackableStore } from '@/shared/hackableStore'
+	import { ref } from 'vue'
+	import { useHackableStore } from '@/shared/hackableStore'
 
-const hackableStore = useHackableStore()
+	const hackableStore = useHackableStore()
 
-const formValid = ref<boolean>(false)
-const signUpUser = ref<boolean>(false)
-const isLoading = ref<boolean>(false)
-const username = ref<string>('')
-const password = ref<string>('')
-const passwordRepeat = ref<string>('')
-const error = ref<string>('')
-const usernameError = ref<string>('')
-const nameError = ref<string>('')
-const passwordLengthError = ref<string>('')
-const passwordNotMatchError = ref<string>('')
+	const formValid = ref<boolean>(false)
+	const signUpUser = ref<boolean>(false)
+	const isLoading = ref<boolean>(false)
+	const username = ref<string>('')
+	const password = ref<string>('')
+	const passwordRepeat = ref<string>('')
+	const error = ref<string>('')
+	const usernameError = ref<string>('')
+	const nameError = ref<string>('')
+	const passwordLengthError = ref<string>('')
+	const passwordNotMatchError = ref<string>('')
 
-const emit = defineEmits(['close'])
+	const emit = defineEmits(['close'])
 
-const closeModal = () => {
-	emit('close')
-}
-const login = async () => {
-	let response = await hackableStore.login(username.value, password.value)
-	console.log(response)
-	if (response.status !== 200) {
-		error.value = response.error
-	} else {
+	const closeModal = () => {
 		emit('close')
 	}
-}
-const signUp = () => {
-	signUpUser.value = true
-}
-const signIn = () => {
-	signUpUser.value = false
-}
-const createAccount = async () => {
-	validateForm()
-
-	if (formValid.value) {
-		let response = await hackableStore.createAccount(
-			username.value,
-			password.value,
-			passwordRepeat.value,
-		)
-
-		if (response.error) {
+	const login = async () => {
+		let response = await hackableStore.login(username.value, password.value)
+		console.log(response)
+		if (response.status !== 200) {
 			error.value = response.error
 		} else {
 			emit('close')
 		}
 	}
-}
-
-const validateForm = () => {
-	formValid.value = false
-
-	passwordLengthError.value = ''
-	passwordNotMatchError.value = ''
-
-	if (password.value.length < 8) {
-		passwordLengthError.value = 'Password must be a minimum of 8 characters'
+	const signUp = () => {
+		signUpUser.value = true
 	}
-
-	if (password.value !== passwordRepeat.value) {
-		passwordNotMatchError.value = "Passwords don't match"
+	const signIn = () => {
+		signUpUser.value = false
 	}
+	const createAccount = async () => {
+		validateForm()
 
-	if (!passwordNotMatchError.value && !passwordLengthError.value && !nameError.value) {
-		formValid.value = true
-	}
-}
-
-const handleKeyPress = (event: KeyboardEvent) => {
-	if (event.key === 'Enter') {
-		if (signUpUser.value) {
-			createAccount()
-		} else {
-			login()
+		if (formValid.value) {
+			try {
+				await hackableStore.createAccount(
+					username.value,
+					password.value,
+					passwordRepeat.value,
+				)
+				emit('close')
+			} catch (err) {
+				error.value = 'An unexpected error occurred. Please try again.'
+				console.error(err)
+			}
 		}
 	}
-}
 
-document.addEventListener('keydown', handleKeyPress)
+	const validateForm = () => {
+		formValid.value = false
+
+		passwordLengthError.value = ''
+		passwordNotMatchError.value = ''
+
+		if (password.value.length < 8) {
+			passwordLengthError.value = 'Password must be a minimum of 8 characters'
+		}
+
+		if (password.value !== passwordRepeat.value) {
+			passwordNotMatchError.value = "Passwords don't match"
+		}
+
+		if (!passwordNotMatchError.value && !passwordLengthError.value && !nameError.value) {
+			formValid.value = true
+		}
+	}
+
+	const handleKeyPress = (event: KeyboardEvent) => {
+		if (event.key === 'Enter') {
+			if (signUpUser.value) {
+				createAccount()
+			} else {
+				login()
+			}
+		}
+	}
+
+	document.addEventListener('keydown', handleKeyPress)
 
 </script>
 

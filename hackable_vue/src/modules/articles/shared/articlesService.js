@@ -31,7 +31,7 @@ class ArticlesService {
 	}
 
 	async getArticleComments(id, offset) {
-		return await api.GET(`${BASE_ROUTE}/v1/article/${id}/comments/${offset}/`)
+		return await api.GET(`${BASE_ROUTE}/v1/article/${id}/comments/${offset}/`, '', true)
 	}
 }
 

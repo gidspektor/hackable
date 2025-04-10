@@ -18,48 +18,48 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+	import { ref } from 'vue'
 
-import { useArticlesStore } from '@articles/shared/articlesStore'
-import { useRouter } from 'vue-router'
+	import { useArticlesStore } from '@articles/shared/articlesStore'
+	import { useRouter } from 'vue-router'
 
-const articlesStore = useArticlesStore()
+	const articlesStore = useArticlesStore()
 
-const router = useRouter()
+	const router = useRouter()
 
-const title = ref<string>('')
-const richText = ref<string>('')
-const error = ref<string>('')
-const isFeatured = ref<boolean>(false)
+	const title = ref<string>('')
+	const richText = ref<string>('')
+	const error = ref<string>('')
+	const isFeatured = ref<boolean>(false)
 
-const cancelArticle = () => {
-	title.value = ''
-	richText.value = ''
-	isFeatured.value = false
-	router.push({ name: 'articles' })
-}
-
-const createArticle = async () => {
-	//<a onclick=alert(document.cookie) href="#">Click here for awesomeness!</a>
-	if (title.value && richText.value) {
-
-		const response = await articlesStore.createArticle(
-			title.value,
-			richText.value,
-			isFeatured.value
-		);
-
-		if (response.error) {
-			error.value = response.error;
-		} else {
-			title.value = '';
-			richText.value = '';
-			router.push({ name: 'articles' });
-		}
-	} else {
-		error.value = 'Please enter a title and content!';
+	const cancelArticle = () => {
+		title.value = ''
+		richText.value = ''
+		isFeatured.value = false
+		router.push({ name: 'articles' })
 	}
-}
+
+	const createArticle = async () => {
+		//<a onclick=alert(document.cookie) href="#">Click here for awesomeness!</a>
+		if (title.value && richText.value) {
+
+			const response = await articlesStore.createArticle(
+				title.value,
+				richText.value,
+				isFeatured.value
+			);
+
+			if (response.error) {
+				error.value = response.error;
+			} else {
+				title.value = '';
+				richText.value = '';
+				router.push({ name: 'articles' });
+			}
+		} else {
+			error.value = 'Please enter a title and content!';
+		}
+	}
 </script>
 
 <style scoped>

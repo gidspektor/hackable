@@ -8,6 +8,7 @@
 					<RouterLink v-if="Object.keys(user).length == 0" :to="{ name: 'login' }">Login/Signup</RouterLink>
 					<RouterLink v-if="Object.keys(user).length > 0" :to="{ name: 'account' }">My Account</RouterLink>
 					<RouterLink v-if="Object.keys(user).length > 0" :to="{ name: 'create-article' }">Create Article</RouterLink>
+					<a v-if="Object.keys(user).length > 0" @click="logout">Logout</a>
 				</nav>
 			</div>
 		</header>
@@ -18,22 +19,26 @@
 </template>
 
 <script setup lang="ts">
-import { useHackableStore } from '@/shared/hackableStore'
-import { onMounted, computed } from 'vue'
-import { RouterLink, RouterView } from 'vue-router'
+	import { useHackableStore } from '@/shared/hackableStore'
+	import { onMounted, computed } from 'vue'
+	import { RouterLink, RouterView } from 'vue-router'
 
-const hackableStore = useHackableStore()
+	const hackableStore = useHackableStore()
 
-const user = computed(() => hackableStore.user)
+	const user = computed(() => hackableStore.user)
 
-onMounted(async () => {
-	try {
-		await hackableStore.refreshToken()
-		await hackableStore.getUser()
-	} catch (error) {
-		console.error('Failed to get user data:', error)
+	const logout = async () => {
+		await hackableStore.logout()
 	}
-})
+
+	onMounted(async () => {
+		try {
+			await hackableStore.refreshToken()
+			await hackableStore.getUser()
+		} catch (error) {
+			console.error('Failed to get user data:', error)
+		}
+	})
 </script>
 
 <style scoped>
@@ -69,6 +74,7 @@ nav a {
 	border-left: 1px solid var(--color-border, #ddd);
 	text-decoration: none;
 	color: var(--color-text, #333);
+	cursor: pointer;
 }
 
 nav a:first-of-type {

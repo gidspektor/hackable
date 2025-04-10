@@ -223,4 +223,4 @@ async def change_password(
     if not result:
         raise HTTPException(status_code=400, detail="Password not changed")
 
-    return {"Ok"}
+    return {"message": "Ok"}

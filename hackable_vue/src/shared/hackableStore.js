@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import HackableService from './hackableService.js'
 import { API_URL } from '@/shared/constants.js'
+import hackableService from './hackableService.js'
 
 export const useHackableStore = defineStore('hackable', () => {
 	const user = ref({})
@@ -20,6 +21,8 @@ export const useHackableStore = defineStore('hackable', () => {
 		refreshToken,
 		getJwtToken,
 		removeJwtToken,
+		changePassword,
+		logout,
 	}
 
 	async function login(username, password) {
@@ -82,6 +85,23 @@ export const useHackableStore = defineStore('hackable', () => {
 
 	function removeJwtToken() {
 		jwt.value = ''
+	}
+
+	async function logout() {
+		user.value = {}
+		jwt.value = ''
+		document.cookie = 'is_admin=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
+		await hackableService.logout()
+	}
+
+	async function changePassword(oldPassword, newPassword, passwordMatch) {
+		const response = await HackableService.changePassword({
+			'old_password': oldPassword,
+			'new_password': newPassword,
+			'new_password_match': passwordMatch,
+		})
+
+		return response
 	}
 },
 	{
