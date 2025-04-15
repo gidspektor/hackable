@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String
 
-from db.models.base import Base
+from hackable_api.db.models.base import Base
 from sqlalchemy import Boolean
 
 

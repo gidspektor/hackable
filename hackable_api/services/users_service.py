@@ -1,6 +1,6 @@
 import bcrypt
 
-from interfaces.repository_interfaces.users_repository_interface import UsersRepositoryInterface
+from hackable_api.interfaces.repository_interfaces.users_repository_interface import UsersRepositoryInterface
 
 
 class UsersService:
@@ -11,7 +11,7 @@ class UsersService:
         return await self._users_repository.get_user_by_id(user_id)
 
     async def create_user(self, user_data: dict) -> dict:
-        user_data["password_hash"] = bcrypt.hashpw(user_data["password"].encode("utf-8"), bcrypt.gensalt())
+        user_data["password_hash"] = self.hash_password(user_data["password"])
         del user_data["password"]
         return await self._users_repository.create_user(user_data)
 
@@ -37,9 +37,13 @@ class UsersService:
         password_hash = await self._users_repository.get_user_password_by_id(user_id)
 
         if password_hash and bcrypt.checkpw(old_password.encode("utf-8"), password_hash):
-            new_password = bcrypt.hashpw(new_password.encode("utf-8"), bcrypt.gensalt())
+            new_password = self.hash_password(new_password)
             await self._users_repository.change_password(new_password, user_id)
 
             return True
 
         return False
+
+    @staticmethod
+    def hash_password(password: str) -> str:
+        return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())

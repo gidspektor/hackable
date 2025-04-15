@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from db.models.articles_comments import ArticlesComments
+from hackable_api.db.models.articles_comments import ArticlesComments
 
 
 class ArticlesCommentsRepositoryInterface(ABC):

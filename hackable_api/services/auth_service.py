@@ -2,7 +2,7 @@ from jose import jwt
 from jose.exceptions import JWTError
 from datetime import datetime, timedelta
 
-from app.settings import settings
+from hackable_api.app.settings import settings
 
 
 class AuthService:

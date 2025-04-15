@@ -1,24 +1,24 @@
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.settings import settings
+from hackable_api.app.settings import settings
 
-from api.v1.schemas import (
+from hackable_api.api.v1.schemas import (
     ArticlesPreviewsResponse, ArticleResponse,
     ArticleCreateRequest, ArticleCommentsResponse,
     ArticleCommentResponse, ArticleCommentPostRequest,
     UsersArticlesResponse, UserArticleCommentsResponse,
 )
 
-from api.dependencies import auth_exception_handler
+from hackable_api.api.dependencies import auth_exception_handler
 
-from services.users_service import UsersService
-from services.articles_service import ArticlesService
-from services.articles_comments_service import ArticlesCommentsService
+from hackable_api.services.users_service import UsersService
+from hackable_api.services.articles_service import ArticlesService
+from hackable_api.services.articles_comments_service import ArticlesCommentsService
 
-from db.db_driver import DbDriver
-from db.repositories.articles_repository import ArticlesRepository
-from db.repositories.articles_comments_repository import ArticlesCommentsRepository
-from db.repositories.users_repository import UsersRepository
+from hackable_api.db.db_driver import DbDriver
+from hackable_api.db.repositories.articles_repository import ArticlesRepository
+from hackable_api.db.repositories.articles_comments_repository import ArticlesCommentsRepository
+from hackable_api.db.repositories.users_repository import UsersRepository
 
 router = APIRouter(prefix="/v1")
 

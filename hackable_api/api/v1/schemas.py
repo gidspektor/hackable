@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import List
 
-from app.settings import settings
+from hackable_api.app.settings import settings
 
 
 class ArticlePreviewResponse(BaseModel):

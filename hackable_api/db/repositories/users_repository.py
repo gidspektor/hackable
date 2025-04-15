@@ -1,9 +1,9 @@
 from sqlalchemy import select, update
 
-from interfaces.driver_interfaces.db_driver_interface import DbDriverInterface
-from interfaces.repository_interfaces.users_repository_interface import UsersRepositoryInterface
+from hackable_api.interfaces.driver_interfaces.db_driver_interface import DbDriverInterface
+from hackable_api.interfaces.repository_interfaces.users_repository_interface import UsersRepositoryInterface
 
-from db.models.users import Users
+from hackable_api.db.models.users import Users
 
 class UsersRepository(UsersRepositoryInterface):
     def __init__(self, db_driver: DbDriverInterface):

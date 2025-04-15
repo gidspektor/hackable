@@ -3,11 +3,11 @@ from sqlalchemy.sql import func
 
 from datetime import datetime
 
-from interfaces.driver_interfaces.db_driver_interface import DbDriverInterface
-from interfaces.repository_interfaces.articles_comments_repository_interface import ArticlesCommentsRepositoryInterface
+from hackable_api.interfaces.driver_interfaces.db_driver_interface import DbDriverInterface
+from hackable_api.interfaces.repository_interfaces.articles_comments_repository_interface import ArticlesCommentsRepositoryInterface
 
-from db.models.articles_comments import ArticlesComments
-from db.models.users import Users
+from hackable_api.db.models.articles_comments import ArticlesComments
+from hackable_api.db.models.users import Users
 
 
 class ArticlesCommentsRepository(ArticlesCommentsRepositoryInterface):

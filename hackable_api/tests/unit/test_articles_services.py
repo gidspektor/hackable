@@ -1,8 +1,8 @@
 import pytest
 from unittest.mock import AsyncMock, MagicMock
 
-from services.articles_service import ArticlesService
-from interfaces.repository_interfaces.articles_repository_interface import ArticlesRepositoryInterface
+from hackable_api.services.articles_service import ArticlesService
+from hackable_api.interfaces.repository_interfaces.articles_repository_interface import ArticlesRepositoryInterface
 
 @pytest.fixture
 def mock_article_repository():
@@ -12,7 +12,7 @@ def mock_article_repository():
     return AsyncMock(spec=ArticlesRepositoryInterface)
 
 @pytest.mark.asyncio
-async def test_create_article_service(mock_article_repository):
+async def test_create_article(mock_article_repository):
     """Test article service for creating an article"""
 
     # Create a mock Article object with necessary attributes
@@ -25,7 +25,7 @@ async def test_create_article_service(mock_article_repository):
     service = ArticlesService(mock_article_repository)
 
     # Call the actual service method
-    article = await service.create_article({"title": "Test Title", "body": "Test Body"})
+    article = await service.create_article("Test Title", 0, "Test Body", 1)
 
     # Verify the service method returns the expected article
     assert article.title == "Test Title"

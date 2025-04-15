@@ -6,8 +6,8 @@ from fastapi.responses import UJSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from api.router import api_router
-from app.settings import settings
+from hackable_api.api.router import api_router
+from hackable_api.app.settings import settings
 
 APP_ROOT = Path(__file__).parent.parent
 

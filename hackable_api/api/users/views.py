@@ -10,19 +10,19 @@ from fastapi import (
 
 from app.settings import settings
 
-from api.users.schemas import (
+from hackable_api.api.users.schemas import (
     UserRequest, UserResponse,
     TokenResponse, UserLoginResponse,
     passwordChangeRequest,
 )
 
-from api.dependencies import auth_exception_handler
+from hackable_api.api.dependencies import auth_exception_handler
 
-from services.users_service import UsersService
-from services.auth_service import AuthService
+from hackable_api.services.users_service import UsersService
+from hackable_api.services.auth_service import AuthService
 
-from db.db_driver import DbDriver
-from db.repositories.users_repository import UsersRepository
+from hackable_api.db.db_driver import DbDriver
+from hackable_api.db.repositories.users_repository import UsersRepository
 
 router = APIRouter()
 

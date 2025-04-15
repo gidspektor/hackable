@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
-from db.models.users import Users
+from hackable_api.db.models.users import Users
+
 
 class UsersRepositoryInterface(ABC):
     @abstractmethod

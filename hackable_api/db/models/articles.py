@@ -1,9 +1,9 @@
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey
 import sqlalchemy as sa
 
-from app.settings import settings
+from hackable_api.app.settings import settings
 
-from db.models.base import Base
+from hackable_api.db.models.base import Base
 
 
 class Articles(Base):

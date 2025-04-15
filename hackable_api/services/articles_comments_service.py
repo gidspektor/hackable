@@ -1,4 +1,4 @@
-from db.repositories.articles_comments_repository import ArticlesCommentsRepositoryInterface
+from hackable_api.db.repositories.articles_comments_repository import ArticlesCommentsRepositoryInterface
 
 
 class ArticlesCommentsService:

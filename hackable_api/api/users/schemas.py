@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-from app.settings import settings
+from hackable_api.app.settings import settings
 
 
 class TokenResponse(BaseModel):

@@ -1,4 +1,4 @@
-from interfaces.repository_interfaces.articles_repository_interface import ArticlesRepositoryInterface
+from hackable_api.interfaces.repository_interfaces.articles_repository_interface import ArticlesRepositoryInterface
 
 
 class ArticlesService:

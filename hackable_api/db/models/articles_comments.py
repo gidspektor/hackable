@@ -1,9 +1,9 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 import sqlalchemy as sa
 
-from app.settings import settings
+from hackable_api.app.settings import settings
 
-from db.models.base import Base
+from hackable_api.db.models.base import Base
 
 
 class ArticlesComments(Base):

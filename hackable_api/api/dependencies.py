@@ -1,6 +1,6 @@
 from fastapi import HTTPException, Request
 
-from services.auth_service import AuthService
+from hackable_api.services.auth_service import AuthService
 
 async def auth_exception_handler(request: Request) -> None:
     """Validate and decode the JWT"""
