@@ -5,13 +5,14 @@ from hackable_api.interfaces.repository_interfaces.users_repository_interface im
 
 from hackable_api.db.models.users import Users
 
+
 class UsersRepository(UsersRepositoryInterface):
     def __init__(self, db_driver: DbDriverInterface):
         self._db = db_driver
 
     async def create_user(self, user_data: dict) -> Users:
         new_user = Users(**user_data)  # 🚨 Directly unpacking user input
-        self._db.add(new_user)
+        await self._db.add(new_user)
         await self._db.commit()
 
         return new_user
@@ -25,7 +26,7 @@ class UsersRepository(UsersRepositoryInterface):
         result = await self._db.execute(stmt)
 
         return result.mappings().first()
-    
+
     async def get_user_by_username(self, username: str) -> Users:
         stmt = select(
             Users.id, Users.username,
@@ -48,7 +49,7 @@ class UsersRepository(UsersRepositoryInterface):
         result = await self._db.execute(stmt)
 
         return result.scalar_one_or_none()
-    
+
     async def get_user_image_url(self, user_id: int) -> str:
         stmt = select(Users.image_name).where(Users.id == user_id)
         result = await self._db.execute(stmt)

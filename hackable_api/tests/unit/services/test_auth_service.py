@@ -27,3 +27,11 @@ def test_verify_token():
 
     assert payload["sub"] == "3"
     assert "exp" in payload
+
+def test_verify_bad_token():
+    """Test verifying a bad token"""
+
+    # Verify the token
+    payload = AuthService.verify_token('blabla')
+
+    assert payload == None

@@ -43,3 +43,41 @@ async def test_get_articles_previews(mock_db_driver):
     assert articles_previews[0]["title"] == "Article 1"
     assert articles_previews[1]["content"] == "This is a preview of article 2."
     mock_db_driver.execute.assert_called_once()
+
+@pytest.mark.asyncio
+async def test_delete_article_success(mock_db_driver):
+    """Test delete_article when the article is successfully deleted."""
+
+    # Arrange
+    mock_result = MagicMock(spec=Result)
+    mock_result.rowcount = 1
+    mock_db_driver.execute.return_value = mock_result
+
+    repository = ArticlesRepository(mock_db_driver)
+
+    # Act
+    result = await repository.delete_article(article_id=1)
+
+    # Assert
+    mock_db_driver.execute.assert_called_once()
+    mock_db_driver.commit.assert_called_once()
+    assert result.rowcount == 1
+
+@pytest.mark.asyncio
+async def test_delete_article_not_found(mock_db_driver):
+    """Test delete_article when the article is not found."""
+
+    # Arrange
+    mock_result = MagicMock(spec=Result)
+    mock_result.rowcount = 0
+    mock_db_driver.execute.return_value = mock_result
+
+    repository = ArticlesRepository(mock_db_driver)
+
+    # Act
+    result = await repository.delete_article(article_id=999)
+
+    # Assert
+    mock_db_driver.execute.assert_called_once()
+    mock_db_driver.commit.assert_called_once()
+    assert result == False

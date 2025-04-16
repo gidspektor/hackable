@@ -27,6 +27,7 @@ export const useArticlesStore = defineStore('articles', () => {
 		getUserComments,
 		getFeaturedArticles,
 		updateCommentsOffset,
+		setSelectedArticleComments,
 	}
 
 	async function getArticlePreviews() {
@@ -42,7 +43,7 @@ export const useArticlesStore = defineStore('articles', () => {
 	async function getArticleComments(articleId) {
 		const response = await ArticlesService.getArticleComments(articleId, state.commentsOffset)
 
-		state.selectedArticleComments = response?.data?.comments
+		state.selectedArticleComments.push(response?.data?.comments)
 
 		updateCommentsOffset(state.selectedArticleComments.length)
 	}
@@ -77,6 +78,10 @@ export const useArticlesStore = defineStore('articles', () => {
 	async function getUserComments() {
 		const response = await ArticlesService.getUserComments()
 		state.userComments = response?.data?.comments
+	}
+	
+	function setSelectedArticleComments() {
+		state.selectedArticleComments = []
 	}
 },
 	{

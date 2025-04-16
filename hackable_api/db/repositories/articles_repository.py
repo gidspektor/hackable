@@ -57,7 +57,7 @@ class ArticlesRepository(ArticlesRepositoryInterface):
         await self._db.commit()
 
         if result.rowcount == 0:
-            False
+            return False
 
         return result
 

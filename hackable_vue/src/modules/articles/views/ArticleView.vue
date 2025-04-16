@@ -60,7 +60,6 @@
 
 	const getArticleComments = async () => {
 		isLoadingComments.value = true
-		articlesStore.updateCommentsOffset(0)
 
 		try {
 			await articlesStore.getArticleComments(articleId.value)
@@ -72,6 +71,8 @@
 	}
 
 	onMounted(async () => {
+		articlesStore.updateCommentsOffset(0)
+		articlesStore.setSelectedArticleComments()
 		await getArticle()
 		await getArticleComments()
 	})
