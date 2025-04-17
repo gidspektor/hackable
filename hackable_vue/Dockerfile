@@ -2,14 +2,14 @@
 FROM node:20
 
 # Set working directory
-WORKDIR /app
+WORKDIR /vue/app
 
 # Install dependencies
 COPY package.json package-lock.json ./
 RUN npm install
 
 # Copy application code
-COPY ./ ./
+COPY . /vue/app
 
 # Build Vue.js application
 RUN npm run build

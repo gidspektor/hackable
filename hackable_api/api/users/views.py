@@ -8,7 +8,7 @@ from fastapi import (
     File,
 )
 
-from app.settings import settings
+from hackable_api.app.settings import settings
 
 from hackable_api.api.users.schemas import (
     UserRequest, UserResponse,

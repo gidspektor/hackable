@@ -35,7 +35,7 @@ class Settings(BaseSettings):
     log_level: LogLevel = LogLevel.INFO
 
     # Database URL
-    db_url: str = os.environ.get("DB_URL", "sqlite+aiosqlite:///db/database.db")
+    db_url: str = os.environ.get("DB_URL", "postgresql://test_user:password@db:5433/test_db")
     # Database URL without async driver for migrations
     sync_db_url: str = db_url.replace("+aiosqlite", "")
 

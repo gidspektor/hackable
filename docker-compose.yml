@@ -3,18 +3,45 @@ version: '3.8'
 services:
   backend:
     build:
-      context: ./hackable
+      context: ./hackable_api
+      dockerfile: Dockerfile
+    container_name: hackable_api_container
     ports:
       - "8000:8000"
     volumes:
-      - ./hackable/app:/app
+      - $PWD:/api/app
     environment:
-      - ENV=production
+      HACKABLE_API_HOST: 0.0.0.0
+    depends_on:
+      - db
+    restart: always
 
   frontend:
     build:
-      context: ./hackable-vue
+      context: ./hackable_vue
+      dockerfile: Dockerfile
+    image: hackable_vue
+    container_name: hackable_vue_container
     ports:
       - "80:80"
+    volumes:
+      - ./hackable_vue:/vue/app
+      - ./hackable_vue/node_modules:/vue/app/node_modules
+    restart: always
+    tty: true
+    stdin_open: true
+    command: npm run dev
+
     depends_on:
       - backend
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: test_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./db/init_db.sql:/docker-entrypoint-initdb.d/init.sql

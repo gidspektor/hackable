@@ -46,7 +46,7 @@ def run_app() -> None:
     """Run the FastAPI app."""
 
     uvicorn.run(
-        "app.application:get_app",
+        "hackable_api.app.application:get_app",
         host=settings.host,
         port=settings.port,
         reload=settings.reload
