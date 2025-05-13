@@ -30,19 +30,17 @@
 	</main>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ref, onMounted, computed } from 'vue';
 
 import { useArticlesStore } from '@articles/shared/articlesStore';
-import { useHackableStore } from '@/shared/hackableStore'
 import ArticlePreview from '@articles/components/ArticlePreview.vue';
 
-const hackableStore = useHackableStore()
 const articlesStore = useArticlesStore();
 
 const articlesPreviews = computed(() => articlesStore.articlesPreviews);
 const featuredArticles = computed(() => articlesStore.featuredArticles);
-const isLoading = ref<boolean>(false);
+const isLoading = ref(false);
 
 const getArticlePreviews = async () => {
 	isLoading.value = true;

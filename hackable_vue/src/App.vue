@@ -18,7 +18,7 @@
 	</div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 	import { useHackableStore } from '@/shared/hackableStore'
 	import { onMounted, computed } from 'vue'
 	import { RouterLink, RouterView } from 'vue-router'

@@ -5,11 +5,17 @@
 	</div>
 </template>
 
-<script setup lang="ts">
-defineProps<{
-	title: string
-	content?: string
-}>()
+<script setup>
+defineProps({
+	title: {
+		type: String,
+		required: true
+	},
+	content: {
+		type: String,
+		required: true
+	}
+})
 </script>
 
 <style scoped>

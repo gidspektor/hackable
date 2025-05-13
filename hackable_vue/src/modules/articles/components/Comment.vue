@@ -5,14 +5,20 @@
 	</div>
 </template>
 
-<script setup lang="ts">
-defineProps<{
+<script setup>
+defineProps({
 	comment: {
-		id: number
-		username: string
-		comment: string
+		type: Object,
+		required: true,
+		validator(value) {
+			return (
+				typeof value.id === 'number' &&
+				typeof value.username === 'string' &&
+				typeof value.comment === 'string'
+			);
+		}
 	}
-}>()
+});
 </script>
 
 <style scoped>

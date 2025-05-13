@@ -17,7 +17,7 @@
 	</div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 	import { ref } from 'vue'
 
 	import { useArticlesStore } from '@articles/shared/articlesStore'
@@ -27,10 +27,10 @@
 
 	const router = useRouter()
 
-	const title = ref<string>('')
-	const richText = ref<string>('')
-	const error = ref<string>('')
-	const isFeatured = ref<boolean>(false)
+	const title = ref('')
+	const richText = ref('')
+	const error = ref('')
+	const isFeatured = ref(false)
 
 	const cancelArticle = () => {
 		title.value = ''

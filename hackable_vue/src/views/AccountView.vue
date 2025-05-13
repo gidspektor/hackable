@@ -77,7 +77,7 @@
 	</div>
 </template>
 
-<script setup lang='ts'>
+<script setup>
 	import { onMounted, computed, ref } from 'vue';
 
 	import { useArticlesStore } from '@articles/shared/articlesStore';
@@ -92,7 +92,7 @@
 	const userArticles = computed(() => articlesStore.userArticles);
 	const userComments = computed(() => articlesStore.userComments);
 	const userImageUrl = computed(() => hackableStore.userImageUrl);
-	const showModal = ref<boolean>(false)
+	const showModal = ref(false)
 
 	const openPasswordModal = () => {
 		showModal.value = true
@@ -122,9 +122,9 @@
 		}
 	};
 
-	const handelFileUpload = async (event: Event) => {
-		const target = event.target as HTMLInputElement;
-		const file = target.files?.[0];
+	const handelFileUpload = async (event) => {
+		const target = event.target;
+		const file = target && target.files && target.files[0];
 		if (!file) {
 			return;
 		}

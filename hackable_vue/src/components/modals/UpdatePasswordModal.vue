@@ -36,19 +36,19 @@
     </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
     import { ref } from 'vue'
     import { useHackableStore } from '@/shared/hackableStore'
 
     const hackableStore = useHackableStore()
     const emit = defineEmits(['close'])
 
-    const passwordLengthError = ref<string>('')
-    const passwordNotMatchError = ref<string>('')
-    const newPassword = ref<string>('')
-    const passwordRepeat = ref<string>('')
-    const oldPassword = ref<string>('')
-    const error = ref<string>('')
+    const passwordLengthError = ref('')
+    const passwordNotMatchError = ref('')
+    const newPassword = ref('')
+    const passwordRepeat = ref('')
+    const oldPassword = ref('')
+    const error = ref('')
 
     const closeModal = () => {
 		emit('close')

@@ -9,7 +9,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - $PWD:/api/app
+      - ./hackable_api:/app/hackable_api
     environment:
       HACKABLE_API_HOST: 0.0.0.0
     depends_on:
@@ -26,14 +26,10 @@ services:
       - "80:80"
     volumes:
       - ./hackable_vue:/vue/app
-      - ./hackable_vue/node_modules:/vue/app/node_modules
     restart: always
     tty: true
     stdin_open: true
     command: npm run dev
-
-    depends_on:
-      - backend
 
   db:
     image: postgres:15

@@ -1,24 +1,17 @@
-# Use Node.js image
-FROM node:20
+# Use multi-architecture Node.js image
+FROM node:20-slim
 
 # Set working directory
 WORKDIR /vue/app
 
 # Install dependencies
-COPY package.json package-lock.json ./
+COPY package.json ./
 RUN npm install
 
 # Copy application code
 COPY . /vue/app
 
-# Build Vue.js application
-RUN npm run build
-
-# Use nginx to serve static files
-FROM nginx:latest
-COPY --from=0 /app/dist /usr/share/nginx/html
-
 # Expose frontend port
 EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["npm", "-run", "build"]

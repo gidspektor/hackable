@@ -23,7 +23,7 @@
 	</div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 	import { ref, onMounted, computed } from 'vue'
 	import { useRoute } from 'vue-router'
 	import { useArticlesStore } from '@articles/shared/articlesStore'
@@ -31,15 +31,15 @@
 	import Article from '@articles/components/Article.vue'
 	import Comment from '@articles/components/Comment.vue'
 	import CreateComment from '@articles/components/CreateComment.vue'
-	import LoginSignupModal from '@/components/modals/LoginSignupModal.vue'
+	import LoginSignupModal from '@/components/modals/LoginSignUpModal.vue'
 
 	const route = useRoute()
-	const showModal = ref<boolean>(false)
+	const showModal = ref(false)
 	const articlesStore = useArticlesStore()
 
-	const articleId = ref<number>(Number(route.params.id))
-	const isLoading = ref<boolean>(false)
-	const isLoadingComments = ref<boolean>(false)
+	const articleId = ref((route.params.id))
+	const isLoading = ref(false)
+	const isLoadingComments = ref(false)
 	const article = computed(() => articlesStore.selectedArticle)
 	const articleComments = computed(() => articlesStore.selectedArticleComments)
 

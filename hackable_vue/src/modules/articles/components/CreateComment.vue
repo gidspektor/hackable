@@ -13,20 +13,23 @@
 	<button v-else @click="openCommentBox" class="add-comment-button">Add Comment +</button>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { useHackableStore } from '@/shared/hackableStore'
 import { useArticlesStore } from '@articles/shared/articlesStore'
 import { ref, computed } from 'vue'
 
-const props = defineProps<{
-	articleId: number
-}>()
+const props = defineProps({
+	articleId: {
+		type: Number,
+		required: true
+	}
+})
 
 const articlesStore = useArticlesStore()
 const hackableStore = useHackableStore()
 
-const active = ref<boolean>(false)
-const comment = ref<string>('')
+const active = ref(false)
+const comment = ref('')
 
 const emit = defineEmits(['login'])
 const user = computed(() => hackableStore.user)

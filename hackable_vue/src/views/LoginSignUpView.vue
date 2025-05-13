@@ -65,24 +65,24 @@
 	</div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 	import { ref } from 'vue'
 	import { useHackableStore } from '@/shared/hackableStore'
 	import router from '@/router/index.js'
 
 	const hackableStore = useHackableStore()
 
-	const formValid = ref<boolean>(false)
-	const signUpUser = ref<boolean>(false)
-	const isLoading = ref<boolean>(false)
-	const username = ref<string>('')
-	const password = ref<string>('')
-	const passwordRepeat = ref<string>('')
-	const error = ref<string>('')
-	const usernameError = ref<string>('')
-	const nameError = ref<string>('')
-	const passwordLengthError = ref<string>('')
-	const passwordNotMatchError = ref<string>('')
+	const formValid = ref(false)
+	const signUpUser = ref(false)
+	const isLoading = ref(false)
+	const username = ref('')
+	const password = ref('')
+	const passwordRepeat = ref('')
+	const error = ref('')
+	const usernameError = ref('')
+	const nameError = ref('')
+	const passwordLengthError = ref('')
+	const passwordNotMatchError = ref('')
 
 	const emit = defineEmits(['close'])
 
@@ -138,7 +138,7 @@
 		}
 	}
 
-	const handleKeyPress = (event: KeyboardEvent) => {
+	const handleKeyPress = (event) => {
 		if (event.key === 'Enter') {
 			if (signUpUser.value) {
 				createAccount()
