@@ -1,17 +1,20 @@
 # Use multi-architecture Node.js image
-FROM node:20-slim
+FROM node:20-alpine
 
 # Set working directory
-WORKDIR /vue/app
+RUN mkdir -p /opt/app/ps-client
+
+WORKDIR /opt/app/ps-client
 
 # Install dependencies
-COPY package.json ./
+COPY package.json .
 RUN npm install
 
 # Copy application code
-COPY . /vue/app
+COPY . .
 
 # Expose frontend port
 EXPOSE 80
+EXPOSE 5137
 
-CMD ["npm", "-run", "build"]
+CMD ["npm", "run", "build"]

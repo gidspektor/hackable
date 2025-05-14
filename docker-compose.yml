@@ -23,13 +23,14 @@ services:
     image: hackable_vue
     container_name: hackable_vue_container
     ports:
-      - "80:80"
+      - "5137:5137"
     volumes:
-      - ./hackable_vue:/vue/app
+      - ./hackable_vue:/app
+      - ./hackable_vue/node_modules:/app/node_modules
     restart: always
     tty: true
     stdin_open: true
-    command: npm run dev
+    command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
 
   db:
     image: postgres:15
