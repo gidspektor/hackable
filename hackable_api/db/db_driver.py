@@ -2,7 +2,9 @@ from contextlib import asynccontextmanager
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
-from hackable_api.interfaces.driver_interfaces.db_driver_interface import DbDriverInterface
+from hackable_api.interfaces.driver_interfaces.db_driver_interface import (
+    DbDriverInterface,
+)
 
 
 class DbDriver(DbDriverInterface):
@@ -12,9 +14,7 @@ class DbDriver(DbDriverInterface):
 
         # Create a session factory that generates new sessions
         self.session_factory = sessionmaker(
-            bind=self.engine,
-            class_=AsyncSession,
-            expire_on_commit=False
+            bind=self.engine, class_=AsyncSession, expire_on_commit=False
         )
 
     @asynccontextmanager

@@ -1,7 +1,11 @@
 from sqlalchemy import select, update
 
-from hackable_api.interfaces.driver_interfaces.db_driver_interface import DbDriverInterface
-from hackable_api.interfaces.repository_interfaces.users_repository_interface import UsersRepositoryInterface
+from hackable_api.interfaces.driver_interfaces.db_driver_interface import (
+    DbDriverInterface,
+)
+from hackable_api.interfaces.repository_interfaces.users_repository_interface import (
+    UsersRepositoryInterface,
+)
 
 from hackable_api.db.models.users import Users
 
@@ -12,16 +16,15 @@ class UsersRepository(UsersRepositoryInterface):
 
     async def create_user(self, user_data: dict) -> Users:
         new_user = Users(**user_data)  # 🚨 Directly unpacking user input
-        await self._db.add(new_user)
+        self._db.add(new_user)
         await self._db.commit()
 
         return new_user
 
     async def get_user_by_id(self, user_id: int) -> Users:
-        stmt = select(
-            Users.id, Users.username,
-            Users.is_admin
-        ).where(Users.id == user_id)
+        stmt = select(Users.id, Users.username, Users.is_admin).where(
+            Users.id == user_id
+        )
 
         result = await self._db.execute(stmt)
 
@@ -29,15 +32,14 @@ class UsersRepository(UsersRepositoryInterface):
 
     async def get_user_by_username(self, username: str) -> Users:
         stmt = select(
-            Users.id, Users.username,
-            Users.is_admin, Users.password_hash
+            Users.id, Users.username, Users.is_admin, Users.password_hash
         ).where(Users.username == username)
 
         result = await self._db.execute(stmt)
 
         return result.mappings().first()
 
-    async def upload_image_name(self, image_name: str, user_id: int) -> Users|bool:
+    async def upload_image_name(self, image_name: str, user_id: int) -> Users | bool:
         stmt = update(Users).where(Users.id == user_id).values(image_name=image_name)
         result = await self._db.execute(stmt)
         await self._db.commit()
@@ -57,7 +59,9 @@ class UsersRepository(UsersRepositoryInterface):
         return result.scalar_one_or_none()
 
     async def change_password(self, new_password: str, user_id: int) -> Users:
-        stmt = update(Users).where(Users.id == user_id).values(password_hash=new_password)
+        stmt = (
+            update(Users).where(Users.id == user_id).values(password_hash=new_password)
+        )
         result = await self._db.execute(stmt)
         await self._db.commit()
 

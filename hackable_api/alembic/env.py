@@ -7,7 +7,7 @@ from alembic import context
 
 import sys
 
-sys.path = ['', '..'] + sys.path[1:]
+sys.path = ["", ".."] + sys.path[1:]
 
 from db.models.base import Base
 from db.models.articles import Articles
@@ -58,6 +58,7 @@ def run_migrations_offline() -> None:
     with context.begin_transaction():
         context.run_migrations()
 
+
 def run_migrations_online():
     """Run migrations in 'online' mode.
 
@@ -72,12 +73,11 @@ def run_migrations_online():
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()
+
 
 if context.is_offline_mode():
     run_migrations_offline()

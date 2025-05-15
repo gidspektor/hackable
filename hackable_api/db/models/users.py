@@ -5,7 +5,7 @@ from sqlalchemy import Boolean
 
 
 class Users(Base):
-    __tablename__ = 'users'
+    __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String(50), nullable=False, unique=True)

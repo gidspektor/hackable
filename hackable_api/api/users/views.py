@@ -2,17 +2,22 @@ import os
 import shutil
 
 from fastapi import (
-    APIRouter, HTTPException,
-    Request, Depends,
-    Response, UploadFile,
+    APIRouter,
+    HTTPException,
+    Request,
+    Depends,
+    Response,
+    UploadFile,
     File,
 )
 
 from hackable_api.app.settings import settings
 
 from hackable_api.api.users.schemas import (
-    UserRequest, UserResponse,
-    TokenResponse, UserLoginResponse,
+    UserRequest,
+    UserResponse,
+    TokenResponse,
+    UserLoginResponse,
     passwordChangeRequest,
 )
 
@@ -26,6 +31,7 @@ from hackable_api.db.repositories.users_repository import UsersRepository
 
 router = APIRouter()
 
+
 @router.post("/login/", response_model=UserLoginResponse)
 async def login(user_request: UserRequest, response: Response) -> UserLoginResponse:
     """
@@ -36,21 +42,34 @@ async def login(user_request: UserRequest, response: Response) -> UserLoginRespo
 
     async with DbDriver(settings.db_url).get_db_session() as session:
         user_repository = UsersRepository(session)
-        user = await UsersService(user_repository).login(user_request.username, user_request.password)
+        user = await UsersService(user_repository).login(
+            user_request.username, user_request.password
+        )
 
     if not user:
         raise HTTPException(status_code=401, detail=str(user))
 
-    token = AuthService.create_access_token(data={"sub": str(user.id)}, expires=settings.token_expire_minutes)
-    refresh_token = AuthService.create_access_token(data={"sub": str(user.id)}, expires=settings.refresh_token_expire_minutes)
+    token = AuthService.create_access_token(
+        data={"sub": str(user.id)}, expires=settings.token_expire_minutes
+    )
+    refresh_token = AuthService.create_access_token(
+        data={"sub": str(user.id)}, expires=settings.refresh_token_expire_minutes
+    )
 
     # samesite="strict"
     response.set_cookie(
-        "refresh_token", refresh_token, httponly=True,
-        secure=settings.environment == "prod", samesite="Lax", max_age=2592000 # 30 days
+        "refresh_token",
+        refresh_token,
+        httponly=True,
+        secure=settings.environment == "prod",
+        samesite="Lax",
+        max_age=2592000,  # 30 days
     )
 
-    return UserLoginResponse(id=user.id, username=user.username, is_admin=user.is_admin, jwt=token)
+    return UserLoginResponse(
+        id=user.id, username=user.username, is_admin=user.is_admin, jwt=token
+    )
+
 
 @router.post("/refresh/", response_model=TokenResponse)
 async def refresh_token(request: Request) -> TokenResponse:
@@ -72,12 +91,17 @@ async def refresh_token(request: Request) -> TokenResponse:
 
     user_id: str = decoded_token.get("sub")
 
-    access_token = AuthService.create_access_token(data={"sub": user_id}, expires=settings.token_expire_minutes)
+    access_token = AuthService.create_access_token(
+        data={"sub": user_id}, expires=settings.token_expire_minutes
+    )
 
     return TokenResponse(jwt=access_token)
 
+
 @router.get("/user/", response_model=UserResponse)
-async def get_user(decoded_token: dict = Depends(auth_exception_handler)) -> UserResponse:
+async def get_user(
+    decoded_token: dict = Depends(auth_exception_handler),
+) -> UserResponse:
     """
     Gets the user.
     """
@@ -89,15 +113,18 @@ async def get_user(decoded_token: dict = Depends(auth_exception_handler)) -> Use
 
     async with DbDriver(settings.db_url).get_db_session() as session:
         user_repository = UsersRepository(session)
-        user = await UsersService(user_repository).get_user(user_id)
+        user = await UsersService(user_repository).get_user(int(user_id))
 
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
     return UserResponse(id=user.id, username=user.username, is_admin=user.is_admin)
 
+
 @router.post("/user/", response_model=UserLoginResponse)
-async def create_user(user_request: UserRequest, response: Response) -> UserLoginResponse:
+async def create_user(
+    user_request: UserRequest, response: Response
+) -> UserLoginResponse:
     """
     Creates a user.
     """
@@ -108,18 +135,29 @@ async def create_user(user_request: UserRequest, response: Response) -> UserLogi
 
     if not user:
         raise HTTPException(status_code=400, detail="User not created")
-    
+
     # Log the user in
-    token = AuthService.create_access_token({"sub": str(user.id)}, settings.token_expire_minutes)
-    refresh_token = AuthService.create_access_token({"sub": str(user.id)}, settings.refresh_token_expire_minutes)
+    token = AuthService.create_access_token(
+        {"sub": str(user.id)}, settings.token_expire_minutes
+    )
+    refresh_token = AuthService.create_access_token(
+        {"sub": str(user.id)}, settings.refresh_token_expire_minutes
+    )
 
     # samesite="strict"
     response.set_cookie(
-        "refresh_token", refresh_token, httponly=True,
-        secure=True, samesite="Lax", max_age=2592000 # 30 days
+        "refresh_token",
+        refresh_token,
+        httponly=True,
+        secure=True,
+        samesite="Lax",
+        max_age=2592000,  # 30 days
     )
 
-    return UserLoginResponse(id=user.id, username=user.username, is_admin=user.is_admin, jwt=token)
+    return UserLoginResponse(
+        id=user.id, username=user.username, is_admin=user.is_admin, jwt=token
+    )
+
 
 @router.post("/logout/")
 async def logout(response: Response) -> dict[str, str]:
@@ -131,11 +169,11 @@ async def logout(response: Response) -> dict[str, str]:
 
     return response
 
+
 @router.patch("/upload/image/", response_model=dict)
 async def upload_image(
-        decoded_token: dict = Depends(auth_exception_handler),
-        image: UploadFile = File(...)
-    ) -> dict:
+    decoded_token: dict = Depends(auth_exception_handler), image: UploadFile = File(...)
+) -> dict:
     """
     Uploads a user image image.
 
@@ -149,12 +187,14 @@ async def upload_image(
 
     if not image:
         raise HTTPException(status_code=400, detail="Image missing")
-    
+
     image_name = image.filename.replace(" ", "_")
 
     async with DbDriver(settings.db_url).get_db_session() as session:
         user_repository = UsersRepository(session)
-        image_path = await UsersService(user_repository).upload_image_name(image_name, user_id)
+        image_path = await UsersService(user_repository).upload_image_name(
+            image_name, user_id
+        )
 
     if not image_path:
         raise HTTPException(status_code=400, detail="Could not save image")
@@ -176,6 +216,7 @@ async def upload_image(
         f.write(await image.read())
 
     return {"image_path": file_location}
+
 
 @router.get("/user/image/", response_model=dict)
 async def get_image(decoded_token: dict = Depends(auth_exception_handler)) -> dict:
@@ -199,11 +240,12 @@ async def get_image(decoded_token: dict = Depends(auth_exception_handler)) -> di
 
     return {"image_path": file_location}
 
+
 @router.patch("/user/password/", response_model=dict)
 async def change_password(
-        password_change_request: passwordChangeRequest,
-        decoded_token: dict = Depends(auth_exception_handler)
-    ) -> dict:
+    password_change_request: passwordChangeRequest,
+    decoded_token: dict = Depends(auth_exception_handler),
+) -> dict:
     """
     Changes the user password.
     """
@@ -216,8 +258,10 @@ async def change_password(
     async with DbDriver(settings.db_url).get_db_session() as session:
         user_repository = UsersRepository(session)
         result = await UsersService(user_repository).change_password(
-            password_change_request.new_password, password_change_request.new_password_match,
-            password_change_request.old_password, user_id
+            password_change_request.new_password,
+            password_change_request.new_password_match,
+            password_change_request.old_password,
+            user_id,
         )
 
     if not result:

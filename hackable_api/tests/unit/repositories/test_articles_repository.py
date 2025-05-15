@@ -3,10 +3,12 @@ from unittest.mock import AsyncMock, MagicMock
 from hackable_api.db.repositories.articles_repository import ArticlesRepository
 from sqlalchemy.engine import Result
 
+
 @pytest.fixture
 def mock_db_driver():
     """Fixture to mock the database driver."""
     return AsyncMock()
+
 
 @pytest.mark.asyncio
 async def test_get_articles_previews(mock_db_driver):
@@ -44,6 +46,7 @@ async def test_get_articles_previews(mock_db_driver):
     assert articles_previews[1]["content"] == "This is a preview of article 2."
     mock_db_driver.execute.assert_called_once()
 
+
 @pytest.mark.asyncio
 async def test_delete_article_success(mock_db_driver):
     """Test delete_article when the article is successfully deleted."""
@@ -62,6 +65,7 @@ async def test_delete_article_success(mock_db_driver):
     mock_db_driver.execute.assert_called_once()
     mock_db_driver.commit.assert_called_once()
     assert result.rowcount == 1
+
 
 @pytest.mark.asyncio
 async def test_delete_article_not_found(mock_db_driver):

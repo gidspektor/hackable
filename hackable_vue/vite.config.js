@@ -10,4 +10,8 @@ export default defineConfig({
 			'@articles': path.resolve(__dirname, './src/modules/articles'),
 		},
 	},
+	server: {
+		host: '0.0.0.0',
+		port: 5137,
+	},
 })

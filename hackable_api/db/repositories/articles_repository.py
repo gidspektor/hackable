@@ -3,8 +3,12 @@ from sqlalchemy.sql import func
 
 from datetime import datetime
 
-from hackable_api.interfaces.driver_interfaces.db_driver_interface import DbDriverInterface
-from hackable_api.interfaces.repository_interfaces.articles_repository_interface import ArticlesRepositoryInterface
+from hackable_api.interfaces.driver_interfaces.db_driver_interface import (
+    DbDriverInterface,
+)
+from hackable_api.interfaces.repository_interfaces.articles_repository_interface import (
+    ArticlesRepositoryInterface,
+)
 
 from hackable_api.db.models.articles import Articles
 from hackable_api.db.models.users import Users
@@ -17,9 +21,11 @@ class ArticlesRepository(ArticlesRepositoryInterface):
 
     async def get_articles_previews(self) -> list[dict]:
         stmt = select(
-            Articles.id, Articles.title,
+            Articles.id,
+            Articles.title,
             func.substr(Articles.content, 1, 200).label("content"),
-            Articles.featured, Articles.author_id
+            Articles.featured,
+            Articles.author_id,
         ).where(Articles.featured == False)
 
         result = await self._db.execute(stmt)
@@ -28,22 +34,33 @@ class ArticlesRepository(ArticlesRepositoryInterface):
 
         return rows
 
-    async def get_article(self, article_id: int) -> dict|None:
-        stmt = select(
-            Articles.id, Articles.title,
-            Articles.content, Articles.featured,
-            Articles.author_id, Users.username
-        ).join(Users, Articles.author_id == Users.id).where(Articles.id == article_id)
+    async def get_article(self, article_id: int) -> dict | None:
+        stmt = (
+            select(
+                Articles.id,
+                Articles.title,
+                Articles.content,
+                Articles.featured,
+                Articles.author_id,
+                Users.username,
+            )
+            .join(Users, Articles.author_id == Users.id)
+            .where(Articles.id == article_id)
+        )
 
         article = await self._db.execute(stmt)
 
         return article.mappings().first()
 
-    async def create_article(self, title: str, content: str, featured: bool, user_id: int) -> Articles:
+    async def create_article(
+        self, title: str, content: str, featured: bool, user_id: int
+    ) -> Articles:
         new_article = Articles(
-            title=title, content=content,
-            featured=featured, author_id=user_id,
-            created_at=datetime.utcnow()
+            title=title,
+            content=content,
+            featured=featured,
+            author_id=user_id,
+            created_at=datetime.utcnow(),
         )
         self._db.add(new_article)
         self._db.commit()
@@ -62,12 +79,16 @@ class ArticlesRepository(ArticlesRepositoryInterface):
         return result
 
     async def get_featured_articles(self) -> list[dict]:
-        stmt = select(
-            Articles.id,
-            Articles.title,
-            func.substr(Articles.content, 1, 200).label("content"),
-            Articles.featured
-        ).where(Articles.featured == True).limit(self.featured_limit)
+        stmt = (
+            select(
+                Articles.id,
+                Articles.title,
+                func.substr(Articles.content, 1, 200).label("content"),
+                Articles.featured,
+            )
+            .where(Articles.featured == True)
+            .limit(self.featured_limit)
+        )
 
         result = await self._db.execute(stmt)
 

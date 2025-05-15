@@ -2,7 +2,10 @@ import pytest
 from unittest.mock import AsyncMock, MagicMock
 
 from hackable_api.services.articles_service import ArticlesService
-from hackable_api.interfaces.repository_interfaces.articles_repository_interface import ArticlesRepositoryInterface
+from hackable_api.interfaces.repository_interfaces.articles_repository_interface import (
+    ArticlesRepositoryInterface,
+)
+
 
 @pytest.fixture
 def mock_article_repository():
@@ -10,6 +13,7 @@ def mock_article_repository():
 
     # Create a mock repository
     return AsyncMock(spec=ArticlesRepositoryInterface)
+
 
 @pytest.mark.asyncio
 async def test_create_article(mock_article_repository):
@@ -31,6 +35,7 @@ async def test_create_article(mock_article_repository):
     assert article.title == "Test Title"
     assert article.body == "Test Body"
 
+
 @pytest.mark.asyncio
 async def test_get_articles_previews(mock_article_repository):
     """Test article service for getting articles"""
@@ -38,7 +43,7 @@ async def test_get_articles_previews(mock_article_repository):
     # Create a mock Article object with necessary attributes
     mock_article = [
         MagicMock(id=1, title="Test Title", body="Test Body"),
-        MagicMock(id=2, title="Test Title 2", body="Test Body 2")
+        MagicMock(id=2, title="Test Title 2", body="Test Body 2"),
     ]
 
     # Mock the `get_articles` method to return the mock article
@@ -55,6 +60,7 @@ async def test_get_articles_previews(mock_article_repository):
     assert articles[0].body == "Test Body"
     assert articles[1].title == "Test Title 2"
     assert articles[1].body == "Test Body 2"
+
 
 @pytest.mark.asyncio
 async def test_get_article(mock_article_repository):

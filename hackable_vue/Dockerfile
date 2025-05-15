@@ -1,4 +1,4 @@
-# Use multi-architecture Node.js image
+# Stage 1: Build the Vue app
 FROM node:20-alpine
 
 # Set working directory
@@ -12,9 +12,5 @@ RUN npm install
 
 # Copy application code
 COPY . .
-
-# Expose frontend port
-EXPOSE 80
-EXPOSE 5137
 
 CMD ["npm", "run", "build"]

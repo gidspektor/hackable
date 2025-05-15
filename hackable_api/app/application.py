@@ -11,36 +11,38 @@ from hackable_api.app.settings import settings
 
 APP_ROOT = Path(__file__).parent.parent
 
+
 def get_app() -> FastAPI:
-	"""Get the FastAPI application."""
+    """Get the FastAPI application."""
 
-	app = FastAPI(
-		title="hackable_api",
-		docs_url=None,
-		redoc_url=None,
-		openapi_url="/api/openapi.json",
-		default_response_class=UJSONResponse,
-	)
+    app = FastAPI(
+        title="hackable_api",
+        docs_url=None,
+        redoc_url=None,
+        openapi_url="/api/openapi.json",
+        default_response_class=UJSONResponse,
+    )
 
-	app.add_middleware(
-		CORSMiddleware,
-		allow_origins=settings.allowed_origins,
-		allow_credentials=True,
-		allow_methods=settings.allowed_methods,
-		allow_headers=settings.allowed_headers,
-	)
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=settings.allowed_origins,
+        allow_credentials=True,
+        allow_methods=settings.allowed_methods,
+        allow_headers=settings.allowed_headers,
+    )
 
-	app.include_router(router=api_router, prefix="/api")
+    app.include_router(router=api_router, prefix="/api")
 
-	# Adds static directory.
-	# This directory is used to access swagger files.
-	app.mount(
-		"/static",
-		StaticFiles(directory=APP_ROOT / "static"),
-		name="static",
-	)
+    # Adds static directory.
+    # This directory is used to access swagger files.
+    app.mount(
+        "/static",
+        StaticFiles(directory=APP_ROOT / "static"),
+        name="static",
+    )
 
-	return app
+    return app
+
 
 def run_app() -> None:
     """Run the FastAPI app."""
@@ -49,5 +51,5 @@ def run_app() -> None:
         "hackable_api.app.application:get_app",
         host=settings.host,
         port=settings.port,
-        reload=settings.reload
+        reload=settings.reload,
     )

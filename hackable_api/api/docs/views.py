@@ -8,6 +8,7 @@ from fastapi.responses import HTMLResponse
 
 router = APIRouter()
 
+
 @router.get("/docs", include_in_schema=False)
 async def swagger_ui_html(request: Request) -> HTMLResponse:
     """

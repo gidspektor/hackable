@@ -7,7 +7,7 @@
 					<RouterLink :to="{ name: 'articles' }">Articles</RouterLink>
 					<RouterLink v-if="Object.keys(user).length == 0" :to="{ name: 'login' }">Login/Signup</RouterLink>
 					<RouterLink v-if="Object.keys(user).length > 0" :to="{ name: 'account' }">My Account</RouterLink>
-					<RouterLink v-if="Object.keys(user).length > 0" :to="{ name: 'create-article' }">Create Article</RouterLink>
+					<RouterLink v-if="admin" :to="{ name: 'create-article' }">Create Article</RouterLink>
 					<a v-if="Object.keys(user).length > 0" @click="logout">Logout</a>
 				</nav>
 			</div>
@@ -30,6 +30,11 @@
 	const logout = async () => {
 		await hackableStore.logout()
 	}
+
+	const admin = document.cookie
+		.split('; ')
+		.find((row) => row.startsWith('is_admin='))
+		?.split("=")[1] == 'true';
 
 	onMounted(async () => {
 		try {

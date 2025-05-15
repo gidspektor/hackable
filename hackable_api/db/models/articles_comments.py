@@ -13,4 +13,6 @@ class ArticlesComments(Base):
     article_id = Column(Integer, ForeignKey("articles.id"), nullable=False)
     comment = Column(String(settings.comment_max_length), nullable=False)
     author_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    created_at = Column(DateTime, server_default=sa.text('CURRENT_TIMESTAMP'), nullable=False)
+    created_at = Column(
+        DateTime, server_default=sa.text("CURRENT_TIMESTAMP"), nullable=False
+    )

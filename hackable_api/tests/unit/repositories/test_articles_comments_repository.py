@@ -1,12 +1,16 @@
 import pytest
 from unittest.mock import AsyncMock, MagicMock
-from hackable_api.db.repositories.articles_comments_repository import ArticlesCommentsRepository
+from hackable_api.db.repositories.articles_comments_repository import (
+    ArticlesCommentsRepository,
+)
 from sqlalchemy.engine import Result
+
 
 @pytest.fixture
 def mock_db_driver():
     """Fixture to mock the database driver."""
     return AsyncMock()
+
 
 @pytest.mark.asyncio
 async def test_get_article_comments(mock_db_driver):
@@ -19,14 +23,14 @@ async def test_get_article_comments(mock_db_driver):
             "article_id": 1,
             "comment": "This is a comment.",
             "author_id": 101,
-            "username": "testuser"
+            "username": "testuser",
         },
         {
             "id": 2,
             "article_id": 1,
             "comment": "This is another comment.",
             "author_id": 102,
-            "username": "anotheruser"
+            "username": "anotheruser",
         },
     ]
 

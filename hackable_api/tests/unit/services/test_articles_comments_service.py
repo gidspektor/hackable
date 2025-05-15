@@ -1,13 +1,17 @@
 import pytest
 from unittest.mock import AsyncMock, MagicMock
 
-from hackable_api.db.repositories.articles_comments_repository import ArticlesCommentsRepositoryInterface
+from hackable_api.db.repositories.articles_comments_repository import (
+    ArticlesCommentsRepositoryInterface,
+)
 
 from hackable_api.services.articles_comments_service import ArticlesCommentsService
+
 
 @pytest.fixture
 def mock_articles_comments_repository():
     return MagicMock(spec=ArticlesCommentsRepositoryInterface)
+
 
 @pytest.mark.asyncio
 async def test_get_article_comments(mock_articles_comments_repository):
@@ -17,7 +21,9 @@ async def test_get_article_comments(mock_articles_comments_repository):
         MagicMock(id=3, article_id=1, comment="Test Comment 3"),
     ]
 
-    mock_articles_comments_repository.get_article_comments = AsyncMock(return_value=mock_comments)
+    mock_articles_comments_repository.get_article_comments = AsyncMock(
+        return_value=mock_comments
+    )
 
     service = ArticlesCommentsService(mock_articles_comments_repository)
 
@@ -35,11 +41,14 @@ async def test_get_article_comments(mock_articles_comments_repository):
     assert article_comments[2].article_id == 1
     assert article_comments[2].comment == "Test Comment 3"
 
+
 @pytest.mark.asyncio
 async def test_create_article_comment(mock_articles_comments_repository):
     mock_comment = MagicMock(id=1, article_id=1, comment="Test Comment")
 
-    mock_articles_comments_repository.create_article_comment = AsyncMock(return_value=mock_comment)
+    mock_articles_comments_repository.create_article_comment = AsyncMock(
+        return_value=mock_comment
+    )
 
     service = ArticlesCommentsService(mock_articles_comments_repository)
 

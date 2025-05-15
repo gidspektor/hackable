@@ -27,7 +27,9 @@ class UserRequest(BaseModel):
     """
 
     username: str = Field(max_length=settings.request_max_length)
-    password: str = Field(max_length=settings.request_max_length, min_length=settings.password_min_length)
+    password: str = Field(
+        max_length=settings.request_max_length, min_length=settings.password_min_length
+    )
 
 
 class UserLoginResponse(BaseModel):
@@ -46,6 +48,12 @@ class passwordChangeRequest(BaseModel):
     Request schema for changing a password.
     """
 
-    old_password: str = Field(max_length=settings.request_max_length, min_length=settings.password_min_length)
-    new_password: str = Field(max_length=settings.request_max_length, min_length=settings.password_min_length)
-    new_password_match: str = Field(max_length=settings.request_max_length, min_length=settings.password_min_length)
+    old_password: str = Field(
+        max_length=settings.request_max_length, min_length=settings.password_min_length
+    )
+    new_password: str = Field(
+        max_length=settings.request_max_length, min_length=settings.password_min_length
+    )
+    new_password_match: str = Field(
+        max_length=settings.request_max_length, min_length=settings.password_min_length
+    )

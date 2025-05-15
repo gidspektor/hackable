@@ -3,10 +3,14 @@ from fastapi import APIRouter, Depends, HTTPException
 from hackable_api.app.settings import settings
 
 from hackable_api.api.v1.schemas import (
-    ArticlesPreviewsResponse, ArticleResponse,
-    ArticleCreateRequest, ArticleCommentsResponse,
-    ArticleCommentResponse, ArticleCommentPostRequest,
-    UsersArticlesResponse, UserArticleCommentsResponse,
+    ArticlesPreviewsResponse,
+    ArticleResponse,
+    ArticleCreateRequest,
+    ArticleCommentsResponse,
+    ArticleCommentResponse,
+    ArticleCommentPostRequest,
+    UsersArticlesResponse,
+    UserArticleCommentsResponse,
 )
 
 from hackable_api.api.dependencies import auth_exception_handler
@@ -17,10 +21,13 @@ from hackable_api.services.articles_comments_service import ArticlesCommentsServ
 
 from hackable_api.db.db_driver import DbDriver
 from hackable_api.db.repositories.articles_repository import ArticlesRepository
-from hackable_api.db.repositories.articles_comments_repository import ArticlesCommentsRepository
+from hackable_api.db.repositories.articles_comments_repository import (
+    ArticlesCommentsRepository,
+)
 from hackable_api.db.repositories.users_repository import UsersRepository
 
 router = APIRouter(prefix="/v1")
+
 
 @router.get("/article_previews/", response_model=ArticlesPreviewsResponse)
 async def get_articles() -> ArticlesPreviewsResponse:
@@ -32,6 +39,7 @@ async def get_articles() -> ArticlesPreviewsResponse:
 
     return ArticlesPreviewsResponse(articles=articles)
 
+
 @router.get("/articles/featured/", response_model=ArticlesPreviewsResponse)
 async def get_featured_articles() -> ArticlesPreviewsResponse:
     """API endpoint to get a featured article"""
@@ -42,13 +50,13 @@ async def get_featured_articles() -> ArticlesPreviewsResponse:
 
     return ArticlesPreviewsResponse(articles=articles)
 
+
 # Open to be hit by anyone, should be checking the JWT token for the user
 # and then confirming if it's an admin user in the db.
 @router.post("/article/", response_model=ArticleResponse)
 async def create_article(
-        article: ArticleCreateRequest,
-        decoded_token: dict = Depends(auth_exception_handler)
-    ) -> ArticleResponse:
+    article: ArticleCreateRequest, decoded_token: dict = Depends(auth_exception_handler)
+) -> ArticleResponse:
     """API endpoint to create an article"""
 
     user_id: str = decoded_token.get("sub")
@@ -59,15 +67,17 @@ async def create_article(
     async with DbDriver(settings.db_url).get_db_session() as session:
         article_repository = ArticlesRepository(session)
         article = await ArticlesService(article_repository).create_article(
-            article.title, article.content,
-            article.featured, user_id
+            article.title, article.content, article.featured, user_id
         )
 
     return ArticleResponse(
-        id=article.id, title=article.title,
-        content=article.content, featured=article.featured,
-        username=article.username
+        id=article.id,
+        title=article.title,
+        content=article.content,
+        featured=article.featured,
+        username=article.username,
     )
+
 
 @router.get("/article/{article_id}/", response_model=ArticleResponse)
 async def get_article(article_id: int) -> ArticleResponse:
@@ -78,12 +88,17 @@ async def get_article(article_id: int) -> ArticleResponse:
         article = await ArticlesService(article_repository).get_article(article_id)
 
     return ArticleResponse(
-        id=article.id, title=article.title,
-        content=article.content, featured=article.featured,
-        username=article.username
+        id=article.id,
+        title=article.title,
+        content=article.content,
+        featured=article.featured,
+        username=article.username,
     )
 
-@router.get("/article/{article_id}/comments/{offset}/", response_model=ArticleCommentsResponse)
+
+@router.get(
+    "/article/{article_id}/comments/{offset}/", response_model=ArticleCommentsResponse
+)
 async def get_article_comments(article_id: int, offset: int) -> ArticleCommentsResponse:
     """API endpoint to get article comments"""
 
@@ -95,11 +110,12 @@ async def get_article_comments(article_id: int, offset: int) -> ArticleCommentsR
 
     return ArticleCommentsResponse(comments=comments)
 
+
 @router.post("/comment/", response_model=ArticleCommentResponse)
 async def create_comment(
-        article_comment: ArticleCommentPostRequest,
-        decoded_token: dict = Depends(auth_exception_handler)
-    ) -> ArticleCommentResponse:
+    article_comment: ArticleCommentPostRequest,
+    decoded_token: dict = Depends(auth_exception_handler),
+) -> ArticleCommentResponse:
     """API endpoint to create a comment"""
 
     user_id: str = decoded_token.get("sub")
@@ -111,15 +127,20 @@ async def create_comment(
         article_comments_repository = ArticlesCommentsRepository(session)
         comment = await ArticlesCommentsService(
             article_comments_repository
-        ).create_article_comment(article_comment.comment, user_id, article_comment.article_id)
+        ).create_article_comment(
+            article_comment.comment, user_id, article_comment.article_id
+        )
 
         user_repository = UsersRepository(session)
         username = await UsersService(user_repository).get_username(user_id)
 
     return ArticleCommentResponse(
-        id=comment.id, username=username,
-        article_id=comment.article_id, comment=comment.comment
+        id=comment.id,
+        username=username,
+        article_id=comment.article_id,
+        comment=comment.comment,
     )
+
 
 @router.delete("/article/{article_id}", response_model=dict[str, str])
 async def delete_article(article: int) -> dict[str, str]:
@@ -129,15 +150,20 @@ async def delete_article(article: int) -> dict[str, str]:
 
     async with DbDriver(settings.db_url).get_db_session() as session:
         article_repository = ArticlesRepository(session)
-        deleted = await ArticlesService(article_repository).delete_article(article.article_id)
+        deleted = await ArticlesService(article_repository).delete_article(
+            article.article_id
+        )
 
     if not deleted:
         raise HTTPException(status_code=404, detail="Article not found")
 
     return {"message": "Ok"}
 
+
 @router.get("/user/articles/", response_model=UsersArticlesResponse)
-async def get_user_articles(decoded_token: dict = Depends(auth_exception_handler)) -> UsersArticlesResponse:
+async def get_user_articles(
+    decoded_token: dict = Depends(auth_exception_handler),
+) -> UsersArticlesResponse:
     """API endpoint to get all articles for a user"""
 
     user_id: str = decoded_token.get("sub")
@@ -147,12 +173,17 @@ async def get_user_articles(decoded_token: dict = Depends(auth_exception_handler
 
     async with DbDriver(settings.db_url).get_db_session() as session:
         article_repository = ArticlesRepository(session)
-        articles = await ArticlesService(article_repository).get_articles_by_user(user_id)
+        articles = await ArticlesService(article_repository).get_articles_by_user(
+            user_id
+        )
 
     return UsersArticlesResponse(articles=articles)
 
+
 @router.get("/user/comments/", response_model=UserArticleCommentsResponse)
-async def get_user_comments(decoded_token: dict = Depends(auth_exception_handler)) -> UserArticleCommentsResponse:
+async def get_user_comments(
+    decoded_token: dict = Depends(auth_exception_handler),
+) -> UserArticleCommentsResponse:
     """API endpoint to get all comments by a user"""
 
     user_id: str = decoded_token.get("sub")

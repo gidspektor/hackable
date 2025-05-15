@@ -1,8 +1,5 @@
 FROM python:3.11-slim
 
-EXPOSE 80
-EXPOSE 443
-
 # Install Poetry and dependencies
 RUN apt-get update && apt-get install -y tzdata \
   && pip install poetry==1.4.2

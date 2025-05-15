@@ -3,10 +3,12 @@ from unittest.mock import AsyncMock, MagicMock
 from hackable_api.db.repositories.users_repository import UsersRepository
 from sqlalchemy.engine import Result
 
+
 @pytest.fixture
 def mock_db_driver():
     """Fixture to mock the database driver."""
     return AsyncMock()
+
 
 @pytest.mark.asyncio
 async def test_create_user(mock_db_driver):
@@ -30,6 +32,7 @@ async def test_create_user(mock_db_driver):
     assert user.username == "testuser"
     assert user.password_hash == "hashedpassword"
 
+
 @pytest.mark.asyncio
 async def test_get_user_by_username(mock_db_driver):
     """Test the get_user_by_username function of UsersRepository."""
@@ -37,7 +40,9 @@ async def test_get_user_by_username(mock_db_driver):
     mock_result = MagicMock(spec=Result)
 
     mock_result.mappings.return_value.first.return_value = {
-        "id": 1, "username": "testuser", "password_hash": "hashedpassword"
+        "id": 1,
+        "username": "testuser",
+        "password_hash": "hashedpassword",
     }
 
     mock_db_driver.execute.return_value = mock_result
@@ -47,6 +52,7 @@ async def test_get_user_by_username(mock_db_driver):
     assert result["username"] == "testuser"
     assert result["password_hash"] == "hashedpassword"
     mock_db_driver.execute.assert_called_once()
+
 
 @pytest.mark.asyncio
 async def test_get_user_by_bad_username(mock_db_driver):
