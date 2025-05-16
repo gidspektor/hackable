@@ -30,7 +30,7 @@
     ```
 4. Run the app:
     ```bash
-    poetry run python -m app.run_app
+    poetry run python -m app.app.run_app
     ```
 5. Open your browser and go to [http://localhost:3000]
 

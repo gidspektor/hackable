@@ -7,7 +7,7 @@
 					<RouterLink :to="{ name: 'articles' }">Articles</RouterLink>
 					<RouterLink v-if="Object.keys(user).length == 0" :to="{ name: 'login' }">Login/Signup</RouterLink>
 					<RouterLink v-if="Object.keys(user).length > 0" :to="{ name: 'account' }">My Account</RouterLink>
-					<RouterLink v-if="admin" :to="{ name: 'create-article' }">Create Article</RouterLink>
+					<RouterLink v-if="isAdmin" :to="{ name: 'create-article' }">Create Article</RouterLink>
 					<a v-if="Object.keys(user).length > 0" @click="logout">Logout</a>
 				</nav>
 			</div>
@@ -20,21 +20,24 @@
 
 <script setup>
 	import { useHackableStore } from '@/shared/hackableStore'
-	import { onMounted, computed } from 'vue'
+	import { onMounted, computed, ref } from 'vue'
 	import { RouterLink, RouterView } from 'vue-router'
 
 	const hackableStore = useHackableStore()
 
 	const user = computed(() => hackableStore.user)
+	const isAdmin = ref(false)
 
 	const logout = async () => {
 		await hackableStore.logout()
 	}
-
-	const admin = document.cookie
+	
+	const getIsAdmin = () => {
+		return document.cookie
 		.split('; ')
 		.find((row) => row.startsWith('is_admin='))
-		?.split("=")[1] == 'true';
+		?.split("=")[1] == 'true'
+	}
 
 	onMounted(async () => {
 		try {
@@ -43,6 +46,7 @@
 		} catch (error) {
 			console.error('Failed to get user data:', error)
 		}
+		isAdmin.value = getIsAdmin()
 	})
 </script>
 

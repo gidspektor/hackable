@@ -3,7 +3,7 @@ import { BASE_ROUTE } from '@/shared/constants.js'
 
 class ArticlesService {
 	async getArticlePreviews() {
-		return await api.GET(`${BASE_ROUTE}/v1/article_previews/`, '', true)
+		return await api.GET(`${BASE_ROUTE}/v1/articles/previews/`, '', true)
 	}
 
 	async getArticle(id) {

@@ -41,7 +41,9 @@ export const useHackableStore = defineStore('hackable', () => {
 
 	async function getUser() {
 		const response = await HackableService.getUserInfo()
-		user.value = response?.data
+		if (response.status == 200) {
+			user.value = response?.data
+		}
 	}
 
 	async function createAccount(username, password, passwordRepeat) {

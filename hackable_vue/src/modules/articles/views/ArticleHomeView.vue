@@ -8,7 +8,7 @@
 				:to="{ name: 'article', params: { id: featuredArticle.id } }"
 				class="box"
 			>
-				<ArticlePreview :title="featuredArticle.title" :body="featuredArticle.body" />
+				<ArticlePreview :title="featuredArticle.title" />
 			</router-link>
 		</div>
 		<div v-if="isLoading">

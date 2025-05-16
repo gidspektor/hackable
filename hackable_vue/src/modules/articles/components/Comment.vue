@@ -10,13 +10,6 @@ defineProps({
 	comment: {
 		type: Object,
 		required: true,
-		validator(value) {
-			return (
-				typeof value.id === 'number' &&
-				typeof value.username === 'string' &&
-				typeof value.comment === 'string'
-			);
-		}
 	}
 });
 </script>

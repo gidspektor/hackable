@@ -9,7 +9,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./hackable_api:/app/hackable_api
+      - ./hackable_api:/app/app
     environment:
       HACKABLE_API_HOST: 0.0.0.0
     depends_on:

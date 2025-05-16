@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y tzdata \
 
 RUN poetry config virtualenvs.create false
 
-WORKDIR /app/hackable_api
+WORKDIR /app/app
 
 # Copy dependency files
 COPY pyproject.toml poetry.lock ./
@@ -14,7 +14,7 @@ COPY pyproject.toml poetry.lock ./
 # Install dependencies
 RUN poetry install
 
-COPY . /app/hackable_api
+COPY . /app/app
 
 # Set environment for Python imports
 ENV PYTHONPATH=/app
