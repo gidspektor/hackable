@@ -43,7 +43,7 @@ export const useArticlesStore = defineStore('articles', () => {
 	async function getArticleComments(articleId) {
 		const response = await ArticlesService.getArticleComments(articleId, state.commentsOffset)
 
-		state.selectedArticleComments.push(response?.data?.comments)
+		state.selectedArticleComments.push(...response?.data?.comments)
 
 		updateCommentsOffset(state.selectedArticleComments.length)
 	}

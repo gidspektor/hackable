@@ -193,7 +193,7 @@ async def upload_image(
     async with DbDriver(settings.db_url).get_db_session() as session:
         user_repository = UsersRepository(session)
         image_path = await UsersService(user_repository).upload_image_name(
-            image_name, user_id
+            image_name, int(user_id)
         )
 
     if not image_path:
@@ -231,7 +231,7 @@ async def get_image(decoded_token: dict = Depends(auth_exception_handler)) -> di
 
     async with DbDriver(settings.db_url).get_db_session() as session:
         user_repository = UsersRepository(session)
-        image_url = await UsersService(user_repository).get_user_image_url(user_id)
+        image_url = await UsersService(user_repository).get_user_image_url(int(user_id))
 
     file_location = os.path.join(f"static/upload/{user_id}/", image_url)
 
@@ -261,7 +261,7 @@ async def change_password(
             password_change_request.new_password,
             password_change_request.new_password_match,
             password_change_request.old_password,
-            user_id,
+            int(user_id),
         )
 
     if not result:

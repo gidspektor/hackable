@@ -35,7 +35,7 @@ const emit = defineEmits(['login'])
 const user = computed(() => hackableStore.user)
 
 const openCommentBox = () => {
-	Object.keys(user).length > 0 ? (active.value = true) : emit('login')
+	user.value.username ? (active.value = true) : emit('login')
 }
 
 const cancelComment = () => {

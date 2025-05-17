@@ -45,7 +45,7 @@ class UsersService:
         password_hash = await self._users_repository.get_user_password_by_id(user_id)
 
         if password_hash and bcrypt.checkpw(
-            old_password.encode("utf-8"), password_hash
+            old_password.encode("utf-8"), password_hash.encode("utf-8")
         ):
             new_password = self.hash_password(new_password)
             await self._users_repository.change_password(new_password, user_id)
@@ -56,4 +56,5 @@ class UsersService:
 
     @staticmethod
     def hash_password(password: str) -> str:
-        return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode()
+        new_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
+        return new_password.decode("utf-8")

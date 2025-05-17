@@ -31,7 +31,8 @@
 	const logout = async () => {
 		await hackableStore.logout()
 	}
-	
+
+	// Broken access control
 	const getIsAdmin = () => {
 		return document.cookie
 		.split('; ')
