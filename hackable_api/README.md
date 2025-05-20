@@ -36,7 +36,7 @@
 
 To run API tests, execute the following command from the `hackable_api` directory:
 ```bash
-poetry run pytest hackable_api/tests/unit/
+poetry run pytest app/tests/unit/
 ```
 
 db make migrations with poetry

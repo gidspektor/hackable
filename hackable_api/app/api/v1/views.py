@@ -68,7 +68,7 @@ async def create_article(
     async with DbDriver(settings.db_url).get_db_session() as session:
         article_repository = ArticlesRepository(session)
         article = await ArticlesService(article_repository).create_article(
-            article.title, article.content, article.featured, user_id
+            article.title, article.content, article.featured, int(user_id)
         )
 
     return ArticleResponse(
@@ -129,11 +129,11 @@ async def create_comment(
         comment = await ArticlesCommentsService(
             article_comments_repository
         ).create_article_comment(
-            article_comment.comment, user_id, article_comment.article_id
+            article_comment.comment, int(user_id), article_comment.article_id
         )
 
         user_repository = UsersRepository(session)
-        username = await UsersService(user_repository).get_username(user_id)
+        username = await UsersService(user_repository).get_username(int(user_id))
 
     return ArticleCommentResponse(
         id=comment.id,
@@ -175,7 +175,7 @@ async def get_user_articles(
     async with DbDriver(settings.db_url).get_db_session() as session:
         article_repository = ArticlesRepository(session)
         articles = await ArticlesService(article_repository).get_articles_by_user(
-            user_id
+            int(user_id)
         )
 
     return UsersArticlesResponse(articles=articles)
@@ -196,6 +196,6 @@ async def get_user_comments(
         article_comments_repository = ArticlesCommentsRepository(session)
         comments = await ArticlesCommentsService(
             article_comments_repository
-        ).get_comments_by_user(user_id)
+        ).get_comments_by_user(int(user_id))
 
     return UserArticleCommentsResponse(comments=comments)

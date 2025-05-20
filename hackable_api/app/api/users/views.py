@@ -1,5 +1,6 @@
 import os
 import shutil
+from pathlib import Path
 
 from fastapi import (
     APIRouter,
@@ -28,6 +29,8 @@ from app.services.auth_service import AuthService
 
 from app.db.db_driver import DbDriver
 from app.db.repositories.users_repository import UsersRepository
+
+APP_ROOT = Path(__file__).parent.parent.parent
 
 router = APIRouter()
 
@@ -233,12 +236,12 @@ async def get_image(decoded_token: dict = Depends(auth_exception_handler)) -> di
         user_repository = UsersRepository(session)
         image_url = await UsersService(user_repository).get_user_image_url(int(user_id))
 
-    file_location = os.path.join(f"static/upload/{user_id}/", image_url)
+    file_location = os.path.join(f"{APP_ROOT}/static/upload/{user_id}/", image_url)
 
     if not os.path.exists(file_location):
         raise HTTPException(status_code=404, detail="Image not found")
 
-    return {"image_path": file_location}
+    return {"image_path": file_location.replace("/hackable_api/app/", "", 1)}
 
 
 @router.patch("/user/password/", response_model=dict)

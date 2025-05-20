@@ -45,7 +45,7 @@ def test_hash_password():
     hashed_password = UsersService.hash_password(password)
 
     assert hashed_password != password
-    assert bcrypt.checkpw(password.encode("utf-8"), hashed_password)
+    assert bcrypt.checkpw(password.encode("utf-8"), hashed_password.encode("utf-8"))
 
 
 @pytest.mark.asyncio
@@ -54,11 +54,8 @@ async def test_change_password(mock_users_repository):
 
     # Mock the `get_user_password_by_id` method to return a hashed password
     mock_users_repository.get_user_password_by_id = AsyncMock(
-        return_value=bcrypt.hashpw(b"oldpassword", bcrypt.gensalt())
+        return_value=UsersService.hash_password("oldpassword")
     )
-
-    # Mock the `change_password` method to return True
-    mock_users_repository.change_password = AsyncMock(return_value=True)
 
     # Instantiate the service with the mocked repository
     service = UsersService(mock_users_repository)

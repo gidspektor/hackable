@@ -29,7 +29,7 @@ export const useHackableStore = defineStore('hackable', () => {
 		const response = await HackableService.login({'username': username, 'password': password})
 
 		if (response.status === 200) {
-			user.value = response.data
+			user.value = response?.data
 			jwt.value = user.value.jwt
 
 			// Broken access control
@@ -57,6 +57,9 @@ export const useHackableStore = defineStore('hackable', () => {
 		if (response.status === 200) {
 			user.value = response?.data
 			jwt.value = user.value.jwt
+
+			// Broken access control
+			document.cookie = `is_admin=${user.value.is_admin}; path=/;`
 		}
 
 		return response
