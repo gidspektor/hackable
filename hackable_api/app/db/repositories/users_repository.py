@@ -16,7 +16,7 @@ class UsersRepository(UsersRepositoryInterface):
 
     async def create_user(self, user_data: dict) -> Users:
         new_user = Users(**user_data)  # 🚨 Directly unpacking user input
-        await self._db.add(new_user)
+        self._db.add(new_user)
         await self._db.commit()
 
         return new_user

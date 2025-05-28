@@ -36,13 +36,14 @@ black = "^24.4.2"
 autoflake = "^1.6.1"
 pyyaml = "^6.0.2"
 requests = "^2.32.3"
-
+httpx = "0.23.0"
 
 [tool.pytest.ini_options]
 filterwarnings = [
     "error",
     "ignore::DeprecationWarning",
     "ignore:.*unclosed.*:ResourceWarning",
+    "ignore::PendingDeprecationWarning",
 ]
 asyncio_default_fixture_loop_scope = "function"
 

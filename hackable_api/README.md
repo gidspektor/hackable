@@ -34,9 +34,26 @@
     ```
 5. Open your browser and go to [http://localhost:3000]
 
-To run API tests, execute the following command from the `hackable_api` directory:
+To run API unit or integration tests:
+
+In poetry
+execute the following command from the `hackable_api` directory
+
 ```bash
-poetry run pytest app/tests/unit/
+poetry run pytest app/tests/unit
+```
+```bash
+poetry run pytest app/tests/integration
+```
+
+In Docker
+execute the following command from the `hackable` directory
+
+```bash
+docker compose run --rm backend poetry run pytest app/tests/unit
+```
+```bash
+docker compose run --rm backend poetry run pytest app/tests/integration
 ```
 
 db make migrations with poetry
