@@ -1,6 +1,7 @@
 import pytest
 from starlette.testclient import TestClient
 from sqlalchemy import text
+import bcrypt
 
 from app.app.application import get_app
 from app.app.settings import settings
@@ -24,7 +25,7 @@ async def test_user():
 
         user_repository = UsersRepository(session)
         user = await UsersService(user_repository).create_user({
-            "username": "testuser1",
+            "username": "testuser",
             "password": "testpassword",
         })
     return user
@@ -49,7 +50,7 @@ async def test_login_success():
     await test_user()  # Ensure the test user is created
     # Prepare the login request payload
     payload = {
-        "username": "testuser1",
+        "username": "testuser",
         "password": "testpassword"
     }
 
@@ -64,7 +65,7 @@ async def test_login_success():
     assert "id" in response_data
     assert response_data["id"] is not None
     assert "username" in response_data
-    assert response_data["username"] == "testuser1"
+    assert response_data["username"] == "testuser"
     assert "is_admin" in response_data
     assert "jwt" in response_data
 
@@ -119,7 +120,7 @@ async def test_get_user_success(token):
     assert "id" in response_data
     assert response_data["id"] == 1
     assert "username" in response_data
-    assert response_data["username"] == "testuser1"
+    assert response_data["username"] == "testuser"
     assert "is_admin" in response_data
 
 def test_get_user_invalid_token():
@@ -182,6 +183,35 @@ async def test_create_user_success():
 
         await session.execute(text("DELETE FROM users WHERE username = 'newuser6578'"))
         await session.commit()
+
+@pytest.mark.asyncio
+async def test_change_password(token):
+    """
+    Test successful password change for an existing user.
+    """
+
+    await test_user()  # Ensure the test user is created
+
+    # Add the Authorization header with the JWT
+    headers = {"Authorization": f"Bearer {token}"}
+
+    response = client.patch("/api/user/password/", json={
+            "old_password": "testpassword",
+            "new_password": "newpassword",
+            "new_password_match": "newpassword"
+        },
+        headers=headers
+    )
+
+    assert response.status_code == 200
+
+
+    async with DbDriver(settings.db_url).get_db_session() as session:
+        user = await session.execute(text("SELECT password_hash FROM users WHERE username = 'testuser'"))
+        password_hash = user.scalar_one_or_none()
+        bcrypt.checkpw(
+            password_hash.encode("utf-8"), UsersService.hash_password("newpassword").encode("utf-8")
+        )
 
 def test_refresh_token_success(token):
     """
