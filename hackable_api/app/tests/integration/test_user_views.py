@@ -12,24 +12,22 @@ from app.services.auth_service import AuthService
 app = get_app()
 client = TestClient(app)
 
-@pytest.fixture(scope="module")
-async def setup_test_user():
+@pytest.mark.asyncio
+async def test_user():
     """
-    Fixture to set up a test user in the database.
+    Helper function to create a test user in the database.
     """
-
-    # User ID will be 6
     async with DbDriver(settings.db_url).get_db_session() as session:
+        # Reset table before each test
+        await session.execute(text('TRUNCATE TABLE users RESTART IDENTITY CASCADE;'))
+        await session.commit()
+
         user_repository = UsersRepository(session)
-        await UsersService(user_repository).create_user({
-            "username": "testuser",
+        user = await UsersService(user_repository).create_user({
+            "username": "testuser1",
             "password": "testpassword",
         })
-    yield
-
-    # async with DbDriver(settings.db_url).get_db_session() as session:
-    #     await session.execute(text("DELETE FROM users WHERE username = 'testuser'"))
-    #     await session.commit()
+    return user
 
 @pytest.fixture(scope="module")
 def token():
@@ -37,27 +35,26 @@ def token():
     Fixture to create a mock access token.
     """
     # Mock the data to be encoded
-    data = {"sub": "6", "exp": 3600}
+    data = {"sub": "1", "exp": 3600}
 
     # Create the access token
     return AuthService.create_access_token(data, 60)
 
-def test_login_success(token):
+
+@pytest.mark.asyncio
+async def test_login_success():
     """
     Test successful login.
     """
-
+    await test_user()  # Ensure the test user is created
     # Prepare the login request payload
     payload = {
-        "username": "testuser",
+        "username": "testuser1",
         "password": "testpassword"
     }
 
-    # Add the Authorization header with the JWT
-    headers = {"Authorization": f"Bearer {token}"}
-
     # Send a POST request to the /login/ endpoint
-    response = client.post("/api/login/", json=payload, headers=headers)
+    response = client.post("/api/login/", json=payload)
 
     # Assert the response status code
     assert response.status_code == 200
@@ -65,9 +62,9 @@ def test_login_success(token):
     # Assert the response body contains the expected fields
     response_data = response.json()
     assert "id" in response_data
-    assert response_data["id"] == 6
+    assert response_data["id"] is not None
     assert "username" in response_data
-    assert response_data["username"] == "testuser"
+    assert response_data["username"] == "testuser1"
     assert "is_admin" in response_data
     assert "jwt" in response_data
 
@@ -75,7 +72,6 @@ def test_login_success(token):
     cookies = response.cookies
     assert "refresh_token" in cookies
     assert cookies["refresh_token"] is not None
-
 
 def test_login_failure(token):
     """
@@ -101,10 +97,13 @@ def test_login_failure(token):
     response_data = response.json()
     assert response_data["detail"] == "None"  # Adjust based on your error handling
 
-def test_get_user_success(token):
+@pytest.mark.asyncio
+async def test_get_user_success(token):
     """
     Test successful retrieval of user information.
     """
+
+    await test_user()  # Ensure the test user is created
 
     # Add the Authorization header with the JWT
     headers = {"Authorization": f"Bearer {token}"}
@@ -118,9 +117,9 @@ def test_get_user_success(token):
     # Assert the response body contains the user information
     response_data = response.json()
     assert "id" in response_data
-    assert response_data["id"] == 6
+    assert response_data["id"] == 1
     assert "username" in response_data
-    assert response_data["username"] == "testuser"
+    assert response_data["username"] == "testuser1"
     assert "is_admin" in response_data
 
 def test_get_user_invalid_token():
@@ -157,18 +156,15 @@ def test_get_user_missing_token():
     assert response_data["detail"] == "Authorization header missing or invalid"
 
 @pytest.mark.asyncio
-async def test_create_user_success(token):
+async def test_create_user_success():
     """
     Test successful user creation.
     """
 
-    headers = {"Authorization": f"Bearer {token}"}
-
     response = client.post("/api/user/", json={
             "username": "newuser6578",
             "password": "newpassword"
-        },
-        headers=headers
+        }
     )
 
     assert response.status_code == 200

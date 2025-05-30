@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     """
 
     host: str = os.environ.get("API_HOST", "0.0.0.0")
-    port: int = int(os.environ.get("API_PORT", "8000"))
+    port: int = int(os.environ.get("API_PORT", "80"))
     # quantity of workers for uvicorn
     workers_count: int = int(os.environ.get("WORKER_COUNT", 1))
     # Enable uvicorn reloading

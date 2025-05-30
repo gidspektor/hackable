@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     container_name: hackable_api_container
     ports:
-      - "8000:8000"
+      - "8000:80"
     volumes:
       - ./hackable_api:/hackable_api
     environment:
