@@ -76,7 +76,7 @@ async def create_article(
         title=article.title,
         content=article.content,
         featured=article.featured,
-        username=article.username,
+        user_id=article.author_id,
     )
 
 

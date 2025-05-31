@@ -1,7 +1,11 @@
+import tempfile
 import pytest
+import bcrypt
+import os
+
 from starlette.testclient import TestClient
 from sqlalchemy import text
-import bcrypt
+from pathlib import Path
 
 from app.app.application import get_app
 from app.app.settings import settings
@@ -10,31 +14,39 @@ from app.db.repositories.users_repository import UsersRepository
 from app.services.users_service import UsersService
 from app.services.auth_service import AuthService
 
+APP_ROOT = Path(__file__).parent.parent.parent
+
 app = get_app()
 client = TestClient(app)
+
 
 @pytest.mark.asyncio
 async def test_user():
     """
     Helper function to create a test user in the database.
     """
+
     async with DbDriver(settings.db_url).get_db_session() as session:
         # Reset table before each test
-        await session.execute(text('TRUNCATE TABLE users RESTART IDENTITY CASCADE;'))
+        await session.execute(text("TRUNCATE TABLE users RESTART IDENTITY CASCADE;"))
         await session.commit()
 
         user_repository = UsersRepository(session)
-        user = await UsersService(user_repository).create_user({
-            "username": "testuser",
-            "password": "testpassword",
-        })
+        user = await UsersService(user_repository).create_user(
+            {
+                "username": "testuser",
+                "password": "testpassword",
+            }
+        )
     return user
+
 
 @pytest.fixture(scope="module")
 def token():
     """
     Fixture to create a mock access token.
     """
+
     # Mock the data to be encoded
     data = {"sub": "1", "exp": 3600}
 
@@ -49,10 +61,7 @@ async def test_login_success():
     """
     await test_user()  # Ensure the test user is created
     # Prepare the login request payload
-    payload = {
-        "username": "testuser",
-        "password": "testpassword"
-    }
+    payload = {"username": "testuser", "password": "testpassword"}
 
     # Send a POST request to the /login/ endpoint
     response = client.post("/api/login/", json=payload)
@@ -74,16 +83,14 @@ async def test_login_success():
     assert "refresh_token" in cookies
     assert cookies["refresh_token"] is not None
 
+
 def test_login_failure(token):
     """
     Test login failure with incorrect credentials.
     """
 
     # Prepare the login request payload with incorrect credentials
-    payload = {
-        "username": "wronguser",
-        "password": "wrongpassword"
-    }
+    payload = {"username": "wronguser", "password": "wrongpassword"}
 
     # Add the Authorization header with the JWT
     headers = {"Authorization": f"Bearer {token}"}
@@ -97,6 +104,7 @@ def test_login_failure(token):
     # Assert the response body contains the expected error message
     response_data = response.json()
     assert response_data["detail"] == "None"  # Adjust based on your error handling
+
 
 @pytest.mark.asyncio
 async def test_get_user_success(token):
@@ -123,6 +131,7 @@ async def test_get_user_success(token):
     assert response_data["username"] == "testuser"
     assert "is_admin" in response_data
 
+
 def test_get_user_invalid_token():
     """
     Test retrieval of user information with an invalid token.
@@ -141,6 +150,7 @@ def test_get_user_invalid_token():
     response_data = response.json()
     assert response_data["detail"] == "Invalid or expired token"
 
+
 def test_get_user_missing_token():
     """
     Test retrieval of user information without a token.
@@ -156,16 +166,15 @@ def test_get_user_missing_token():
     response_data = response.json()
     assert response_data["detail"] == "Authorization header missing or invalid"
 
+
 @pytest.mark.asyncio
 async def test_create_user_success():
     """
     Test successful user creation.
     """
 
-    response = client.post("/api/user/", json={
-            "username": "newuser6578",
-            "password": "newpassword"
-        }
+    response = client.post(
+        "/api/user/", json={"username": "newuser6578", "password": "newpassword"}
     )
 
     assert response.status_code == 200
@@ -177,12 +186,15 @@ async def test_create_user_success():
     assert response_data["username"] == "newuser6578"
 
     async with DbDriver(settings.db_url).get_db_session() as session:
-        user = await session.execute(text("SELECT id FROM users WHERE username = 'newuser6578'"))
+        user = await session.execute(
+            text("SELECT id FROM users WHERE username = 'newuser6578'")
+        )
         user_id = user.scalar_one_or_none()
         assert user_id is not None
 
         await session.execute(text("DELETE FROM users WHERE username = 'newuser6578'"))
         await session.commit()
+
 
 @pytest.mark.asyncio
 async def test_change_password(token):
@@ -195,23 +207,60 @@ async def test_change_password(token):
     # Add the Authorization header with the JWT
     headers = {"Authorization": f"Bearer {token}"}
 
-    response = client.patch("/api/user/password/", json={
+    response = client.patch(
+        "/api/user/password/",
+        json={
             "old_password": "testpassword",
             "new_password": "newpassword",
-            "new_password_match": "newpassword"
+            "new_password_match": "newpassword",
         },
-        headers=headers
+        headers=headers,
     )
 
     assert response.status_code == 200
 
-
     async with DbDriver(settings.db_url).get_db_session() as session:
-        user = await session.execute(text("SELECT password_hash FROM users WHERE username = 'testuser'"))
+        user = await session.execute(
+            text("SELECT password_hash FROM users WHERE username = 'testuser'")
+        )
         password_hash = user.scalar_one_or_none()
         bcrypt.checkpw(
-            password_hash.encode("utf-8"), UsersService.hash_password("newpassword").encode("utf-8")
+            password_hash.encode("utf-8"),
+            UsersService.hash_password("newpassword").encode("utf-8"),
         )
+
+
+@pytest.mark.asyncio
+async def test_upload_image_success(token):
+    """
+    Test successful image upload.
+    """
+
+    await test_user()  # Ensure the test user is created
+
+    # Create a temporary file to simulate an uploaded file
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as temp_file:
+        temp_file.write(b"Test file content")
+        temp_file_path = temp_file.name
+
+    # Open the file in binary mode for the request
+    with open(temp_file_path, "rb") as file:
+        headers = {"Authorization": f"Bearer {token}"}
+
+        response = client.patch(
+            "/api/upload/image/",
+            headers=headers,
+            files={"image": ("test_file.png", file, "png")},
+        )
+
+    # Assert the response
+    assert response.status_code == 200
+    response_data = response.json()
+    assert "image_path" in response_data
+
+    # Clean up the temporary file
+    os.remove(temp_file_path)
+
 
 def test_refresh_token_success(token):
     """
@@ -232,6 +281,7 @@ def test_refresh_token_success(token):
     assert "jwt" in response_data
     assert response_data["jwt"] is not None
 
+
 def test_refresh_token_missing():
     """
     Test refresh token missing in the request.
@@ -248,6 +298,7 @@ def test_refresh_token_missing():
     # Assert the response body contains the expected error message
     response_data = response.json()
     assert response_data["detail"] == "Refresh token missing"
+
 
 def test_refresh_token_invalid():
     """

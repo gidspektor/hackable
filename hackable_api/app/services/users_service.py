@@ -20,7 +20,9 @@ class UsersService:
     async def login(self, username: str, password: str) -> dict:
         user = await self._users_repository.get_user_by_username(username)
 
-        if user and bcrypt.checkpw(password.encode("utf-8"), user.password_hash.encode("utf-8")):
+        if user and bcrypt.checkpw(
+            password.encode("utf-8"), user.password_hash.encode("utf-8")
+        ):
             return user
 
     async def upload_image_name(self, image_name: str, user_id: int) -> str:

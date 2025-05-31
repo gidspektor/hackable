@@ -63,8 +63,8 @@ class ArticlesRepository(ArticlesRepositoryInterface):
             created_at=datetime.utcnow(),
         )
         self._db.add(new_article)
-        self._db.commit()
-        self._db.refresh(new_article)
+        await self._db.commit()
+        await self._db.refresh(new_article)
 
         return new_article
 
