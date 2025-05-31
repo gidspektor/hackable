@@ -22,8 +22,7 @@ class ArticleResponse(BaseModel):
     id: int
     title: str
     content: str
-    user_id: int
-    featured: bool
+    username: str
 
 
 class ArticlesPreviewsResponse(BaseModel):

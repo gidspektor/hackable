@@ -54,10 +54,10 @@ async def get_featured_articles() -> FeaturedArticlesPreviewsResponse:
 
 # Open to be hit by anyone, should be checking the JWT token for the user
 # and then confirming if it's an admin user in the db.
-@router.post("/article/", response_model=ArticleResponse)
+@router.post("/article/", response_model=dict)
 async def create_article(
     article: ArticleCreateRequest, decoded_token: dict = Depends(auth_exception_handler)
-) -> ArticleResponse:
+) -> dict[str]:
     """API endpoint to create an article"""
 
     user_id: str = decoded_token.get("sub")
@@ -71,13 +71,10 @@ async def create_article(
             article.title, article.content, article.featured, int(user_id)
         )
 
-    return ArticleResponse(
-        id=article.id,
-        title=article.title,
-        content=article.content,
-        featured=article.featured,
-        user_id=article.author_id,
-    )
+    if not article:
+        raise HTTPException(status_code=400, detail="Article not created")
+
+    return { "message": "Article created successfully" }
 
 
 @router.get("/article/{article_id}/", response_model=ArticleResponse)
