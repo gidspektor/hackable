@@ -140,8 +140,8 @@ async def create_comment(
     )
 
 
-@router.delete("/article/{article_id}", response_model=dict[str, str])
-async def delete_article(article: int) -> dict[str, str]:
+@router.delete("/article/{article_id}/", response_model=dict[str, str])
+async def delete_article(article_id: int) -> dict[str, str]:
     """API endpoint to delete an article"""
 
     deleted = False
@@ -149,7 +149,7 @@ async def delete_article(article: int) -> dict[str, str]:
     async with DbDriver(settings.db_url).get_db_session() as session:
         article_repository = ArticlesRepository(session)
         deleted = await ArticlesService(article_repository).delete_article(
-            article.article_id
+            article_id
         )
 
     if not deleted:

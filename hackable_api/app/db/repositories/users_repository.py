@@ -18,6 +18,7 @@ class UsersRepository(UsersRepositoryInterface):
         new_user = Users(**user_data)  # 🚨 Directly unpacking user input
         self._db.add(new_user)
         await self._db.commit()
+        await self._db.refresh(new_user)
 
         return new_user
 

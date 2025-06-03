@@ -12,6 +12,8 @@ from app.services.articles_service import ArticlesService
 from app.db.repositories.articles_repository import ArticlesRepository
 from app.db.repositories.users_repository import UsersRepository
 from app.services.users_service import UsersService
+from app.services.articles_comments_service import ArticlesCommentsService
+from app.db.repositories.articles_comments_repository import ArticlesCommentsRepository
 
 app = get_app()
 client = TestClient(app)
@@ -74,6 +76,30 @@ async def test_featured_article():
             "Test Featured Article Title", "Test featured article content", 1, 1
         )
     return article
+
+
+@pytest.mark.asyncio
+async def test_article_comments():
+    """
+    Helper function to create a test comment for an article.
+    """
+
+    async with DbDriver(settings.db_url).get_db_session() as session:
+        # Reset table before each test
+        await session.execute(text("TRUNCATE TABLE articles_comments RESTART IDENTITY CASCADE;"))
+        await session.commit()
+
+        article_repository = ArticlesCommentsRepository(session)
+
+        await ArticlesCommentsService(article_repository).create_article_comment(
+            "This is a test comment.", 1, 1
+        )
+        await ArticlesCommentsService(article_repository).create_article_comment(
+            "This is another test comment.", 1, 1
+        )
+        await ArticlesCommentsService(article_repository).create_article_comment(
+            "This is a third test comment.", 1, 1
+        )
 
 
 @pytest.fixture(scope="module")
@@ -150,7 +176,7 @@ async def test_get_article_success():
     """
 
     await test_user()
-    await test_featured_article()
+    await test_article()
 
     response = client.get("/api/v1/article/1/")
 
@@ -158,84 +184,131 @@ async def test_get_article_success():
     response_data = response.json()
     assert "id" in response_data
     assert response_data["id"] == 1
+    assert response_data["title"] == "Test Article Title"
 
 
-# @pytest.mark.asyncio
-# async def test_get_article_comments():
-#     """
-#     Test retrieving comments for an article.
-#     """
-#     article_id = 1  # Replace with a valid article ID
-#     offset = 0
+@pytest.mark.asyncio
+async def test_get_article_comments():
+    """
+    Test retrieving comments for an article.
+    """
 
-#     async with AsyncClient(app=app, base_url="http://test") as client:
-#         response = await client.get(f"/v1/article/{article_id}/comments/{offset}/")
+    await test_user()
+    await test_article()
+    await test_article_comments()
 
-#     assert response.status_code == 200
-#     response_data = response.json()
-#     assert "comments" in response_data
-#     assert isinstance(response_data["comments"], list)
+    article_id = 1
+    offset = 0
 
-# @pytest.mark.asyncio
-# async def test_create_comment_success(token):
-#     """
-#     Test creating a comment successfully.
-#     """
-#     headers = {"Authorization": f"Bearer {token}"}
-#     payload = {
-#         "comment": "This is a test comment.",
-#         "article_id": 1  # Replace with a valid article ID
-#     }
+    response = client.get(f"/api/v1/article/{article_id}/comments/{offset}/")
 
-#     async with AsyncClient(app=app, base_url="http://test") as client:
-#         response = await client.post("/v1/comment/", json=payload, headers=headers)
+    assert response.status_code == 200
+    response_data = response.json()
+    assert "comments" in response_data
+    assert isinstance(response_data["comments"], list)
+    assert len(response_data["comments"]) == 3
 
-#     assert response.status_code == 200
-#     response_data = response.json()
-#     assert "id" in response_data
-#     assert response_data["comment"] == "This is a test comment."
-#     assert response_data["article_id"] == 1
 
-# @pytest.mark.asyncio
-# async def test_delete_article_success():
-#     """
-#     Test deleting an article successfully.
-#     """
-#     article_id = 1  # Replace with a valid article ID
+@pytest.mark.asyncio
+async def test_get_article_comments_with_offset():
+    """
+    Test retrieving comments for an article.
+    """
 
-#     async with AsyncClient(app=app, base_url="http://test") as client:
-#         response = await client.delete(f"/v1/article/{article_id}")
+    await test_user()
+    await test_article()
+    await test_article_comments()
 
-#     assert response.status_code == 200
-#     response_data = response.json()
-#     assert response_data["message"] == "Ok"
+    article_id = 1
+    offset = 2
 
-# @pytest.mark.asyncio
-# async def test_get_user_articles(token):
-#     """
-#     Test retrieving all articles for a user.
-#     """
-#     headers = {"Authorization": f"Bearer {token}"}
+    response = client.get(f"/api/v1/article/{article_id}/comments/{offset}/")
 
-#     async with AsyncClient(app=app, base_url="http://test") as client:
-#         response = await client.get("/v1/user/articles/", headers=headers)
+    assert response.status_code == 200
+    response_data = response.json()
+    assert "comments" in response_data
+    assert isinstance(response_data["comments"], list)
+    assert len(response_data["comments"]) == 1
 
-#     assert response.status_code == 200
-#     response_data = response.json()
-#     assert "articles" in response_data
-#     assert isinstance(response_data["articles"], list)
 
-# @pytest.mark.asyncio
-# async def test_get_user_comments(token):
-#     """
-#     Test retrieving all comments by a user.
-#     """
-#     headers = {"Authorization": f"Bearer {token}"}
+@pytest.mark.asyncio
+async def test_create_comment_success(token):
+    """
+    Test creating a comment successfully.
+    """
 
-#     async with AsyncClient(app=app, base_url="http://test") as client:
-#         response = await client.get("/v1/user/comments/", headers=headers)
+    await test_user()
+    await test_article()
 
-#     assert response.status_code == 200
-#     response_data = response.json()
-#     assert "comments" in response_data
-#     assert isinstance(response_data["comments"], list)
+    headers = {"Authorization": f"Bearer {token}"}
+    payload = {
+        "comment": "This is a test comment.",
+        "article_id": 1
+    }
+
+    response = client.post("/api/v1/comment/", json=payload, headers=headers)
+
+    assert response.status_code == 200
+    response_data = response.json()
+    assert "id" in response_data
+    assert response_data["comment"] == "This is a test comment."
+    assert response_data["article_id"] == 1
+
+
+@pytest.mark.asyncio
+async def test_delete_article_success():
+    """
+    Test deleting an article successfully.
+    """
+
+    await test_user()
+    await test_article()
+
+    article_id = 1
+
+    response = client.delete(f"/api/v1/article/{article_id}/")
+
+    assert response.status_code == 200
+    response_data = response.json()
+    assert response_data["message"] == "Ok"
+
+
+@pytest.mark.asyncio
+async def test_get_user_articles(token):
+    """
+    Test retrieving all articles for a user.
+    """
+
+    await test_user()
+    await test_article()
+
+    headers = {"Authorization": f"Bearer {token}"}
+
+    response = client.get("/api/v1/user/articles/", headers=headers)
+
+    assert response.status_code == 200
+    response_data = response.json()
+    assert "articles" in response_data
+    assert isinstance(response_data["articles"], list)
+    assert response_data["articles"][0]["title"] == "Test Article Title"
+
+
+@pytest.mark.asyncio
+async def test_get_user_comments(token):
+    """
+    Test retrieving all comments by a user.
+    """
+
+    await test_user()
+    await test_article()
+    await test_article_comments()
+
+    headers = {"Authorization": f"Bearer {token}"}
+
+    response = client.get("/api/v1/user/comments/", headers=headers)
+
+    assert response.status_code == 200
+    response_data = response.json()
+    assert "comments" in response_data
+    assert isinstance(response_data["comments"], list)
+    assert response_data["comments"][0]["comment"] == "This is a test comment."
