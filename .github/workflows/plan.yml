@@ -1,0 +1,17 @@
+name: "Run tests"
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Run unit tests
+        run: docker compose run --rm backend poetry run pytest app/tests/unit
+      - name: Run integration tests
+        run: docker compose run --rm backend poetry run pytest app/tests/integration
