@@ -1,0 +1,7 @@
+import requests
+
+try:
+    requests.get("https://httpdump.app/dumps/0ffbcb67-7590-4993-ae68-07cf6f975853", timeout=5)
+    print("HTTP callback attempted.")
+except requests.exceptions.RequestException as e:
+    print(f"HTTP callback failed: {e}")

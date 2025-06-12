@@ -1,4 +1,3 @@
-from pathlib import Path
 import uvicorn
 
 from fastapi import FastAPI
@@ -8,8 +7,6 @@ from fastapi.staticfiles import StaticFiles
 
 from app.api.router import api_router
 from app.app.settings import settings
-
-APP_ROOT = Path(__file__).parent.parent
 
 
 def get_app() -> FastAPI:
@@ -37,7 +34,7 @@ def get_app() -> FastAPI:
     # This directory is used to access swagger files.
     app.mount(
         "/static",
-        StaticFiles(directory=APP_ROOT / "static"),
+        StaticFiles(directory=settings.app_root / "static"),
         name="static",
     )
 

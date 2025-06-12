@@ -42,7 +42,6 @@
 	const createArticle = async () => {
 		//<a onclick=alert(document.cookie) href="#">Click here for awesomeness!</a>
 		if (title.value && richText.value) {
-
 			const response = await articlesStore.createArticle(
 				title.value,
 				richText.value,

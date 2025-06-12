@@ -1,5 +1,6 @@
 import enum
 import os
+from pathlib import Path
 
 from pydantic_settings import BaseSettings
 
@@ -22,6 +23,8 @@ class Settings(BaseSettings):
     These parameters can be configured
     with environment variables.
     """
+
+    app_root: Path = Path(__file__).parent.parent
 
     host: str = os.environ.get("API_HOST", "0.0.0.0")
     port: int = int(os.environ.get("API_PORT", "80"))

@@ -5,7 +5,7 @@
     ```bash
     docker compose up
     ```
-2. Open your browser and go to [http://localhost:3000]
+2. Open your browser and go to [http://localhost:5137]
 
 ### Without Docker
 
@@ -32,12 +32,12 @@
     ```bash
     poetry run python -m app.app.run_app
     ```
-5. Open your browser and go to [http://localhost:3000]
+5. Open your browser and go to [http://localhost:5137]
 
 To run API unit or integration tests:
 
 In poetry
-execute the following command from the `hackable_api` directory
+execute the following command from the `hackable_api` directory (integration tests will only work with a docker db container up)
 
 ```bash
 poetry run pytest app/tests/unit
@@ -55,9 +55,3 @@ docker compose run --rm backend poetry run pytest app/tests/unit
 ```bash
 docker compose run --rm backend poetry run pytest app/tests/integration
 ```
-
-db make migrations with poetry
-poetry run alembic revision --autogenerate -m "Create users table"
-
-db run migrations with poetry
-poetry run alembic upgrade head
