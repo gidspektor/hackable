@@ -29,3 +29,6 @@ class ArticlesService:
 
     async def get_articles_by_user(self, user_id: int) -> ArticlesRepositoryInterface:
         return await self._article_repository.get_articles_by_user(user_id)
+
+    async def search_articles(self, username: str) -> list[dict]:
+        return await self._article_repository.search_articles(username)

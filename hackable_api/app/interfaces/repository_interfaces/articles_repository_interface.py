@@ -27,3 +27,7 @@ class ArticlesRepositoryInterface(ABC):
     @abstractmethod
     async def get_articles_by_user(self, user_id: int):
         raise NotImplementedError("This method should be overridden by subclasses")
+
+    @abstractmethod
+    async def search_articles(self, username: str) -> list[dict]:
+        raise NotImplementedError("This method should be overridden by subclasses")

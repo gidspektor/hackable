@@ -33,6 +33,10 @@ class ArticlesService {
 	async getArticleComments(id, offset) {
 		return await api.GET(`${BASE_ROUTE}/v1/article/${id}/comments/${offset}/`, '', true)
 	}
+
+	async searchArticles(title) {
+		return await api.GET(`${BASE_ROUTE}/v1/articles/search/${title}/`,)
+	}
 }
 
 export default new ArticlesService()

@@ -70,6 +70,30 @@
 			</div>
 		</div>
 	</div>
+	<div v-if="isAdmin" class="section">
+		<div class="form-group">
+			<input
+				v-model="articleKeyword"
+				type="articleKeyword"
+				class="input-field"
+				placeholder="articleKeyword"
+			/>
+			<button @click="searchArticles" class="action-button">Search articles by title</button>
+			<div>
+				<router-link
+					v-for="article in searchedArticles"
+					:key="article.id"
+					:to="{ name: 'article', params: { id: article.id } }"
+					class="article-item"
+				>
+					{{ article.title }}
+				</router-link>
+			</div>
+   		</div>
+	</div>
+	<div>
+		{{ error }}
+	</div>
 	<div class="overlay" v-show="showModal">
 		<transition name="fade">
 			<UpdatePasswordModal id="modal" class="myModal" v-show="showModal" @close="showModal = false" />
@@ -78,21 +102,25 @@
 </template>
 
 <script setup>
-	import { onMounted, computed, ref } from 'vue';
+	import { onMounted, computed, ref } from 'vue'
 
-	import { useArticlesStore } from '@articles/shared/articlesStore';
-	import { useHackableStore } from '@/shared/hackableStore';
+	import { useArticlesStore } from '@articles/shared/articlesStore'
+	import { useHackableStore } from '@/shared/hackableStore'
 
-	import UpdatePasswordModal from '@/components/modals/UpdatePasswordModal.vue';
+	import UpdatePasswordModal from '@/components/modals/UpdatePasswordModal.vue'
 
-	const articlesStore = useArticlesStore();
-	const hackableStore = useHackableStore();
+	const articlesStore = useArticlesStore()
+	const hackableStore = useHackableStore()
 
 	const user = computed(() => hackableStore.user);
-	const userArticles = computed(() => articlesStore.userArticles);
-	const userComments = computed(() => articlesStore.userComments);
-	const userImageUrl = computed(() => hackableStore.userImageUrl);
+	const userArticles = computed(() => articlesStore.userArticles)
+	const userComments = computed(() => articlesStore.userComments)
+	const userImageUrl = computed(() => hackableStore.userImageUrl)
 	const showModal = ref(false)
+	const searchedArticles =  computed(() => hackableStore.searchedArticles)
+	const articleKeyword = ref('')
+	const isAdmin = ref(false)
+	const error = ref('')
 
 	const openPasswordModal = () => {
 		showModal.value = true
@@ -100,46 +128,72 @@
 
 	const getUserArticles = async () => {
 		try {
-			await articlesStore.getUserArticles();
+			await articlesStore.getUserArticles()
 		} catch (error) {
-			console.error('Failed to fetch user articles:', error);
+			console.error('Failed to fetch user articles:', error)
 		}
 	};
 
 	const getUserComments = async () => {
 		try {
-			await articlesStore.getUserComments();
+			await articlesStore.getUserComments()
 		} catch (error) {
-			console.error('Failed to fetch user comments:', error);
+			error.value = 'Failed to fetch user comments: ' + error.message
 		}
 	};
 
 	const getUserImage = async () => {
 		try {
-			await hackableStore.getUserImage();
+			await hackableStore.getUserImage()
 		} catch (error) {
-			console.error('Failed to fetch user image:', error);
+			error.value = 'Failed to fetch user image: ' + error.message
 		}
 	};
 
 	const handelFileUpload = async (event) => {
-		const target = event.target;
-		const file = target && target.files && target.files[0];
+		const target = event.target
+		const file = target && target.files && target.files[0]
 		if (!file) {
-			return;
+			return
 		}
 
 		try {
-			await hackableStore.uploadUserImage(file);
+			await hackableStore.uploadUserImage(file)
 		} catch (error) {
-			console.error('Failed to upload user image:', error);
+			error.value = 'Failed to upload image: ' + error.message
 		}
 	};
 
+	const searchArticles = async () => {
+        const response = await articlesStore.searchArticles(articleKeyword.value)
+        try {
+			await hackableStore.getSearchedArticles(response)
+		} catch (error) {
+			error.value = 'Failed to search articles: ' + error.message
+		}
+    }
+
+    const handleKeyPress = (event) => {
+		if (event.key === 'Enter') {
+			search(username.value)
+		}
+	}
+
+	document.addEventListener('keydown', handleKeyPress)
+
+	// Broken access control
+	const getIsAdmin = () => {
+		return document.cookie
+		.split('; ')
+		.find((row) => row.startsWith('is_admin='))
+		?.split("=")[1] == 'true'
+	}
+
 	onMounted(async () => {
-		await getUserComments();
-		await getUserArticles();
-		await getUserImage();
+		await getUserComments()
+		await getUserArticles()
+		await getUserImage()
+		isAdmin.value = await getIsAdmin()
 	});
 </script>
 

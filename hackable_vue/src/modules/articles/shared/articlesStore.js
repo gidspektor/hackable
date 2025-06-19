@@ -9,6 +9,7 @@ export const useArticlesStore = defineStore('articles', () => {
 		userComments: [],
 		featuredArticles: [],
 		commentsOffset: 0,
+		searchedArticles: [],
 	})
 
 	const articlesPreviews = ref([])
@@ -28,6 +29,7 @@ export const useArticlesStore = defineStore('articles', () => {
 		getFeaturedArticles,
 		updateCommentsOffset,
 		setSelectedArticleComments,
+		searchArticles,
 	}
 
 	async function getArticlePreviews() {
@@ -82,6 +84,10 @@ export const useArticlesStore = defineStore('articles', () => {
 	
 	function setSelectedArticleComments() {
 		state.selectedArticleComments = []
+	}
+
+	async function searchArticles(title) {
+		state.searchedArticles = await ArticlesService.searchArticles(title)
 	}
 },
 	{

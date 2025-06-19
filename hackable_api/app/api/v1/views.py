@@ -196,3 +196,21 @@ async def get_user_comments(
         ).get_comments_by_user(int(user_id))
 
     return UserArticleCommentsResponse(comments=comments)
+
+@router.get('/articles/search/{title}/', response_model=dict)
+async def search_users(title: str, decoded_token: dict = Depends(auth_exception_handler)) -> dict:
+    user_id: str = decoded_token.get("sub")
+
+    if not user_id.isalnum():
+        raise HTTPException(status_code=400, detail="Invalid user ID")
+
+    async with DbDriver(settings.db_url).get_db_session() as session:
+        article_repository = ArticlesRepository(session)
+        result = await ArticlesService(article_repository).search_articles(
+            title
+        )
+
+    if not result:
+        raise HTTPException(status_code=400, detail="No articles found")
+
+    return {'data': result}

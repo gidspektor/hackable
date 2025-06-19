@@ -6,7 +6,7 @@
 					<RouterLink :to="{ name: 'home' }">Home</RouterLink>
 					<RouterLink :to="{ name: 'articles' }">Articles</RouterLink>
 					<RouterLink v-if="Object.keys(user).length == 0" :to="{ name: 'login' }">Login/Signup</RouterLink>
-					<RouterLink v-if="Object.keys(user).length > 0" :to="{ name: 'account' }">My Account</RouterLink>
+					<RouterLink v-if="Object.keys(user).length > 0" :to="{ name: 'account' }">Account</RouterLink>
 					<RouterLink v-if="isAdmin" :to="{ name: 'create-article' }">Create Article</RouterLink>
 					<a v-if="Object.keys(user).length > 0" @click="logout">Logout</a>
 				</nav>

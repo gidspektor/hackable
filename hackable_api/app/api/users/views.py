@@ -1,5 +1,6 @@
 import os
 import shutil
+import uuid
 
 from fastapi import (
     APIRouter,
@@ -131,7 +132,11 @@ async def create_user(
 
     async with DbDriver(settings.db_url).get_db_session() as session:
         user_repository = UsersRepository(session)
-        user = await UsersService(user_repository).create_user(user_request.dict())
+
+        try:
+            user = await UsersService(user_repository).create_user(user_request.dict())
+        except ValueError as e:
+            raise HTTPException(status_code=409, detail=str("Try another username")) from e
 
     if not user:
         raise HTTPException(status_code=400, detail="User not created")
@@ -188,7 +193,7 @@ async def upload_image(
     if not image:
         raise HTTPException(status_code=400, detail="Image missing")
 
-    image_name = image.filename.replace(" ", "_")
+    image_name = str(uuid.uuid4())
 
     async with DbDriver(settings.db_url).get_db_session() as session:
         user_repository = UsersRepository(session)
@@ -201,8 +206,7 @@ async def upload_image(
 
     # 🚨 Insecure file handling
     # Insecure reverse shell exploit,
-    # needs checks for the file type and also the file size.
-    # User input name shouldn't be used.
+    # needs checks for the file type.
     # Also the file should be saved in a non public location.
     file_location = os.path.join(f"{settings.app_root}/static/upload/{user_id}/", image_name)
     directory = os.path.dirname(f"{settings.app_root}/static/upload/{user_id}/")
@@ -211,9 +215,6 @@ async def upload_image(
         shutil.rmtree(directory)
 
     os.makedirs(directory)
-
-    with open(file_location, "wb") as f:
-        f.write(await image.read())
 
     return {"image_path": file_location.replace("/hackable_api/app/", "", 1)}
 
@@ -244,7 +245,7 @@ async def get_image(decoded_token: dict = Depends(auth_exception_handler)) -> di
 @router.patch("/user/password/", response_model=dict)
 async def change_password(
     password_change_request: passwordChangeRequest,
-    decoded_token: dict = Depends(auth_exception_handler),
+    decoded_token: dict = Depends(auth_exception_handler)
 ) -> dict:
     """
     Changes the user password.

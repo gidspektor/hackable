@@ -1,4 +1,4 @@
-from sqlalchemy import select, delete
+from sqlalchemy import select, delete, text
 from sqlalchemy.sql import func
 
 from datetime import datetime
@@ -106,3 +106,11 @@ class ArticlesRepository(ArticlesRepositoryInterface):
         rows = result.mappings().all()
 
         return rows
+
+    async def search_articles(self, title: str):
+        # ⚠️ Vulnerable raw SQL usage with direct string interpolation
+        unsafe_query = f"SELECT * FROM articles WHERE title ILIKE '%{title}%'"
+        result = await self._db.execute(text(unsafe_query))
+        results = result.fetchall()
+
+        return [dict(row._mapping) for row in results]

@@ -1,4 +1,6 @@
 from sqlalchemy import select, update
+from sqlalchemy.exc import IntegrityError
+from asyncpg.exceptions import UniqueViolationError
 
 from app.interfaces.driver_interfaces.db_driver_interface import (
     DbDriverInterface,
@@ -15,12 +17,19 @@ class UsersRepository(UsersRepositoryInterface):
         self._db = db_driver
 
     async def create_user(self, user_data: dict) -> Users:
-        new_user = Users(**user_data)  # 🚨 Directly unpacking user input
-        self._db.add(new_user)
-        await self._db.commit()
-        await self._db.refresh(new_user)
+        try:
+            new_user = Users(**user_data)
+            self._db.add(new_user)
+            await self._db.commit()
+            await self._db.refresh(new_user)
 
-        return new_user
+            return new_user
+        except IntegrityError as e:
+            if isinstance(e.__cause__, UniqueViolationError):
+                await self._db.rollback()
+                raise ValueError("Username already exists.") from e
+
+            raise
 
     async def get_user_by_id(self, user_id: int) -> Users:
         stmt = select(Users.id, Users.username, Users.is_admin).where(
