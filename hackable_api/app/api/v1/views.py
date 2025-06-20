@@ -12,6 +12,7 @@ from app.api.v1.schemas import (
     UsersArticlesResponse,
     UserArticleCommentsResponse,
     FeaturedArticlesPreviewsResponse,
+    ArticlesSearchResponse,
 )
 
 from app.api.dependencies import auth_exception_handler
@@ -197,8 +198,8 @@ async def get_user_comments(
 
     return UserArticleCommentsResponse(comments=comments)
 
-@router.get('/articles/search/{title}/', response_model=dict)
-async def search_users(title: str, decoded_token: dict = Depends(auth_exception_handler)) -> dict:
+@router.get('/articles/search/{title}/', response_model=ArticlesSearchResponse)
+async def search_users(title: str, decoded_token: dict = Depends(auth_exception_handler)) -> ArticlesSearchResponse:
     user_id: str = decoded_token.get("sub")
 
     if not user_id.isalnum():
@@ -213,4 +214,4 @@ async def search_users(title: str, decoded_token: dict = Depends(auth_exception_
     if not result:
         raise HTTPException(status_code=400, detail="No articles found")
 
-    return {'data': result}
+    return ArticlesSearchResponse(articles=result)

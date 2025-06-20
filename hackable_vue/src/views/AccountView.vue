@@ -117,7 +117,7 @@
 	const userComments = computed(() => articlesStore.userComments)
 	const userImageUrl = computed(() => hackableStore.userImageUrl)
 	const showModal = ref(false)
-	const searchedArticles =  computed(() => hackableStore.searchedArticles)
+	const searchedArticles =  computed(() => articlesStore.searchedArticles)
 	const articleKeyword = ref('')
 	const isAdmin = ref(false)
 	const error = ref('')
@@ -165,9 +165,8 @@
 	};
 
 	const searchArticles = async () => {
-        const response = await articlesStore.searchArticles(articleKeyword.value)
         try {
-			await hackableStore.getSearchedArticles(response)
+			await articlesStore.searchArticles(articleKeyword.value)
 		} catch (error) {
 			error.value = 'Failed to search articles: ' + error.message
 		}

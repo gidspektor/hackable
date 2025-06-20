@@ -87,7 +87,9 @@ export const useArticlesStore = defineStore('articles', () => {
 	}
 
 	async function searchArticles(title) {
-		state.searchedArticles = await ArticlesService.searchArticles(title)
+		state.searchedArticles = []
+		const response = await ArticlesService.searchArticles(title)
+		state.searchedArticles = response?.data?.articles
 	}
 },
 	{

@@ -122,3 +122,11 @@ class UsersArticlesResponse(BaseModel):
     """
 
     articles: List[UsersArticleResponse]
+
+
+class ArticlesSearchResponse(BaseModel):
+    """
+    Response schema for articles search results.
+    """
+
+    articles: List[UsersArticleResponse]
