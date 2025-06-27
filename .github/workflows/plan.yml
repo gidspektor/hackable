@@ -15,3 +15,5 @@ jobs:
         run: docker compose run --rm backend poetry run pytest app/tests/unit
       - name: Run integration tests
         run: docker compose run --rm backend poetry run pytest app/tests/integration
+      - name: Run tear down docker
+        run: docker compose down

@@ -42,3 +42,19 @@ services:
       - "5433:5432"
     volumes:
       - ./db/init_db.sql:/docker-entrypoint-initdb.d/init.sql
+
+  ftp:
+    image: fauria/vsftpd
+    platform: linux/amd64
+    container_name: ftp_server
+    ports:
+      - "21:21"
+      - "21100-21110:21100-21110"
+    environment:
+      FTP_USER: gidspektor
+      FTP_PASS: password
+      PASV_ADDRESS: 127.0.0.1
+      PASV_MIN_PORT: 21100
+      PASV_MAX_PORT: 21110
+    volumes:
+      - ./ftp-server/ftpdata:/home/vsftpd
